@@ -1,1 +1,1 @@
-# Automated-Student-Attendance-Checker-using-Facial-Recognition
+# Automated Student Attendance Checker using Facial Recognition
