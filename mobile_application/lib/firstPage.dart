@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'signInPage.dart';
+import 'temporarySecond.dart';
+import 'appColors.dart';
 void main(){
   runApp(MyApp());
 }
@@ -8,6 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: GetStarted(),
       ),
@@ -88,7 +90,7 @@ class RectTop extends StatelessWidget {
       width: getDynamicSize.getWidth(context),
       height:getDynamicSize.getHeight(context),
       decoration: ShapeDecoration(
-        color: Color(0xFF1A43BF),
+        color: AppColors.blueColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(width: 1),
           
@@ -306,7 +308,7 @@ class RegisterButton extends StatelessWidget {
 
 Route _createRoute(){
   return PageRouteBuilder(
-    pageBuilder:(context, animation, secondaryAnimation) => SignInWind(),
+    pageBuilder:(context, animation, secondaryAnimation) => RegisterWindow(),
     transitionsBuilder: (context, animation, secondaryAnimation, child){
       const begin = Offset(0.0, 1.0);
       const end = Offset.zero;
