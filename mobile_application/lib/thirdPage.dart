@@ -1,203 +1,218 @@
 import 'package:flutter/material.dart';
-import 'firstPage.dart';
+import 'package:flutter_application_1/firstPage.dart';
+import 'temporarySecond.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
+import 'widgets/icons_and_text.dart';
 
 void main(){
-  runApp(RegisterWindow2());
+  runApp(MainHomePage());
 }
 
-class RegisterWindow2 extends StatelessWidget{
-  const RegisterWindow2({Key? key}) : super(key:key);
+class MainHomePage extends StatelessWidget{
+  const MainHomePage({Key? key}) : super(key:key);
 
   @override
   Widget build(BuildContext context){
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {},
-      onHorizontalDragUpdate: (details) {
-        if (details.delta.direction >= 0) {
-          //Navigator.of(context).push(_swipeEnterLeft());
-      }
-    },
-    child: MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: RegisterPage2(),
-    )
+      home: Home1(),
     );
+    
   }
   
 }
 
 
 
-class RegisterPage2 extends StatefulWidget {
-  const RegisterPage2({Key? key}) : super(key:key);
+class Home1 extends StatefulWidget {
+  const Home1({Key? key}) : super(key:key);
 
   @override
-  _RegisterPageState2 createState() => _RegisterPageState2();
+  Home1State createState() => Home1State();
 }
 
-class _RegisterPageState2 extends State<RegisterPage2>{
+class Home1State extends State<Home1>{
   @override
   Widget build(BuildContext context){
-    return BigText(text:"hi");
-  }
+    return Scaffold(
+      body: Container(
 
-}
+        child: Column(
+          children: [
+            Container(
+              height: getDynamicSize.getHeight(context)*0.4,
+              child: Stack(
+                children: [
+                  Positioned(
 
-class Page2 extends StatefulWidget {
-  const Page2({super.key});
+                    child: Container(
+                        width: getDynamicSize.getWidth(context),
+                        height: getDynamicSize.getHeight(context)*0.3,
+                        decoration: BoxDecoration(color: Color(0xFF1A43BF)),
+                        child: Column(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(top: 55, bottom: 15),
+                                  padding: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.8),
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
 
-  @override
-  State<Page2> createState() => Page2State();
-}
+                                            width: 50,
+                                            height: 50,
+                                            child: ElevatedButton(
+                                              onPressed: (){
+                                                Navigator.of(context).push(createRoute(0));
+                                              },
+                                              clipBehavior: Clip.antiAlias,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.transparent,
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(18.0),
+                                                ),
+                                                padding: EdgeInsets.zero, // <--add this
+                                              ),
+                                              child: Image.asset('images/Bellpin.png'),
 
-class Page2State extends State<Page2>{
-  bool hasMiddleName = false;
-  @override
+                                            )
+                                        ),
+                                      ]
 
-  Widget build(BuildContext context){
-    return Container(
-                padding: EdgeInsets.only(left: 15, right: 15),
+                                  )
+                              ),
+
+                            ]
+
+
+                        )
+                    ),
+                  ),
+                  Positioned(
+                    top: getDynamicSize.getHeight(context)*0.24,
+                    left: getDynamicSize.getWidth(context) * 0.5 - 50,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset('images/taylor.png'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 20),
+              width: getDynamicSize.getWidth(context)*0.8,
+              height: getDynamicSize.getHeight(context)*0.1,
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x3F000000),
+                    blurRadius: 4,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: Container(
+                padding: EdgeInsets.only(top: 9, bottom: 9),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: (getDynamicSize.getWidth(context) - 10)*0.45,
-                          height: 60,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            ),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 20, top: 0.0),
-                            child: TextFormField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              labelText: "ajfnknajb *",
-                            ),
-                            
-                          )
 
-                          )
-                          
-                        ),
-                        SizedBox(width: 15),
-                        Container(
-                          width: (getDynamicSize.getWidth(context) - 10)*0.45,
-                          height: 60,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            ),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 20),
-                            child: TextFormField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              labelText: "Last name *",
-                              
+                    BigText(text: "Taylor Dimagiba D. Swift", color: Colors.black),
+                    BigText(text: "BSCS 3B", color: Color(0xFFB2B2B2), fontWeight: FontWeight.w700)
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+            ClassesBody(),
 
-                            )
-                          )
+          ],
+        )
+      )
+      
+    );
+  }
 
-                          )
-                          
-                        ),
-                      ]
-                    ),
-                    SizedBox(height: 10),
-                    
-                    Row(
-                      children: [
-                       Checkbox(
-                          checkColor: Colors.white,
-                          activeColor: AppColors.blueColor,
-                          value: hasMiddleName,
-                          onChanged: (bool?value){
-                            setState((){
-                              hasMiddleName = value!;
-                            });
-                          }
-                        ),
-                        BigText(color: Colors.black.withOpacity(0.46000000834465027), 
-                        fontWeight: FontWeight.w400,text: "Do you have a middle name?", size:14),
-                        
+}
 
-                      ]
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Visibility(
-                          visible: hasMiddleName,
-                          child:  Container(
-                          width: (getDynamicSize.getWidth(context) - 10)*0.45,
-                          height: 60,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            ),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 20),
-                            child: TextFormField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              labelText: "Middle name",
-                              
+class ClassesBody extends StatefulWidget {
+  const ClassesBody({super.key});
 
-                            )
-                          )
+  @override
+  State<ClassesBody> createState() => _ClassesBodyState();
+}
 
-                          )
-                          
-                        ),
-                          
-                        )
-                      ]
-                    ),
-                    SizedBox(height:30),
-                    
-                  ]
-                )
-                
-              );
+class _ClassesBodyState extends State<ClassesBody> {
+  PageController pageController = PageController(viewportFraction: 0.85);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 220,
+      child: PageView.builder(
+        controller: pageController,
+          itemCount: 7,
+          itemBuilder: (context, position){
+            return _buildPageItem(position);
+          }
+      ),
+    );
+  }
+  Widget _buildPageItem(int index){
+    return Container(
+      height: 220,
+      margin: EdgeInsets.only(left: 10, right: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: index.isEven?AppColors.blueColor:Color(0x781A43BF)
+      ),
+      child: Container(
+        padding: EdgeInsets.only(top: 20, left: 20, right: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BigText(text: "Operating Systems", color: Colors.white, fontWeight: FontWeight.w500),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                IconAndTextWidget(icon: Icons.person, text: "Jane Burce",
+                    textColor: Colors.white, iconColor: Colors.white,
+                  fontWeight: FontWeight.w400, size: 16,)
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.not_started),
+              ],
+            )
+
+
+
+          ],
+        ),
+      ),
+
+    );
   }
 }
+
+
+
+
+
+
+
