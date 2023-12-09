@@ -4,6 +4,7 @@ import 'temporarySecond.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
 import 'widgets/icons_and_text.dart';
+import 'package:slide_digital_clock/slide_digital_clock.dart';
 
 void main(){
   runApp(MainHomePage());
@@ -38,6 +39,11 @@ class Home1 extends StatefulWidget {
 class Home1State extends State<Home1>{
   @override
   Widget build(BuildContext context){
+    DateTime now = DateTime.now();
+    String dayOfWeek = getDayOfWeek(now.weekday);
+    String month = getMonth(now.month);
+    String dateShow = "${now.month}/${now.day}";
+
     return Scaffold(
       body: Container(
 
@@ -56,7 +62,8 @@ class Home1State extends State<Home1>{
                         child: Column(
                             children: [
                               Container(
-                                  margin: EdgeInsets.only(top: 55, bottom: 15),
+
+                                  margin: EdgeInsets.only(top: 55),
                                   padding: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.8),
                                   child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -86,11 +93,84 @@ class Home1State extends State<Home1>{
 
                                   )
                               ),
-
                             ]
-
-
                         )
+                    ),
+                  ),
+                  Positioned(
+                    top: getDynamicSize.getHeight(context)*0.08,
+                    child: Container(
+
+                      height: getDynamicSize.getHeight(context)* 0.22,
+                      margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.05),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                  child: DigitalClock(
+                                    hourMinuteDigitTextStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 60,
+                                    ),
+                                    secondDigitTextStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                    ),
+                                    colon: Text(
+                                      ":",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle1!
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                  )
+
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: getDynamicSize.getWidth(context),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        height:getDynamicSize.getHeight(context)*0.05,
+                                        width: getDynamicSize.getWidth(context)*0.45,
+                                        child: Text(
+                                            dayOfWeek,
+                                            style: TextStyle(
+                                              fontFamily: 'Donuts',
+                                              fontSize: 25,
+                                              color: Colors.white,
+                                            )
+
+                                        )
+                                    ),
+                                    Container(
+                                        alignment: Alignment.centerRight,
+                                        height:getDynamicSize.getHeight(context)*0.05,
+                                        width: getDynamicSize.getWidth(context)*0.45,
+                                        child: Text(
+                                            dateShow,
+                                            style: TextStyle(
+                                              fontFamily: 'Donuts',
+                                              fontSize: 25,
+                                              color: Colors.white,
+                                            )
+
+                                        )
+                                    )
+                                  ],
+                                )
+                              )
+                            ],
+                          ),
+
+                        ],
+                      ),
                     ),
                   ),
                   Positioned(
@@ -147,6 +227,56 @@ class Home1State extends State<Home1>{
       
     );
   }
+  String getDayOfWeek(int day) {
+    switch (day) {
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return '';
+    }
+  }
+  String getMonth(int month) {
+    switch (month) {
+      case 1:
+        return 'January';
+      case 2:
+        return 'February';
+      case 3:
+        return 'March';
+      case 4:
+        return 'April';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'October';
+      case 11:
+        return 'November';
+      case 12:
+        return 'December';
+      default:
+        return '';
+    }
+  }
 
 }
 
@@ -162,7 +292,7 @@ class _ClassesBodyState extends State<ClassesBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 180,
       child: PageView.builder(
         controller: pageController,
           itemCount: 7,
@@ -186,7 +316,7 @@ class _ClassesBodyState extends State<ClassesBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BigText(text: "Operating Systems", color: Colors.white, fontWeight: FontWeight.w500),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             Row(
               children: [
                 IconAndTextWidget(icon: Icons.person, text: "Jane Burce",
@@ -194,11 +324,28 @@ class _ClassesBodyState extends State<ClassesBody> {
                   fontWeight: FontWeight.w400, size: 16,)
               ],
             ),
+            SizedBox(height: 10,),
             Row(
               children: [
-                Icon(Icons.not_started),
+                IconAndTextWidget(icon: Icons.not_started, text: "13:00", textColor: Colors.white,
+                    iconColor: Colors.white),
+                SizedBox(width: 25,),
+                IconAndTextWidget(icon: Icons.access_alarm, text: "16:00", textColor: Colors.white,
+                    iconColor: Colors.white)
+              ],
+            ),
+            SizedBox(height: 10,),
+            Row(
+              children: [
+                IconAndTextWidget(icon: Icons.add_business, text: "Building 2", textColor: Colors.white,
+                    iconColor: Colors.white),
+                SizedBox(width: 25,),
+                IconAndTextWidget(icon: Icons.room_outlined, text: "Room 2104", textColor: Colors.white,
+                    iconColor: Colors.white)
+
               ],
             )
+
 
 
 
