@@ -42,7 +42,7 @@ class Home1State extends State<Home1>{
     DateTime now = DateTime.now();
     String dayOfWeek = getDayOfWeek(now.weekday);
     String month = getMonth(now.month);
-    String dateShow = "${now.month}/${now.day}";
+    String dateShow = "$month ${now.day}";
 
     return Scaffold(
       body: Container(
@@ -102,7 +102,7 @@ class Home1State extends State<Home1>{
                     child: Container(
 
                       height: getDynamicSize.getHeight(context)* 0.22,
-                      margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.05),
+                      margin: EdgeInsets.only(left: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -133,39 +133,36 @@ class Home1State extends State<Home1>{
                           Row(
                             children: [
                               Container(
-                                width: getDynamicSize.getWidth(context),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                        height:getDynamicSize.getHeight(context)*0.05,
-                                        width: getDynamicSize.getWidth(context)*0.45,
-                                        child: Text(
-                                            dayOfWeek,
-                                            style: TextStyle(
-                                              fontFamily: 'Donuts',
-                                              fontSize: 25,
-                                              color: Colors.white,
-                                            )
+                                  height:getDynamicSize.getHeight(context)*0.05,
+                                  width: getDynamicSize.getWidth(context)*0.4,
+                                  child: Text(
+                                      dayOfWeek,
+                                      style: TextStyle(
+                                          fontFamily: 'Donuts',
+                                          fontSize: 29,
+                                          color: Colors.white,
+                                      )
 
-                                        )
-                                    ),
-                                    Container(
-                                        alignment: Alignment.centerRight,
-                                        height:getDynamicSize.getHeight(context)*0.05,
-                                        width: getDynamicSize.getWidth(context)*0.45,
-                                        child: Text(
-                                            dateShow,
-                                            style: TextStyle(
-                                              fontFamily: 'Donuts',
-                                              fontSize: 25,
-                                              color: Colors.white,
-                                            )
+                                  )
+                              ),
+                            ],
+                          ),
 
-                                        )
-                                    )
-                                  ],
-                                )
-                              )
+                          Row(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 0),
+                                height:getDynamicSize.getHeight(context)*0.03,
+                                width: getDynamicSize.getWidth(context)*0.4,
+                                  child: Text(
+                                      dateShow,
+                                      style: TextStyle(
+                                          fontFamily: 'Donuts',
+                                          fontSize: 20,
+                                          color: Colors.white
+                                      )
+                                  )
+                              ),
                             ],
                           ),
 
