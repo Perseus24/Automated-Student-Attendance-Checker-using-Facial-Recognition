@@ -5,7 +5,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'firstPage.dart';
-//import 'thirdPage.dart';
+import 'thirdPage.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
 
@@ -20,22 +20,15 @@ class RegisterWindow extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {},
-onHorizontalDragUpdate: (details) {
-   if (details.delta.direction >= 0) {
-          Navigator.of(context).push(_swipeEnterLeft());
-    }
-},
-    child: MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: RegisterPage(),
-    )
     );
+
   }
   
 }
@@ -59,27 +52,25 @@ class _RegisterPageState extends State<RegisterPage>{
   Widget build(BuildContext context){
     return Scaffold(
       body: SingleChildScrollView(
-         
         child: Column(
-          
-          children: [ 
+          children: [
             Container(
               margin: EdgeInsets.only(top: 55, bottom: 15),
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Row(
                 children: [
                   Container(
-                    
+
                     width: 41,
                     height: 41,
                     child: ElevatedButton(
                       onPressed: (){
-                        Navigator.of(context).push(_createRoute());
+                        Navigator.of(context).push(createRoute(0));
                       },
                       clipBehavior: Clip.antiAlias,
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0), 
+                          borderRadius: BorderRadius.circular(18.0),
                         ),
                         padding: EdgeInsets.zero, // <--add this
                       ),
@@ -101,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage>{
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                      ), 
+                      ),
                     ]
                   )
                 )
@@ -109,34 +100,57 @@ class _RegisterPageState extends State<RegisterPage>{
               SizedBox(height: 30),
               Column(
                 children: [
-                  
+
                   BigText(text: "Sign Up Now!", size: 22),
                   SizedBox(height: 10),
-                  BigText(text: "Please enter your sign up details.", size: 15, 
-                  color: Colors.black.withOpacity(0.46000000834465027), 
+                  BigText(text: "Please enter your sign up details.", size: 15,
+                  color: Colors.black.withOpacity(0.46000000834465027),
                   fontWeight: FontWeight.w400),
                 ]
               ),
-              SizedBox(height: 60),
+              SizedBox(height: 40),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                    height: getDynamicSize.getHeight(context)*0.3,
+                  Container(
+
+                    height: getDynamicSize.getHeight(context)*0.25,
                     child: PageView (
                       controller: _controller,
-                      children: const[
-                        Page1(),
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                            child: Page1()
+                        ),
                         Page2(),
                         //Page3(),
                       ]
 
                     ),
+
                   ),
                 ]
               ),
-              
-              
+            Container(
+
+              height: getDynamicSize.getHeight(context)*0.09,
+
+                  child: SmoothPageIndicator(
+                    controller: _controller,
+                    count: 2,
+                    effect: ExpandingDotsEffect(
+                      activeDotColor: AppColors.blueColor,
+                      dotColor: Colors.blue.shade100,
+                      dotHeight: 10,
+                      dotWidth: 10,
+                      spacing: 20,
+                    ),
+                  ),
+
+
+            ),
+
+
               SizedBox(height: 30),
               Stack(
                 children: [
@@ -161,35 +175,29 @@ class _RegisterPageState extends State<RegisterPage>{
                               )
                             ],
                           ),
-                          child: Center(
-                            child: BigText(text: "Swipe Next", color: Colors.white)
+
+                            child: ElevatedButton(
+                                clipBehavior: Clip.antiAlias,
+                                style: ElevatedButton.styleFrom(
+                                  primary:  Color(0xFF1A43BF),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  padding: EdgeInsets.zero,
+                            ),
+                            onPressed: (){
+                                  Navigator.of(context).push(createRoute(1));
+                                  },
+                            child: BigText(text: "Sign Up", color: Colors.white, fontWeight: FontWeight.w700,)
                             )
                         ),
                       ),
+
                     ]
                   ),
                 ]
               ),
-              BottomAppBar(
-                  color: Colors.transparent,
-                  child: SmoothPageIndicator(
-                controller: _controller,
-                count: 3,
-                effect: ExpandingDotsEffect(
-                  activeDotColor: Colors.purple,
-                  dotColor: Colors.purple.shade100,
-                  dotHeight: 10,
-                  dotWidth: 10,
-                  spacing: 20,
-                ),
-
-
-
-              ), 
-                  elevation: 0
-              ),
-              
-              
+            SizedBox(height: 10,)
             ]
           )
         
@@ -199,40 +207,18 @@ class _RegisterPageState extends State<RegisterPage>{
   
 }
 
-class CheckboxSample extends StatefulWidget {
-  const CheckboxSample({super.key});
+Route createRoute(int num){
+  Widget goToPage = MyApp();
 
-  @override
-  State<CheckboxSample> createState() => _CheckboxSampleState();
-}
-
-class _CheckboxSampleState extends State<CheckboxSample>{
-  bool? isChecked = false;
-
-  @override
-  Widget build(BuildContext context){
-    return Column(
-      children: [
-        Checkbox(
-          checkColor: Colors.white,
-          activeColor: AppColors.blueColor,
-          value: isChecked,
-          onChanged: (bool?value){
-            setState((){
-              isChecked = value!;
-            });
-          }
-        )
-      ]
-    );
+  switch(num){
+    case 0: goToPage = MyApp();
+            break;
+    case 1: goToPage = MainHomePage();
+            break;
   }
-}
-
-
-
-Route _createRoute(){
   return PageRouteBuilder(
-    pageBuilder:(context, animation, secondaryAnimation) => MyApp(),
+    
+    pageBuilder:(context, animation, secondaryAnimation) => goToPage,
     transitionsBuilder: (context, animation, secondaryAnimation, child){
       const begin = Offset(0.0, -1.0);
       const end = Offset.zero;
@@ -282,127 +268,213 @@ class Page1 extends StatefulWidget {
 
 class Page1State extends State<Page1>{
   bool hasMiddleName = false;
+  String? selectedValue;
+
+  final List<String> genderItems = [
+    'Male',
+    'Female',
+  ];
   @override
 
   Widget build(BuildContext context){
     return Container(
-                padding: EdgeInsets.only(left: 15, right: 15),
-                child: Column(
+
+          padding: EdgeInsets.only(left: 15, right: 15),
+          child: Container(
+            margin: EdgeInsets.only(top:20, bottom: 20),
+
+            child: Center(
+              child: Column(
                   children: [
                     Row(
-                      children: [
-                        Container(
-                          width: (getDynamicSize.getWidth(context) - 10)*0.45,
-                          height: 60,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            ),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 20, top: 0.0),
-                            child: TextFormField(
-                              cursorColor: AppColors.blueColor,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              labelText: "First name *",
-                            ),
-                            
-                          )
-
-                          )
-                          
-                        ),
-                        SizedBox(width: 15),
-                        Container(
-                          width: (getDynamicSize.getWidth(context) - 10)*0.45,
-                          height: 60,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            ),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 20),
-                            child: TextFormField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              labelText: "Last name *",
+                        children: [
+                          Container(
+                              width: (getDynamicSize.getWidth(context) - 10)*0.45,
+                              height: 60,
+                              decoration: ShapeDecoration(
+                                color: Colors.white.withOpacity(0.8500000238418579),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 3,
+                                    offset: Offset(0, 0),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
                               
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 20, top: 0.0),
+                                  child: TextFormField(
+                                    cursorColor: AppColors.blueColor,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: "First name *",
+                                    ),
 
-                            )
-                          )
+                                  )
 
-                          )
-                          
-                        ),
-                      ]
+                              )
+
+                          ),
+                          SizedBox(width: 15),
+                          Container(
+                              width: (getDynamicSize.getWidth(context) - 10)*0.45,
+                              height: 60,
+                              decoration: ShapeDecoration(
+                                color: Colors.white.withOpacity(0.8500000238418579),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 3,
+                                    offset: Offset(0, 0),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: TextFormField(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: "Last name *",
+
+
+                                      )
+                                  )
+
+                              )
+
+                          ),
+                        ]
                     ),
-                    SizedBox(height: 10),
-                 
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
+
+                    //SizedBox(height: 10),
                     Row(
-                      children: [
-                    Container(
-                          width: (getDynamicSize.getWidth(context) - 10)*0.45,
-                          height: 60,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
+                        children: [
+                          Container(
+                              width: (getDynamicSize.getWidth(context) - 10)*0.45,
+                              height: 60,
+                              decoration: ShapeDecoration(
+                                color: Colors.white.withOpacity(0.8500000238418579),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 3,
+                                    offset: Offset(0, 0),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: TextFormField(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: "Middle name",
+
+                                      )
+                                  )
+
                               )
-                            ],
+
+                          ),
+                          SizedBox(width: 15),
+                          Container(
+                            width: (getDynamicSize.getWidth(context) - 10)*0.45,
+                            height: 60,
+                            decoration: ShapeDecoration(
+                              color: Colors.white.withOpacity(0.8500000238418579),
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0x3F000000),
+                                  blurRadius: 3,
+                                  offset: Offset(0, 0),
+                                  spreadRadius: 0,
+                                )
+                              ],
                             ),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 20),
-                            child: TextFormField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              labelText: "Middle name",
-                              
-
-                            )
-                          )
-
-                          )
-                          
-                        ),
-                      ]
+                            child: Container(
+                              child: Center(
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  hint: BigText(text: "Sex", fontWeight: FontWeight.w400, size: 16),
+                                  items: genderItems
+                                      .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ))
+                                      .toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Please select gender.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    //Do something when selected item is changed.
+                                  },
+                                  onSaved: (value) {
+                                    selectedValue = value.toString();
+                                  },
+                                  buttonStyleData: const ButtonStyleData(
+                                    padding: EdgeInsets.only(right: 8),
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.black45,
+                                    ),
+                                    iconSize: 24,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    padding: EdgeInsets.symmetric(horizontal: 16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]
                     ),
-                    SizedBox(height:30),
-                    
+                    //SizedBox(height:30),
+
                   ]
-                )
-                
-              );
+              ),
+            ),
+          )
+
+
+    );
   }
 }
 
@@ -416,101 +488,244 @@ class Page2 extends StatefulWidget {
 
 class Page2State extends State<Page2>{
   
-  final List<String> genderItems = [
-  'Male',
-  'Female',
-];
+  final List<String> blocItems = [
+  'A',
+  'B',
+  'C',
+  ];
 
-String? selectedValue;
+  final List<String> courseItems = [
+    'Biology',
+    'Chemistry',
+    'Computer Science',
+    'Information Technology',
+    'Meteorology'
+  ];
 
-final _formKey = GlobalKey<FormState>();
+  final List<String> yearLevel = [
+    '1st Year',
+    '2nd Year',
+    '3rd Year',
+    '4th Year'
+  ];
 
-@override
-Widget build(BuildContext context) {
+  String? selectedValue;
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
   return Scaffold(
     body: Form(
       key: _formKey,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 80),
+        padding: const EdgeInsets.symmetric(horizontal: 70),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextFormField(
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(16),
-                hintText: 'Enter Your Full Name.',
-                hintStyle: const TextStyle(fontSize: 14),
-                border: OutlineInputBorder(
+            Container(
+              width: (getDynamicSize.getWidth(context) - 10)*0.63,
+              height: 50,
+              decoration: ShapeDecoration(
+                color: Colors.white.withOpacity(0.8500000238418579),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
                   borderRadius: BorderRadius.circular(15),
                 ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x3F000000),
+                    blurRadius: 3,
+                    offset: Offset(0, 0),
+                    spreadRadius: 0,
+                  )
+                ],
               ),
-            ),
-            const SizedBox(height: 30),
-            DropdownButtonFormField2<String>(
-              isExpanded: true,
-              decoration: InputDecoration(
-                // Add Horizontal padding using menuItemStyleData.padding so it matches
-                // the menu padding when button's width is not specified.
-                contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
+              child: DropdownButtonFormField2<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
                 ),
-                // Add more decoration..
-              ),
-              hint: const Text(
-                'Select Your Gender',
-                style: TextStyle(fontSize: 14),
-              ),
-              items: genderItems
-                  .map((item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontSize: 14,
+
+                hint: BigText(text: "Select your course", fontWeight: FontWeight.w400, size: 14,),
+                items: courseItems
+                    .map((item) => DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                      ))
-                  .toList(),
-              validator: (value) {
-                if (value == null) {
-                  return 'Please select gender.';
-                }
-                return null;
-              },
-              onChanged: (value) {
-                //Do something when selected item is changed.
-              },
-              onSaved: (value) {
-                selectedValue = value.toString();
-              },
-              buttonStyleData: const ButtonStyleData(
-                padding: EdgeInsets.only(right: 8),
-              ),
-              iconStyleData: const IconStyleData(
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.black45,
+                        ))
+                    .toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select gender.';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  //Do something when selected item is changed.
+                },
+                onSaved: (value) {
+                  selectedValue = value.toString();
+                },
+                buttonStyleData: const ButtonStyleData(
+                  padding: EdgeInsets.only(right: 8),
                 ),
-                iconSize: 24,
-              ),
-              dropdownStyleData: DropdownStyleData(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                iconStyleData: const IconStyleData(
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black45,
+                  ),
+                  iconSize: 24,
                 ),
-              ),
-              menuItemStyleData: const MenuItemStyleData(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                ),
               ),
             ),
-            const SizedBox(height: 30),
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                }
-              },
-              child: const Text('Submit Button'),
+            const SizedBox(height: 20),
+            Container(
+              width: (getDynamicSize.getWidth(context) - 10)*0.63,
+              height: 50,
+              decoration: ShapeDecoration(
+                color: Colors.white.withOpacity(0.8500000238418579),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x3F000000),
+                    blurRadius: 3,
+                    offset: Offset(0, 0),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: DropdownButtonFormField2<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                hint: BigText(text: "Select your year level", fontWeight: FontWeight.w400, size: 14,),
+                items: yearLevel
+                    .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ))
+                    .toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select your year.';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  //Do something when selected item is changed.
+                },
+                onSaved: (value) {
+                  selectedValue = value.toString();
+                },
+                buttonStyleData: const ButtonStyleData(
+                  padding: EdgeInsets.only(right: 8),
+                ),
+                iconStyleData: const IconStyleData(
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black45,
+                  ),
+                  iconSize: 24,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: (getDynamicSize.getWidth(context) - 10)*0.63,
+              height: 50,
+              decoration: ShapeDecoration(
+                color: Colors.white.withOpacity(0.8500000238418579),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x3F000000),
+                    blurRadius: 3,
+                    offset: Offset(0, 0),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: DropdownButtonFormField2<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                hint: BigText(text: "Select your bloc", fontWeight: FontWeight.w400, size: 14,),
+                items: blocItems
+                    .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ))
+                    .toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select gender.';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  //Do something when selected item is changed.
+                },
+                onSaved: (value) {
+                  selectedValue = value.toString();
+                },
+                buttonStyleData: const ButtonStyleData(
+                  padding: EdgeInsets.only(right: 8),
+                ),
+                iconStyleData: const IconStyleData(
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black45,
+                  ),
+                  iconSize: 24,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                ),
+              ),
             ),
           ],
         ),
