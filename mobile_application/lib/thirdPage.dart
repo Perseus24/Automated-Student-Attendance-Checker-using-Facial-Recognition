@@ -5,6 +5,8 @@ import 'appColors.dart';
 import 'widgets/big_texts.dart';
 import 'widgets/icons_and_text.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main(){
   runApp(MainHomePage());
@@ -20,11 +22,55 @@ class MainHomePage extends StatelessWidget{
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Home1(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: BigText(text: "Dashboard", color: Colors.white, size:25, fontWeight: FontWeight.w700,),
+          backgroundColor: AppColors.blueColor,
+          actions: [
+            Container(
+                margin: EdgeInsets.only(right: getDynamicSize.getWidth(context)*0.07),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+
+                          width: 50,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: (){
+                              Navigator.of(context).push(createRoute(0));
+                            },
+                            clipBehavior: Clip.antiAlias,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                              padding: EdgeInsets.zero, // <--add this
+                            ),
+                            child: Image.asset('images/Bellpin.png'),
+
+                          )
+                      ),
+                    ]
+
+                )
+            ),
+          ],
+          toolbarHeight: getDynamicSize.getHeight(context)*0.12,
+          iconTheme: IconThemeData(color: Colors.white, size: 25),
+
+        ),
+        body: Home1(),
+        drawer: Container(
+          child: drawerPage(),
+        ),
+      ),
     );
-    
+
   }
-  
+
 }
 
 
@@ -36,167 +82,31 @@ class Home1 extends StatefulWidget {
   Home1State createState() => Home1State();
 }
 
-class Home1State extends State<Home1>{
+class Home1State extends State<Home1> {
+
+
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String dayOfWeek = getDayOfWeek(now.weekday);
     String month = getMonth(now.month);
-    String dateShow = "${now.month}/${now.day}";
+    String dateShow = "$month ${now.day}, ${now.year}";
 
     return Scaffold(
       body: Container(
-
+        height: getDynamicSize.getHeight(context),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: getDynamicSize.getHeight(context)*0.4,
-              child: Stack(
-                children: [
-                  Positioned(
+              height: getDynamicSize.getHeight(context)*0.22,
+              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                  right: getDynamicSize.getWidth(context)*0.05),
 
-                    child: Container(
-                        width: getDynamicSize.getWidth(context),
-                        height: getDynamicSize.getHeight(context)*0.3,
-                        decoration: BoxDecoration(color: Color(0xFF1A43BF)),
-                        child: Column(
-                            children: [
-                              Container(
-
-                                  margin: EdgeInsets.only(top: 55),
-                                  padding: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.8),
-                                  child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-
-                                            width: 50,
-                                            height: 50,
-                                            child: ElevatedButton(
-                                              onPressed: (){
-                                                Navigator.of(context).push(createRoute(0));
-                                              },
-                                              clipBehavior: Clip.antiAlias,
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.transparent,
-                                                elevation: 0,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(18.0),
-                                                ),
-                                                padding: EdgeInsets.zero, // <--add this
-                                              ),
-                                              child: Image.asset('images/Bellpin.png'),
-
-                                            )
-                                        ),
-                                      ]
-
-                                  )
-                              ),
-                            ]
-                        )
-                    ),
-                  ),
-                  Positioned(
-                    top: getDynamicSize.getHeight(context)*0.08,
-                    child: Container(
-
-                      height: getDynamicSize.getHeight(context)* 0.22,
-                      margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.05),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  child: DigitalClock(
-                                    hourMinuteDigitTextStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 60,
-                                    ),
-                                    secondDigitTextStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
-                                    ),
-                                    colon: Text(
-                                      ":",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .subtitle1!
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                  )
-
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                width: getDynamicSize.getWidth(context),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                        height:getDynamicSize.getHeight(context)*0.05,
-                                        width: getDynamicSize.getWidth(context)*0.45,
-                                        child: Text(
-                                            dayOfWeek,
-                                            style: TextStyle(
-                                              fontFamily: 'Donuts',
-                                              fontSize: 25,
-                                              color: Colors.white,
-                                            )
-
-                                        )
-                                    ),
-                                    Container(
-                                        alignment: Alignment.centerRight,
-                                        height:getDynamicSize.getHeight(context)*0.05,
-                                        width: getDynamicSize.getWidth(context)*0.45,
-                                        child: Text(
-                                            dateShow,
-                                            style: TextStyle(
-                                              fontFamily: 'Donuts',
-                                              fontSize: 25,
-                                              color: Colors.white,
-                                            )
-
-                                        )
-                                    )
-                                  ],
-                                )
-                              )
-                            ],
-                          ),
-
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: getDynamicSize.getHeight(context)*0.24,
-                    left: getDynamicSize.getWidth(context) * 0.5 - 50,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Image.asset('images/taylor.png'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20, right: 20),
-              width: getDynamicSize.getWidth(context)*0.8,
-              height: getDynamicSize.getHeight(context)*0.1,
               decoration: ShapeDecoration(
-                color: Colors.white,
+                color: AppColors.blueColor,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(15)
                 ),
                 shadows: [
                   BoxShadow(
@@ -207,25 +117,91 @@ class Home1State extends State<Home1>{
                   )
                 ],
               ),
+
               child: Container(
-                padding: EdgeInsets.only(top: 9, bottom: 9),
+                padding: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.015, left: getDynamicSize.getWidth(context)*0.04,
+                    right: getDynamicSize.getWidth(context)*0.05),
                 child: Column(
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BigText(text: dateShow, size: 15, color:Color(0xFFD7D7D8), fontWeight: FontWeight.w400,
+                          letterSpacing: 0.05,),
+                        Container(
+                            child: DigitalClock(
+                              areaHeight: getDynamicSize.getHeight(context)*0.03,
+                              hourMinuteDigitTextStyle: TextStyle(
+                                color: Color(0xFFD7D7D8),
+                                fontFamily: 'SF Pro Display',
+                                fontSize: 15,
+                              ),
+                              secondDigitTextStyle: TextStyle(
+                                color: Color(0xFFD7D7D8),
+                                fontFamily: 'SF Pro Display',
+                                fontSize: 10,
+                              ),
+                              colon: Text(
+                                ":",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1!
+                                    .copyWith(color: Colors.white),
+                              ),
+                            )
 
-                    BigText(text: "Taylor Dimagiba D. Swift", color: Colors.black),
-                    BigText(text: "BSCS 3B", color: Color(0xFFB2B2B2), fontWeight: FontWeight.w700)
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
+                    Row(
+                      children: [
+                        BigText(text: "Welcome back, Taylor!", color: Colors.white, size: 22, fontWeight: FontWeight.w700,
+                          letterSpacing: 0.08,)
+                      ],
+                    ),
+                    SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
+                    Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BigText(text: 'You currently have an attendance rate of', color: Colors.white, letterSpacing: 0.06,
+                              size: 16, fontWeight: FontWeight.w400,),
+                            SizedBox(height: getDynamicSize.getHeight(context)*0.005,),
+                            Row(
+                              children: [
+                                BigText(text: '60%', color: Colors.white, letterSpacing: 0.06,
+                                  size: 16, fontWeight: FontWeight.w700,),
+                                BigText(text: '. Keep up the good work!', color: Colors.white, letterSpacing: 0.06,
+                                  size: 16, fontWeight: FontWeight.w400,),
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+
+                    )
                   ],
                 ),
               ),
+
             ),
-            SizedBox(height: 30),
-            ClassesBody(),
+            Container(
+                height: getDynamicSize.getHeight(context)*0.1,
+                margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                    right: getDynamicSize.getWidth(context)*0.05),
+                child: BigText(text: "Today's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
+            )
 
           ],
-        )
-      )
-      
+        ),
+
+      ),
+      drawer: drawerPage(),
     );
+
+
   }
   String getDayOfWeek(int day) {
     switch (day) {
@@ -277,8 +253,34 @@ class Home1State extends State<Home1>{
         return '';
     }
   }
-
 }
+
+class drawerPage extends StatefulWidget {
+  const drawerPage({super.key});
+
+  @override
+  State<drawerPage> createState() => _drawerPageState();
+}
+
+class _drawerPageState extends State<drawerPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Column(
+
+              )
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
 
 class ClassesBody extends StatefulWidget {
   const ClassesBody({super.key});
@@ -289,13 +291,15 @@ class ClassesBody extends StatefulWidget {
 
 class _ClassesBodyState extends State<ClassesBody> {
   PageController pageController = PageController(viewportFraction: 0.85);
+  List<String> subjectList = ["Operating Systems","Computer Architecture and Organization","Automata Theory and Formal Languages","Software Engineering 1","Artificial Intelligence","KomFil","Art Appreciation"];
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 180,
       child: PageView.builder(
-        controller: pageController,
-          itemCount: 7,
+          controller: pageController,
+          itemCount: 1,
           itemBuilder: (context, position){
             return _buildPageItem(position);
           }
@@ -307,48 +311,14 @@ class _ClassesBodyState extends State<ClassesBody> {
       height: 220,
       margin: EdgeInsets.only(left: 10, right: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: index.isEven?AppColors.blueColor:Color(0x781A43BF)
+          borderRadius: BorderRadius.circular(30),
+          color: index.isEven?AppColors.blueColor:Color(0x781A43BF)
       ),
       child: Container(
         padding: EdgeInsets.only(top: 20, left: 20, right: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BigText(text: "Operating Systems", color: Colors.white, fontWeight: FontWeight.w500),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                IconAndTextWidget(icon: Icons.person, text: "Jane Burce",
-                    textColor: Colors.white, iconColor: Colors.white,
-                  fontWeight: FontWeight.w400, size: 16,)
-              ],
-            ),
-            SizedBox(height: 10,),
-            Row(
-              children: [
-                IconAndTextWidget(icon: Icons.not_started, text: "13:00", textColor: Colors.white,
-                    iconColor: Colors.white),
-                SizedBox(width: 25,),
-                IconAndTextWidget(icon: Icons.access_alarm, text: "16:00", textColor: Colors.white,
-                    iconColor: Colors.white)
-              ],
-            ),
-            SizedBox(height: 10,),
-            Row(
-              children: [
-                IconAndTextWidget(icon: Icons.add_business, text: "Building 2", textColor: Colors.white,
-                    iconColor: Colors.white),
-                SizedBox(width: 25,),
-                IconAndTextWidget(icon: Icons.room_outlined, text: "Room 2104", textColor: Colors.white,
-                    iconColor: Colors.white)
-
-              ],
-            )
-
-
-
-
           ],
         ),
       ),
@@ -356,10 +326,3 @@ class _ClassesBodyState extends State<ClassesBody> {
     );
   }
 }
-
-
-
-
-
-
-
