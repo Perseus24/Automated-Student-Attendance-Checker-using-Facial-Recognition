@@ -95,6 +95,7 @@ class Home1State extends State<Home1> {
     return Scaffold(
       body: Container(
         height: getDynamicSize.getHeight(context),
+        color: Colors.black12,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -188,11 +189,13 @@ class Home1State extends State<Home1> {
 
             ),
             Container(
-                height: getDynamicSize.getHeight(context)*0.1,
+                height: getDynamicSize.getHeight(context)*0.05,
                 margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
                     right: getDynamicSize.getWidth(context)*0.05),
                 child: BigText(text: "Today's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
-            )
+            ),
+            ClassesBody()
+
 
           ],
         ),
@@ -296,10 +299,10 @@ class _ClassesBodyState extends State<ClassesBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
+      height: 120,
       child: PageView.builder(
           controller: pageController,
-          itemCount: 1,
+          itemCount: 7,
           itemBuilder: (context, position){
             return _buildPageItem(position);
           }
@@ -309,18 +312,39 @@ class _ClassesBodyState extends State<ClassesBody> {
   Widget _buildPageItem(int index){
     return Container(
       height: 220,
-      margin: EdgeInsets.only(left: 10, right: 10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: index.isEven?AppColors.blueColor:Color(0x781A43BF)
+      margin: EdgeInsets.only(left: 0, right: 10),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 4,
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+          )
+        ],
       ),
       child: Container(
         padding: EdgeInsets.only(top: 20, left: 20, right: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
+            Column(
+              children: [
+                Container(
+                  width: getDynamicSize.getWidth(context)*0.2,
+                  child: BigText(text: "9:30", size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),),
+                ),
+                Container(
+                  width: getDynamicSize.getWidth(context)*0.2,
+                  child: BigText(text: "AM", size: 15, fontWeight: FontWeight.w500, color: Colors.black,),
+                ),
+              ]
+            ),
           ],
-        ),
+        )
       ),
 
     );
