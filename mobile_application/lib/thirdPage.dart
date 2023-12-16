@@ -95,7 +95,7 @@ class Home1State extends State<Home1> {
     return Scaffold(
       body: Container(
         height: getDynamicSize.getHeight(context),
-        color: Colors.black12,
+        //color: Colors.black12,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -194,7 +194,13 @@ class Home1State extends State<Home1> {
                     right: getDynamicSize.getWidth(context)*0.05),
                 child: BigText(text: "Today's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
             ),
-            ClassesBody()
+            ClassesBody(),
+            Container(
+                height: getDynamicSize.getHeight(context)*0.05,
+                margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                    right: getDynamicSize.getWidth(context)*0.05),
+                child: BigText(text: "Today's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
+            ),
 
 
           ],
@@ -299,7 +305,8 @@ class _ClassesBodyState extends State<ClassesBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120,
+      height: 130,
+
       child: PageView.builder(
           controller: pageController,
           itemCount: 7,
@@ -311,8 +318,7 @@ class _ClassesBodyState extends State<ClassesBody> {
   }
   Widget _buildPageItem(int index){
     return Container(
-      height: 220,
-      margin: EdgeInsets.only(left: 0, right: 10),
+      margin: EdgeInsets.only(left: 0, right: 10, bottom: 10),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -328,23 +334,41 @@ class _ClassesBodyState extends State<ClassesBody> {
         ],
       ),
       child: Container(
-        padding: EdgeInsets.only(top: 20, left: 20, right: 15),
-        child: Row(
-          children: [
-            Column(
-              children: [
-                Container(
-                  width: getDynamicSize.getWidth(context)*0.2,
-                  child: BigText(text: "9:30", size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),),
-                ),
-                Container(
-                  width: getDynamicSize.getWidth(context)*0.2,
-                  child: BigText(text: "AM", size: 15, fontWeight: FontWeight.w500, color: Colors.black,),
-                ),
-              ]
-            ),
-          ],
-        )
+          padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+          child: Row(
+            children: [
+              Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                    Container(
+                      width: getDynamicSize.getWidth(context)*0.3,
+                      child: BigText(text: "9:30", size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),)
+                    ),
+                    Container(
+                      width: getDynamicSize.getWidth(context)*0.2,
+                      child: BigText(text: "AM", size: 15, fontWeight: FontWeight.w500, color: Colors.black,),
+                    ),
+                  ]
+              ),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: BigText(text: "Class: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      ),
+                      //SizedBox(width: getDynamicSize.getWidth(context)*0.05,),
+                      Container(
+                        
+                        child: BigText(text: "BSCS 3B", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      )
+                    ],
+                  )
+                ],
+              )
+            ],
+          )
       ),
 
     );
