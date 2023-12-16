@@ -93,8 +93,8 @@ class Home1State extends State<Home1> {
     String dateShow = "$month ${now.day}, ${now.year}";
 
     return Scaffold(
-      body: Container(
-        height: getDynamicSize.getHeight(context),
+      body: SingleChildScrollView(
+        //height: getDynamicSize.getHeight(context),
         //color: Colors.black12,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,10 +199,44 @@ class Home1State extends State<Home1> {
                 height: getDynamicSize.getHeight(context)*0.05,
                 margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
                     right: getDynamicSize.getWidth(context)*0.05),
-                child: BigText(text: "Today's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
+                child: BigText(text: "Tomorrow's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
             ),
+            ClassesBody(),
+            Container(
+                height: getDynamicSize.getHeight(context)*0.05,
+                margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                    right: getDynamicSize.getWidth(context)*0.05),
+                child: BigText(text: "Websites", fontWeight: FontWeight.w700, color: Colors.black,)
+            ),
+            Container(
+              width: getDynamicSize.getWidth(context)*1,
+              height: getDynamicSize.getHeight(context)*0.15,
+              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                  right: getDynamicSize.getWidth(context)*0.05),
 
+              decoration: ShapeDecoration(
+                color: AppColors.blueColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)
+                ),
 
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x3F000000),
+                    blurRadius: 4,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child:
+                Image.asset('images/BU_Logo.png'),
+              ),
+
+            ),
+            SizedBox(height:10)
           ],
         ),
 
@@ -316,6 +350,7 @@ class _ClassesBodyState extends State<ClassesBody> {
       ),
     );
   }
+
   Widget _buildPageItem(int index){
     return Container(
       margin: EdgeInsets.only(left: 0, right: 10, bottom: 10),
@@ -338,11 +373,11 @@ class _ClassesBodyState extends State<ClassesBody> {
           child: Row(
             children: [
               Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Container(
-                      width: getDynamicSize.getWidth(context)*0.3,
-                      child: BigText(text: "9:30", size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),)
+                        width: getDynamicSize.getWidth(context)*0.3,
+                        child: BigText(text: "9:30", size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),)
                     ),
                     Container(
                       width: getDynamicSize.getWidth(context)*0.2,
@@ -353,18 +388,39 @@ class _ClassesBodyState extends State<ClassesBody> {
               Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        child: BigText(text: "Class: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                          child: BigText(text: "Class: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
                       ),
-                      //SizedBox(width: getDynamicSize.getWidth(context)*0.05,),
                       Container(
-                        
-                        child: BigText(text: "BSCS 3B", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      )
+                          child: BigText(text: "BSCS 3B", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      ),
+                      SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
                     ],
-                  )
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                          child: BigText(text: "Room: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      ),
+                      Container(
+                          child: BigText(text: "BSCS", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      ),
+                      SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                          child: BigText(text: "Subject: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      ),
+                      Container(
+                          child: BigText(text: "BSCS", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                      ),
+                      SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
+                    ],
+                  ),
+
                 ],
               )
             ],
@@ -373,4 +429,5 @@ class _ClassesBodyState extends State<ClassesBody> {
 
     );
   }
+
 }
