@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/firstPage.dart';
+import 'package:flutter_application_1/models/subjects.dart';
+import 'main.dart';
 import 'temporarySecond.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
@@ -7,6 +8,7 @@ import 'widgets/icons_and_text.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 
 void main(){
   runApp(MainHomePage());
@@ -334,7 +336,32 @@ class ClassesBody extends StatefulWidget {
 
 class _ClassesBodyState extends State<ClassesBody> {
   PageController pageController = PageController(viewportFraction: 0.85);
-  List<String> subjectList = ["Operating Systems","Computer Architecture and Organization","Automata Theory and Formal Languages","Software Engineering 1","Artificial Intelligence","KomFil","Art Appreciation"];
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
+  List<Subjects>subjectList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveSubjects();
+  }
+
+  void retrieveSubjects() {
+    ref.child('subjects').onValue.listen((DatabaseEvent event) {
+      final dataSnapshot = event.snapshot; // Access the snapshot
+
+      // Clear the subjectList before adding new data (optional for consistency)
+      subjectList.clear();
+
+      dataSnapshot.children.forEach((subjectSnapshot) {
+        final subjectsData = SubjectsData.fromJson(subjectSnapshot.value as Map);
+        final subjects = Subjects(key: subjectSnapshot.key, subjectsData: subjectsData);
+        subjectList.add(subjects);
+      });
+
+      setState(() {}); // Trigger a rebuild to reflect the updated list
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +370,7 @@ class _ClassesBodyState extends State<ClassesBody> {
 
       child: PageView.builder(
           controller: pageController,
-          itemCount: 7,
+          itemCount: subjectList.length,
           itemBuilder: (context, position){
             return _buildPageItem(position);
           }
@@ -415,7 +442,7 @@ class _ClassesBodyState extends State<ClassesBody> {
                           child: BigText(text: "Subject: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
                       ),
                       Container(
-                          child: BigText(text: "BSCS", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
+                          child: BigText(text: subjectList[index].subjectsData!.subjectName.toString(), color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
                       ),
                       SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
                     ],
@@ -431,3 +458,9 @@ class _ClassesBodyState extends State<ClassesBody> {
   }
 
 }
+
+
+
+
+
+
