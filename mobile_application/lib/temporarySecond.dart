@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
-import 'firstPage.dart';
+import 'main.dart';
 import 'thirdPage.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
