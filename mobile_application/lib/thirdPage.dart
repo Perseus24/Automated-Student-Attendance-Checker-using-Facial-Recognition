@@ -6,9 +6,9 @@ import 'appColors.dart';
 import 'widgets/big_texts.dart';
 import 'widgets/icons_and_text.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main(){
   runApp(MainHomePage());
@@ -92,7 +92,7 @@ class Home1State extends State<Home1> {
     DateTime now = DateTime.now();
     String dayOfWeek = getDayOfWeek(now.weekday);
     String month = getMonth(now.month);
-    String dateShow = "$month ${now.day}, ${now.year}";
+    String dateShow = "$month ${now.day}, $dayOfWeek";
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -196,23 +196,23 @@ class Home1State extends State<Home1> {
                     right: getDynamicSize.getWidth(context)*0.05),
                 child: BigText(text: "Today's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
             ),
-            ClassesBody(),
+            ClassesBody(0),
             Container(
                 height: getDynamicSize.getHeight(context)*0.05,
                 margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
                     right: getDynamicSize.getWidth(context)*0.05),
                 child: BigText(text: "Tomorrow's schedule", fontWeight: FontWeight.w700, color: Colors.black,)
             ),
-            ClassesBody(),
+            ClassesBody(1),
             Container(
-                height: getDynamicSize.getHeight(context)*0.05,
+                height: getDynamicSize.getHeight(context)*0.03,
                 margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
                     right: getDynamicSize.getWidth(context)*0.05),
-                child: BigText(text: "Websites", fontWeight: FontWeight.w700, color: Colors.black,)
+                child: BigText(text: "Related Websites", fontWeight: FontWeight.w700, color: Colors.black,)
             ),
             Container(
               width: getDynamicSize.getWidth(context)*1,
-              height: getDynamicSize.getHeight(context)*0.15,
+              height: getDynamicSize.getHeight(context)*0.1,
               margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
                   right: getDynamicSize.getWidth(context)*0.05),
 
@@ -221,7 +221,6 @@ class Home1State extends State<Home1> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),
-
                 shadows: [
                   BoxShadow(
                     color: Color(0x3F000000),
@@ -231,16 +230,86 @@ class Home1State extends State<Home1> {
                   )
                 ],
               ),
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child:
-                Image.asset('images/BU_Logo.png'),
-              ),
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.04),
+                    child: Image.asset('images/BU_Logo.png')
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                        width: getDynamicSize.getWidth(context)*0.65,
+                        child: BigText(text: 'Bicol University Student Portal', color: Colors.white, fontWeight: FontWeight.w700,size: 16, maxLines: 1,)
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.0035, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                          width: getDynamicSize.getWidth(context)*0.65,
+                          child: GestureDetector(
+                            onTap: () => launchUrl(Uri.parse("https://ibu.bicol-u.edu.ph")),
+                              child: BigText(text: "https://ibu.bicol-u.edu.ph", color: Colors.white, fontWeight: FontWeight.w400,size: 15, maxLines: 1,)
+                          )
+                      ),
 
+                    ],
+                  )
+
+                ],
+              ),
+            ),
+            Container(
+              width: getDynamicSize.getWidth(context)*1,
+              height: getDynamicSize.getHeight(context)*0.1,
+              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                  right: getDynamicSize.getWidth(context)*0.05),
+
+              decoration: ShapeDecoration(
+                color: AppColors.blueColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x3F000000),
+                    blurRadius: 4,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.04),
+                      child: Image.asset('images/BU.png')
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                          width: getDynamicSize.getWidth(context)*0.65,
+                          child: BigText(text: 'Bicol University Learning Management System', color: Colors.white, fontWeight: FontWeight.w700,size: 16, maxLines: 1,)
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.0035, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                          width: getDynamicSize.getWidth(context)*0.65,
+                          child: GestureDetector(
+                              onTap: () => launchUrl(Uri.parse("https://bulms.bicol-u.edu.ph/login/index.php")),
+                              child: BigText(text: "https://bulms.bicol-u.edu.ph/login/index.php", color: Colors.white, fontWeight: FontWeight.w400,size: 15, maxLines: 1,)
+                          )
+                      ),
+
+                    ],
+                  )
+
+                ],
+              ),
             ),
             SizedBox(height:10)
           ],
         ),
+
 
       ),
       drawer: drawerPage(),
@@ -328,7 +397,9 @@ class _drawerPageState extends State<drawerPage> {
 
 
 class ClassesBody extends StatefulWidget {
-  const ClassesBody({super.key});
+  final int i;
+
+  const ClassesBody(this.i, {Key? key}) : super(key: key);
 
   @override
   State<ClassesBody> createState() => _ClassesBodyState();
@@ -336,49 +407,211 @@ class ClassesBody extends StatefulWidget {
 
 class _ClassesBodyState extends State<ClassesBody> {
   PageController pageController = PageController(viewportFraction: 0.85);
-  DatabaseReference ref = FirebaseDatabase.instance.ref();
-  List<Subjects>subjectList = [];
 
   @override
   void initState() {
     super.initState();
-    retrieveSubjects();
+    //retrieveSubjects();
+    //retrieveSubjectsSchedule();
+    //mergeSubjectSchedule();
   }
+  Stream<List<Professors>> readProfessors() => FirebaseFirestore.instance
+      .collection('professor')
+      .snapshots()
+      .map((snapshot) =>
+      snapshot.docs.map((doc) => Professors.fromJson(doc.data())).toList());
 
-  void retrieveSubjects() {
-    ref.child('subjects').onValue.listen((DatabaseEvent event) {
-      final dataSnapshot = event.snapshot; // Access the snapshot
 
-      // Clear the subjectList before adding new data (optional for consistency)
-      subjectList.clear();
+  Stream<List<Subjects>> readSubjects() => FirebaseFirestore.instance
+      .collection('subjects')
+      .snapshots()
+      .map((snapshot) =>
+      snapshot.docs.map((doc) => Subjects.fromJson(doc.data())).toList());
 
-      dataSnapshot.children.forEach((subjectSnapshot) {
-        final subjectsData = SubjectsData.fromJson(subjectSnapshot.value as Map);
-        final subjects = Subjects(key: subjectSnapshot.key, subjectsData: subjectsData);
-        subjectList.add(subjects);
-      });
 
-      setState(() {}); // Trigger a rebuild to reflect the updated list
+  final CollectionReference subjectsTable = FirebaseFirestore.instance.collection('subjects');
+  final CollectionReference professorsTable = FirebaseFirestore.instance.collection('professor');
+  final CollectionReference schedSubjectTable = FirebaseFirestore.instance.collection('subject_sched');
+  final CollectionReference roomTable = FirebaseFirestore.instance.collection('room');
+  final CollectionReference bldgTable = FirebaseFirestore.instance.collection('bldg');
+
+  List<DocumentSnapshot<Object?>> getTodaysSchedule(List<DocumentSnapshot> sched){
+    final now = DateTime.now();
+    final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
+
+    List<DocumentSnapshot> filteredSched = sched.where((doc) => doc['dayOfWeek'] == dayOfWeek).toList();
+
+    filteredSched.sort((a, b) {
+      // Assuming 'time' is a string in HH:mm aa format
+      final timeA = a['startTime'] as Timestamp;
+      final timeB = b['startTime'] as Timestamp;
+      // Comparing DateTime objects
+      return timeA.compareTo(timeB);
     });
+    return filteredSched;
+  }
+  List<DocumentSnapshot<Object?>> getTomorrowSchedule(List<DocumentSnapshot> sched){
+    final now = DateTime.now();
+    final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
+
+    List<DocumentSnapshot> filteredSched = sched.where((doc) => doc['dayOfWeek'] == dayOfWeek+1).toList();
+
+    filteredSched.sort((a, b) {
+      // Assuming 'time' is a string in HH:mm aa format
+      final timeA = a['startTime'] as Timestamp;
+      final timeB = b['startTime'] as Timestamp;
+      // Comparing DateTime objects
+      return timeA.compareTo(timeB);
+    });
+    return filteredSched;
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 130,
+    int switchSched = widget.i;
+    String wordToday;
 
-      child: PageView.builder(
-          controller: pageController,
-          itemCount: subjectList.length,
-          itemBuilder: (context, position){
-            return _buildPageItem(position);
-          }
-      ),
-    );
-  }
+    return StreamBuilder<QuerySnapshot>(                                            //get the subject schedule table
+      stream: schedSubjectTable.snapshots(),
+      builder: (context, schedSubjectSnapshot) {
+        if (!schedSubjectSnapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          final List<DocumentSnapshot> schedSubjectDocs = schedSubjectSnapshot.data!.docs;
+          return StreamBuilder<QuerySnapshot>(                                                  //get the professors table
+              stream: professorsTable.snapshots(),
+              builder: (context, professorsSnapshot) {
+                if (!professorsSnapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  final List<
+                      DocumentSnapshot> professorDocs = professorsSnapshot.data!.docs;
+                  return StreamBuilder<QuerySnapshot>(                                              //get the subjects table
+                    stream: subjectsTable.snapshots(),
+                    builder: (context, subjectSnapshot) {
+                      if (!subjectSnapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        final List<
+                            DocumentSnapshot> subjectDocs = subjectSnapshot.data!.docs;
+                        return StreamBuilder<QuerySnapshot>(                                            // get the room table
+                          stream: roomTable.snapshots(),
+                          builder: (context, roomSnapshot) {
+                            if (!roomSnapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              final List<DocumentSnapshot> roomDocs = roomSnapshot.data!.docs;
+                              return StreamBuilder<QuerySnapshot>(                                      //get the bldg table
+                                stream: bldgTable.snapshots(),
+                                builder: (context, bldgSnapshot) {
+                                  if (!bldgSnapshot.hasData) {
+                                    return Center(child: CircularProgressIndicator());
+                                  } else {
+                                    final List<DocumentSnapshot> bldgDocs = bldgSnapshot.data!.docs;
 
-  Widget _buildPageItem(int index){
+                                    List<DocumentSnapshot> schedule = schedSubjectSnapshot.data!.docs;
+                                    if (switchSched == 0) {
+                                      wordToday = 'today';
+                                      schedule = getTodaysSchedule(schedSubjectDocs);
+                                    } else {
+                                      wordToday = 'tomorrow';
+                                      schedule = getTomorrowSchedule(schedSubjectDocs);
+                                    }
+                                    if (schedule.isEmpty) {
+                                      return Container(
+                                          height: getDynamicSize.getHeight(context) * 0.1,
+                                          width: getDynamicSize.getWidth(context) * 0.8,
+                                          margin: EdgeInsets.only(left: getDynamicSize.getWidth(context) * 0.08, right: getDynamicSize.getWidth(
+                                                  context) * 0.05),
+                                          decoration: ShapeDecoration(
+                                            color: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(15),
+                                            ),
+                                            shadows: [
+                                              BoxShadow(
+                                                color: Color(0x3F000000),
+                                                blurRadius: 4,
+                                                offset: Offset(0, 4),
+                                                spreadRadius: 0,
+                                              )
+                                            ],
+                                          ),
+                                          child: Center(child: BigText(text: 'You have no classes $wordToday!', size: 15, color: Colors.black,
+                                              fontWeight: FontWeight.w700))
+                                      );
+                                    } else {
+                                      return Container(
+                                        height: getDynamicSize.getHeight(context) * 0.17,
+                                        child: PageView.builder(
+                                          itemCount: schedule.length,
+                                          controller: PageController(viewportFraction: 0.85),
+                                          itemBuilder: (context, position) {
+                                            final schedSubjectSnapshot = schedule[position];
+                                            final subjectSnapshot = subjectDocs.firstWhere((doc) => doc['subjectID'] == schedSubjectSnapshot['subject_id']);
+                                            final professorSnapshot = professorDocs.firstWhere((doc) => doc['professorID'] == subjectSnapshot['professorID']);
+                                            final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['roomID']);
+                                            final bldgSnapshot = bldgDocs.firstWhere((doc) => doc['bldg_id'] == roomSnapshot['bldg_id']);
+                                            //);
+                                            //final schedSubjectSnapshot = schedSubjectDocs.firstWhere(
+                                            //(schedSubjectDoc) => schedSubjectDoc['subject_id'].toString() == subjectSnapshot['subjectID'].toString());
+                                            return _buildPageItem(
+                                                schedSubjectSnapshot,
+                                                subjectSnapshot,
+                                                professorSnapshot,
+                                                roomSnapshot,
+                                                bldgSnapshot,
+
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                              );
+                            }
+                          },
+                        );
+                      }
+                    },
+                  );
+                }
+              }
+          );
+        }
+      }
+     );
+    }
+
+
+  Widget _buildPageItem(DocumentSnapshot schedSubjectSnapshot, DocumentSnapshot subjectSnapshot, DocumentSnapshot professorSnapshot,
+      DocumentSnapshot roomSnapshot, DocumentSnapshot bldgSnapshot){
+
+    Timestamp startTime = schedSubjectSnapshot['startTime'];
+    Timestamp endTime = schedSubjectSnapshot['endTime'];
+
+    DateTime startTimeCon = startTime.toDate();
+    DateTime endTimeCon = endTime.toDate();
+
+    String morningVar;
+    int hour1;
+    int hour2;
+
+    if(startTimeCon.hour> 12 || endTimeCon.hour > 12){
+      hour1 = startTimeCon.hour - 12;
+      hour2 = endTimeCon.hour - 12;
+      morningVar = 'PM';
+    }else{
+      hour1 = startTimeCon.hour;
+      hour2 = endTimeCon.hour;
+      morningVar = 'AM';
+    }
+    String startTimeString = hour1.toString().padLeft(1, '0') + ":" + startTimeCon.minute.toString().padLeft(2, '0');
+    String endTimeString = hour2.toString().padLeft(1, '0') + ":" + endTimeCon.minute.toString().padLeft(2, '0');
+
+
     return Container(
       margin: EdgeInsets.only(left: 0, right: 10, bottom: 10),
       decoration: ShapeDecoration(
@@ -396,7 +629,8 @@ class _ClassesBodyState extends State<ClassesBody> {
         ],
       ),
       child: Container(
-          padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+          padding: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.05,
+              right: getDynamicSize.getWidth(context)*0.05),
           child: Row(
             children: [
               Column(
@@ -404,50 +638,62 @@ class _ClassesBodyState extends State<ClassesBody> {
                   children: [
                     Container(
                         width: getDynamicSize.getWidth(context)*0.3,
-                        child: BigText(text: "9:30", size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),)
+                        child: BigText(text: startTimeString, size: 39,fontWeight: FontWeight.w700, color: Color(0xFF1A43BF),)
                     ),
                     Container(
                       width: getDynamicSize.getWidth(context)*0.2,
-                      child: BigText(text: "AM", size: 15, fontWeight: FontWeight.w500, color: Colors.black,),
+                      child: BigText(text:morningVar,size: 15, fontWeight: FontWeight.w500, color: Colors.black,),
                     ),
+                    SizedBox(height: getDynamicSize.getHeight(context)*0.005,),
+                    Row(
+                      children: [
+                        Icon(Icons.alarm_outlined, color: Colors.grey, size: 15,),
+                        Container(
+                          width: getDynamicSize.getWidth(context)*0.2,
+                          child: BigText(text:" " + endTimeString,size: 15, fontWeight: FontWeight.w500, color: Colors.grey,),
+                        ),
+                      ],
+                    )
                   ]
               ),
               Column(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                          child: BigText(text: "Class: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      ),
-                      Container(
-                          child: BigText(text: "BSCS 3B", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      ),
-                      SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
-                    ],
+                  Container(
+                      height: getDynamicSize.getHeight(context)*0.056,
+                      width: getDynamicSize.getWidth(context)*0.39,
+                      child: Center(
+                        child: BigText(text: subjectSnapshot['subjectName'].toString(), color: Colors.black,
+                          fontWeight: FontWeight.w700, size: 16, maxLines: 2,),
+                      )
                   ),
-                  Row(
-                    children: [
-                      Container(
-                          child: BigText(text: "Room: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      ),
-                      Container(
-                          child: BigText(text: "BSCS", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      ),
-                      SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                          child: BigText(text: "Subject: ", color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      ),
-                      Container(
-                          child: BigText(text: subjectList[index].subjectsData!.subjectName.toString(), color: Colors.black, fontWeight: FontWeight.w700, size: 18,)
-                      ),
-                      SizedBox(width: getDynamicSize.getWidth(context)*0.03,),
-                    ],
-                  ),
+                  SizedBox(height: getDynamicSize.getHeight(context)*0.01),
+                  Container(
+                    width: getDynamicSize.getWidth(context)*0.39,
+                    child: Row(
+                      children: [
+                        Icon(Icons.person, color: Colors.black, size: 14,),
+                        Expanded(
+                          child: BigText(text: professorSnapshot['FirstName'].toString() + " " + professorSnapshot['LastName'].toString(), color: Colors.black,
+                                fontWeight: FontWeight.w500, size: 14, maxLines: 2,),
+                        )
+                      ],
 
+                    ),
+                  ),
+                  SizedBox(height: getDynamicSize.getHeight(context)*0.01),
+                  Container(
+                    width: getDynamicSize.getWidth(context)*0.39,
+                    child: Row(
+                      children: [
+                        Icon(Icons.meeting_room, color: Colors.black, size: 14,),
+                        Expanded(
+                          child: BigText(text: bldgSnapshot['bldg_name'].toString() + " " + roomSnapshot['room_id'].toString(), color: Colors.black,
+                            fontWeight: FontWeight.w500, size: 14, maxLines: 2,),
+                        )
+                      ],
+
+                    ),
+                  )
                 ],
               )
             ],
@@ -458,6 +704,8 @@ class _ClassesBodyState extends State<ClassesBody> {
   }
 
 }
+
+
 
 
 
