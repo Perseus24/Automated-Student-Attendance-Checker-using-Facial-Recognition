@@ -12,13 +12,15 @@ class BigText extends StatelessWidget {
   TextOverflow overFlow;
   FontWeight fontWeight;
   double letterSpacing;
+  int maxLines;
 
   BigText({Key? key, this.color = Colors.black, 
   required this.text, 
   this.fontWeight = FontWeight.w400,
   this.size = 20,
   this.letterSpacing = 0.08,
-  this.overFlow=TextOverflow.ellipsis}) : super(key:key);
+  this.overFlow=TextOverflow.ellipsis,
+  this.maxLines = 2}) : super(key:key);
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -31,6 +33,7 @@ class BigText extends StatelessWidget {
         fontSize: size,
         letterSpacing: letterSpacing,
       ),
+      maxLines: maxLines,
 
 
     );
