@@ -4,7 +4,9 @@ import 'temporarySecond.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'main.dart';
 import 'appColors.dart';
+import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_admin/firebase_admin.dart';
 
 void main(){
   runApp(SignInWindow());
@@ -35,10 +37,20 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
 
+  final AuthService authService = AuthService();
+  final LogInControllers logInController = LogInControllers();
+  final logInControllerTemp = Get.put(LogInControllers());
   bool notshowPass = true;
   bool? isChecked = false;
   @override
+  void initState() {
+    super.initState();
+    // Initialize the controller outside the build method
+    Get.put(logInController);
+  }
+  @override
   Widget build(BuildContext context) {
+    final controller = Get.find<LogInControllers>();
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -97,97 +109,192 @@ class _SignInPageState extends State<SignInPage> {
                 ]
             ),
             SizedBox(height: 40.h,),
+
             Container(
-                width: 287.w,
-                height: 60.h,
-                decoration: ShapeDecoration(
-                  color: Colors.white.withOpacity(0.8500000238418579),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x3F000000),
-                      blurRadius: 3,
-                      offset: Offset(0, 0),
-                      spreadRadius: 0,
-                    )
+              height: getDynamicSize.getHeight(context)*0.03,
+              width: getDynamicSize.getWidth(context)*0.8,
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: BigText(text: 'Email', size: 13.sp, fontWeight: FontWeight.w500,)),
+            ),
+            Container(
+              height: getDynamicSize.getHeight(context)*0.1,
+              width: getDynamicSize.getWidth(context)*0.8,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          height: getDynamicSize.getHeight(context)*0.06,
+                          width: getDynamicSize.getWidth(context)*0.8,
+                          decoration: ShapeDecoration(
+                            color: Colors.white.withOpacity(0.8500000238418579),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 3,
+                                offset: Offset(0, 0),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          child: Container(
+                            padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
+                            child: Obx(() =>TextFormField(
+                              controller: logInControllerTemp.emailController,
+                              cursorColor: AppColors.blueColor,
+                              onChanged: (_){
+                                logInControllerTemp.emailNotFoundController.text = '';
+                                logInControllerTemp.checkValidInput();
+                              },
+                              onTapOutside: (_) {
+                                //logInControllerTemp.emailNotFoundController.text = '';
+                                logInControllerTemp.checkValidInput();
+                              },
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  logInControllerTemp.emailNotFoundController.text = '';
+                                  return 'This field is required' ;
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                errorText: (logInControllerTemp.hasEmailError.value) ? 'This field is required' :
+                                logInControllerTemp.emailNotFoundController.text.isEmpty ? null :
+                                logInControllerTemp.emailNotFoundControllerText.value,
+
+                                //errorStyle: TextStyle(fontSize: 2),
+                                border: InputBorder.none,
+
+                              ),
+
+                            )),
+                          ),
+                        ),
+
+
+
+                      ],
+                    ),
                   ],
                 ),
-
-                child: Container(
-                    padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                    child: TextFormField(
-                      cursorColor: AppColors.blueColor,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Email",
-                      ),
-
-                    )
-
-                )
-
+              ),
             ),
             SizedBox(height: 19.h,),
             Container(
-                width: 287.w,
-                height: 60.h ,
-                decoration: ShapeDecoration(
-                  color: Colors.white.withOpacity(0.8500000238418579),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x3F000000),
-                      blurRadius: 3,
-                      offset: Offset(0, 0),
-                      spreadRadius: 0,
-                    )
+              height: getDynamicSize.getHeight(context)*0.03,
+              width: getDynamicSize.getWidth(context)*0.8,
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: BigText(text: 'Password', size: 13.sp, fontWeight: FontWeight.w500,)),
+            ),
+            Container(
+              height: getDynamicSize.getHeight(context)*0.1,
+              width: getDynamicSize.getWidth(context)*0.8,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          height: getDynamicSize.getHeight(context)*0.06,
+                          width: getDynamicSize.getWidth(context)*0.8,
+                          decoration: ShapeDecoration(
+                            color: Colors.white.withOpacity(0.8500000238418579),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 3,
+                                offset: Offset(0, 0),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          child: Container(
+                            padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
+                            child: Obx(() =>TextFormField(
+                              obscureText: notshowPass,
+                              controller: logInControllerTemp.passwordController,
+                              cursorColor: AppColors.blueColor,
+                              onChanged: (_){
+                                logInControllerTemp.passwordWrongController.text = '';
+                                logInControllerTemp.checkValidInput();
+                              },
+                              onTapOutside: (_) {
+                                logInControllerTemp.checkValidInput();
+                              },
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  logInControllerTemp.passwordWrongController.text = '';
+                                  return 'This field is required' ;
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                errorText: (logInControllerTemp.hasPasswordError.value) ? 'This field is required' :
+                                logInControllerTemp.passwordWrongController.text.isEmpty ? null :
+                                logInControllerTemp.passwordWrongControllerText.value,
+
+                                //errorStyle: TextStyle(fontSize: 2),
+                                border: InputBorder.none,
+
+                              ),
+
+                            )),
+                          ),
+                        ),
+                        Positioned(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              width: 40.w,
+                              margin: EdgeInsets.only(right: 20.w),
+                              child: Container(
+                                child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        notshowPass = !notshowPass;
+                                      });
+                                    },
+                                    clipBehavior: Clip.antiAlias,
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero, // <--add this
+                                    ),
+                                    child: Image.asset(
+                                      'images/passwordIcon.png',
+                                      fit: BoxFit.fitWidth,
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        )
+
+
+
+                      ],
+                    ),
                   ],
                 ),
-
-              child: Row(
-                children: [
-                  Container(
-                    width: 235.w,
-                    padding: EdgeInsets.only(left: 20.w, ),
-                      child: TextFormField(
-                        obscureText: notshowPass,
-                        cursorColor: AppColors.blueColor,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: "Password",
-                        ),
-
-                      )
-                  ),
-                  Container(
-                    width: 40.w,
-                    child: Container(
-                      child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              notshowPass = !notshowPass;
-                            });
-                          },
-                          clipBehavior: Clip.antiAlias,
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero, // <--add this
-                          ),
-                          child: Image.asset(
-                              'images/passwordIcon.png',
-                            fit: BoxFit.fitWidth,
-                          )
-                      ),
-                    ),
-                  )
-                ],
               ),
-
             ),
             SizedBox(height: 8.h,),
             Container(
@@ -242,10 +349,27 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       padding: EdgeInsets.zero,
                     ),
-                    onPressed: (){
-                      Navigator.of(context).push(createRouteGo(1));
+                    onPressed: () async {
+                      logInControllerTemp.checkValidInput();
+                      if(!controller.hasEmailError.value ){
+                        User? user = await authService.signInWithEmailAndPassword(controller.emailControllerText.value, controller.passwordControllerText.value);
+                        logInControllerTemp.checkValidInput();
+                        if(user != null){
+                          controller.emailController.text = '';
+                          controller.passwordController.text = '';
+                          controller.emailNotFoundController.text = '';
+                          controller.passwordWrongController.text = '';
+                          controller.hasPasswordError = false.obs;
+                          controller.hasEmailError = false.obs;
+                          Navigator.of(context).push(createRouteGo(1));
+
+                        }
+
+
+                      }
+
                     },
-                    child: BigText(text: "Log In", color: Colors.white, fontWeight: FontWeight.w700,)
+                    child: BigText(text:'Log In', color: Colors.white, fontWeight: FontWeight.w700,)
                 )
             ),
             SizedBox(height: 10,)
