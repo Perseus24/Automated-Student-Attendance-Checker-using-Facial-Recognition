@@ -1,68 +1,233 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/signInPage.dart';
+import 'package:flutter_application_1/thirdPage.dart';
+import 'package:flutter_application_1/widgets/big_texts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'temporarySecond.dart';
 import 'appColors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 Future <void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(
+    MyApp()
+  );
 }
+
+Future<bool> checkLoggedIn() async{
+      //check if there's a user already logged in
+  Completer<bool> complete = Completer();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('authKey');
+  FirebaseAuth.instance
+      .authStateChanges()
+      .listen((User? user) {
+    if (user != null) {
+      complete.complete(true);
+    }else{
+      complete.complete(false);
+    }
+  });
+  //uncomment this once all the pages before main homepage completes
+  //return complete.future;
+  return false;
+
+}
+
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: GetStarted(),
+      home: FutureBuilder(
+        future: checkLoggedIn(),
+        builder: (context, snapshot){
+          if(snapshot.connectionState == ConnectionState.done){
+            if (snapshot.data == true) {
+              return MainHomePage();
+            } else {
+              return MainPage();
+            }
+          }else{
+            return MainPage();
+          }
+        },
+      )
+    );
+  }
+}
+
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+
+  @override
+  Widget build(BuildContext context) {
+
+    ScreenUtil.init(context, designSize: const Size(375, 677));
+    return Scaffold(
+      body: Container(
+        color: AppColors.blueColor,
+        height: getDynamicSize.getHeight(context),
+        child: Stack(
+          children: [
+            Positioned(
+                top: getDynamicSize.getHeight(context)*0.28,
+                child: Container(
+                  height: getDynamicSize.getHeight(context),
+                  width:getDynamicSize.getWidth(context),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                )
+            ),
+            Positioned(
+                top: getDynamicSize.getHeight(context)*0.1,
+                child: Column(
+                  children: [
+                    Container(
+                        width: getDynamicSize.getWidth(context),
+                        child: Align(
+                            child: Image.asset('images/num1.png')
+                        )
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 30.h),
+                      //height: getDynamicSize.getHeight(context)*0.11,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          BigText(text: "Welcome to", color: Colors.black.withOpacity(0.8500000238418579), size: 30.sp, fontWeight: FontWeight.w700,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              BigText(text: "KUMIT", color: AppColors.blueColor, size: 30.sp, fontWeight: FontWeight.w700,),
+                              BigText(text: " App", color: Colors.black.withOpacity(0.8500000238418579), size: ScreenUtil().setSp(30), fontWeight: FontWeight.w700,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top:40.h),
+                      width: getDynamicSize.getWidth(context)*0.8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          BigText(text: 'Your intelligent attendance monitoring companion!', color: Colors.black.withOpacity(0.8500000238418579), size: 20.sp,
+                            fontWeight: FontWeight.w400, maxLines: 2, textAlign: TextAlign.center,),
+
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 50.h,),
+                    Container(
+                        height: 47.h,
+                        width: 289.w,
+                        decoration: ShapeDecoration(
+                          color: AppColors.blueColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          clipBehavior: Clip.antiAlias,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.blueColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          onPressed: (){
+                            Navigator.of(context).push(createRouteGo(2));
+                          },
+                          child: Center(
+                              child: BigText(text: 'Log In', color: Colors.white, size: 20.sp, fontWeight: FontWeight.w700,)),
+                        )
+                    ),
+                    SizedBox(height: 12.sp,),
+                    Container(
+                        height: 47.h,
+                        width: 289.w,
+                        decoration: ShapeDecoration(
+                          color: Color(0x001A43BF),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 1,
+                              color: Colors.black.withOpacity(0.46000000834465027),
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          clipBehavior: Clip.antiAlias,
+                          style: ElevatedButton.styleFrom(
+                            disabledBackgroundColor: Color(0x001A43BF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          onPressed: (){
+                            Navigator.of(context).push(createRouteGo(0));
+                          },
+                          child: Center(
+                              child: BigText(text: 'Register', color: Colors.black, size: 20.sp, fontWeight: FontWeight.w700,)),
+                        )
+                    ),
+                  ],
+                )
+            ),
+
+          ],
+        ),
       ),
     );
   }
 }
 
-class GetStarted extends StatelessWidget{
-  @override
-  Widget build(BuildContext context){
-    return Stack(
-      children: [
-        RectTop(),
-        Positioned(
-          top:0.2806*getDynamicSize.getHeight(context),
-          child: RectBottom(),
-        ),
-        Positioned(
-          top: 0.0901*getDynamicSize.getHeight(context),
-          left: 0.15*getDynamicSize.getWidth(context),
-          right: 0.15*getDynamicSize.getWidth(context),
-          //bottom: 0.57016*getDynamicSize.getHeight(context),
-          child: SampleImage(),
-        ),
-        Positioned(
-          top: 0.04497*getDynamicSize.getHeight(context)+0.0901*getDynamicSize.getHeight(context)+235,
-          left: 0.04*getDynamicSize.getWidth(context),
-          right: 0.04*getDynamicSize.getWidth(context),
-          child: BodyText(),
-        ),
-        Positioned(
-          top:3*0.04497*getDynamicSize.getHeight(context)+0.0901*getDynamicSize.getHeight(context)+235+0.093057*getDynamicSize.getHeight(context)+0.107946*getDynamicSize.getHeight(context),
-          left: 0.11466*getDynamicSize.getWidth(context),
-          right: 0.11466*getDynamicSize.getWidth(context),
-          child: SignInButton(),
-        ),
-        Positioned(
-          top: 5*0.04497*getDynamicSize.getHeight(context)+0.0901*getDynamicSize.getHeight(context)+235+0.093057*getDynamicSize.getHeight(context)+0.107946*getDynamicSize.getHeight(context),
-          left: 0.11466*getDynamicSize.getWidth(context),
-          right: 0.11466*getDynamicSize.getWidth(context),
-          child: RegisterButton(),
-        )
-      ]
-    );
-  }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class getDynamicSize{
   static double getHeight(BuildContext context){
@@ -71,246 +236,7 @@ class getDynamicSize{
   static double getWidth(BuildContext context){
     return MediaQuery.of(context).size.width;
   }
-  
-}
 
-class RectBottom extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: getDynamicSize.getWidth(context),
-      height: 0.734 * getDynamicSize.getHeight(context),
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-    );
-  }
-}
-
-class RectTop extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: getDynamicSize.getWidth(context),
-      height:getDynamicSize.getHeight(context),
-      decoration: ShapeDecoration(
-        color: AppColors.blueColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1),
-          
-        ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x3F000000),
-            blurRadius: 4,
-            offset: Offset(0, 4),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class SampleImage extends StatelessWidget {
-  static double getHeight(BuildContext context){
-    return MediaQuery.of(context).size.height;
-  }
-  @override
-  
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 229,
-          height: 235,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(),
-          child: Stack(
-            children: [
-              Image.asset(
-                'images/num1.png',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-
-              ), 
-            ]
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class BodyText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 0.107946*getDynamicSize.getHeight(context),
-          width: 0.92*getDynamicSize.getWidth(context),
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Welcome to\n ',
-                  style: TextStyle(
-                    color: Colors.black.withOpacity(0.8500000238418579),
-                    fontSize: 30,
-                    fontFamily: 'SF Pro Display',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                  ),
-                ),
-                TextSpan(
-                  text: 'KUMIT',
-                  style: TextStyle(
-                    color: Color(0xFF1A43BF),
-                    fontSize: 30,
-                    fontFamily: 'SF Pro Display',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                  ),
-                ),
-                TextSpan(
-                  text: ' App',
-                  style: TextStyle(
-                    color: Colors.black.withOpacity(0.8500000238418579),
-                    fontSize: 30,
-                    fontFamily: 'SF Pro Display',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                  ),
-                ),
-              ],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        SizedBox(
-          height:0.04497*getDynamicSize.getHeight(context),
-        ),
-        SizedBox(
-          width: 0.704*getDynamicSize.getWidth(context),
-          height: 0.093057*getDynamicSize.getHeight(context),
-          child: Text(
-            'Your intelligent attendance monitoring companion!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black.withOpacity(0.8500000238418579),
-              fontSize: 20,
-              fontFamily: 'SF Pro Display',
-              fontWeight: FontWeight.w400,
-              height: 0,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SignInButton extends StatefulWidget{
-  @override
-  _SignButtonState createState() => _SignButtonState();
-}
-
-class _SignButtonState extends State<SignInButton> {
-  bool buttonPressed = false;
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: 0.75466*getDynamicSize.getWidth(context),
-          height: 0.06942*getDynamicSize.getHeight(context),
-          decoration: ShapeDecoration(
-            color: Color(0xFF1A43BF),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary:  Color(0xFF1A43BF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-            onPressed: (){
-              Navigator.of(context).push(_createRoute());
-            },
-            child: Positioned(
-              top: 0.022156*getDynamicSize.getHeight(context),
-              child: SizedBox(
-                width: 0.75466*getDynamicSize.getWidth(context),
-                height: 0.02687*getDynamicSize.getHeight(context),
-                child: Text(
-                  'Register',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontFamily: 'SF Pro Display',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                  ),
-                ),
-              ),
-            ),
-         )
-        ),
-      ],
-    );
-  }
-}
-
-
-class RegisterButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: 0.75466*getDynamicSize.getWidth(context),
-          height: 0.06942*getDynamicSize.getHeight(context),
-          decoration: ShapeDecoration(
-            color: Color(0x001A43BF),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: Colors.black.withOpacity(0.46000000834465027),
-              ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        Positioned(
-          top: 0.022156*getDynamicSize.getHeight(context),
-          child: SizedBox(
-            width: 0.75466*getDynamicSize.getWidth(context),
-            height: 0.02687*getDynamicSize.getHeight(context),
-            child: Text(
-            'Sign In',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xA51E0000),
-              fontSize: 18,
-              fontFamily: 'SF Pro Display',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 Route _createRoute(){
@@ -324,8 +250,8 @@ Route _createRoute(){
       var tween = Tween(begin: begin, end: end).chain(CurveTween(curve:curve));
 
       return SlideTransition(
-        position: animation.drive(tween),
-        child:child
+          position: animation.drive(tween),
+          child:child
       );
     },
 
