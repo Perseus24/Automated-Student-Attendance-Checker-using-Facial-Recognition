@@ -53,331 +53,350 @@ class _SignInPageState extends State<SignInPage> {
     final controller = Get.find<LogInControllers>();
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
+        child: Stack(
           children: [
-            Container(
-                margin: EdgeInsets.only(top: 55, bottom: 15),
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                    children: [
-                      Container(
-                          width: 45.h,
-                          height: 45.h,
-                          child: ElevatedButton(
-                            onPressed: (){
-                              Navigator.of(context).push(createRouteBack(0));
-                            },
-                            clipBehavior: Clip.antiAlias,
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              padding: EdgeInsets.zero, // <--add this
-                            ),
-                            child: Image.asset('images/Back.png'),
-
-                          )
-                      ),
-                    ]
-                )
-            ),
-            SizedBox(height: 22.55.h,),
-            Center(
-                child: Container(
-                    width: 150.w,
-                    height: 80.h,
-                    child: Stack(
+            Column(
+              children: [
+                Container(
+                    margin: EdgeInsets.only(top: 55, bottom: 15),
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
                         children: [
-                          Image.asset(
-                            'images/logo.png',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
+                          Container(
+                              width: 45.h,
+                              height: 45.h,
+                              child: ElevatedButton(
+                                onPressed: (){
+                                  Navigator.of(context).push(createRouteBack(0));
+                                },
+                                clipBehavior: Clip.antiAlias,
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding: EdgeInsets.zero, // <--add this
+                                ),
+                                child: Image.asset('images/Back.png'),
+
+                              )
                           ),
                         ]
                     )
-                )
-            ),
-            SizedBox(height: 40.h),
-            Column(
-                children: [
-                  BigText(text: "Welcome Back!", size: 22.sp, fontWeight: FontWeight.w700,),
-                  SizedBox(height: 10),
-                  BigText(text: "Please enter your log in details.", size: 16.sp,
-                      color: Colors.black.withOpacity(0.46000000834465027),
-                      fontWeight: FontWeight.w400),
-                ]
-            ),
-            SizedBox(height: 40.h,),
-
-            Container(
-              height: getDynamicSize.getHeight(context)*0.03,
-              width: getDynamicSize.getWidth(context)*0.8,
-              child: Align(
-                  alignment: Alignment.topLeft,
-                  child: BigText(text: 'Email', size: 13.sp, fontWeight: FontWeight.w500,)),
-            ),
-            Container(
-              height: getDynamicSize.getHeight(context)*0.1,
-              width: getDynamicSize.getWidth(context)*0.8,
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          height: getDynamicSize.getHeight(context)*0.06,
-                          width: getDynamicSize.getWidth(context)*0.8,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          child: Container(
-                            padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
-                            child: Obx(() =>TextFormField(
-                              controller: logInControllerTemp.emailController,
-                              cursorColor: AppColors.blueColor,
-                              onChanged: (_){
-                                logInControllerTemp.emailNotFoundController.text = '';
-                                logInControllerTemp.checkValidInput();
-                              },
-                              onTapOutside: (_) {
-                                //logInControllerTemp.emailNotFoundController.text = '';
-                                logInControllerTemp.checkValidInput();
-                              },
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  logInControllerTemp.emailNotFoundController.text = '';
-                                  return 'This field is required' ;
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                errorText: (logInControllerTemp.hasEmailError.value) ? 'This field is required' :
-                                logInControllerTemp.emailNotFoundController.text.isEmpty ? null :
-                                logInControllerTemp.emailNotFoundControllerText.value,
-
-                                //errorStyle: TextStyle(fontSize: 2),
-                                border: InputBorder.none,
-
+                ),
+                SizedBox(height: 22.55.h,),
+                Center(
+                    child: Container(
+                        width: 150.w,
+                        height: 80.h,
+                        child: Stack(
+                            children: [
+                              Image.asset(
+                                'images/logo.png',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
                               ),
+                            ]
+                        )
+                    )
+                ),
+                SizedBox(height: 40.h),
+                Column(
+                    children: [
+                      BigText(text: "Welcome Back!", size: 22.sp, fontWeight: FontWeight.w700,),
+                      SizedBox(height: 10),
+                      BigText(text: "Please enter your log in details.", size: 16.sp,
+                          color: Colors.black.withOpacity(0.46000000834465027),
+                          fontWeight: FontWeight.w400),
+                    ]
+                ),
+                SizedBox(height: 40.h,),
 
-                            )),
-                          ),
+                Container(
+                  height: getDynamicSize.getHeight(context)*0.03,
+                  width: getDynamicSize.getWidth(context)*0.8,
+                  child: Align(
+                      alignment: Alignment.topLeft,
+                      child: BigText(text: 'Email', size: 13.sp, fontWeight: FontWeight.w500,)),
+                ),
+                Container(
+                  height: getDynamicSize.getHeight(context)*0.1,
+                  width: getDynamicSize.getWidth(context)*0.8,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              height: getDynamicSize.getHeight(context)*0.06,
+                              width: getDynamicSize.getWidth(context)*0.8,
+                              decoration: ShapeDecoration(
+                                color: Colors.white.withOpacity(0.8500000238418579),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 3,
+                                    offset: Offset(0, 0),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              child: Container(
+                                padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
+                                child: Obx(() =>TextFormField(
+                                  controller: logInControllerTemp.emailController,
+                                  cursorColor: AppColors.blueColor,
+                                  onChanged: (_){
+                                    logInControllerTemp.emailNotFoundController.text = '';
+                                    logInControllerTemp.checkValidInput();
+                                  },
+
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      logInControllerTemp.emailNotFoundController.text = '';
+                                      return 'This field is required' ;
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    errorText: (logInControllerTemp.hasEmailError.value) ? 'This field is required' :
+                                    logInControllerTemp.emailNotFoundControllerText.value,
+
+                                    //errorStyle: TextStyle(fontSize: 2),
+                                    border: InputBorder.none,
+
+                                  ),
+
+                                )),
+                              ),
+                            ),
+
+
+
+                          ],
                         ),
-
-
-
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 19.h,),
-            Container(
-              height: getDynamicSize.getHeight(context)*0.03,
-              width: getDynamicSize.getWidth(context)*0.8,
-              child: Align(
-                  alignment: Alignment.topLeft,
-                  child: BigText(text: 'Password', size: 13.sp, fontWeight: FontWeight.w500,)),
-            ),
-            Container(
-              height: getDynamicSize.getHeight(context)*0.1,
-              width: getDynamicSize.getWidth(context)*0.8,
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Column(
-                  children: [
-                    Stack(
+                SizedBox(height: 19.h,),
+                Container(
+                  height: getDynamicSize.getHeight(context)*0.03,
+                  width: getDynamicSize.getWidth(context)*0.8,
+                  child: Align(
+                      alignment: Alignment.topLeft,
+                      child: BigText(text: 'Password', size: 13.sp, fontWeight: FontWeight.w500,)),
+                ),
+                Container(
+                  height: getDynamicSize.getHeight(context)*0.1,
+                  width: getDynamicSize.getWidth(context)*0.8,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Column(
                       children: [
-                        Container(
-                          height: getDynamicSize.getHeight(context)*0.06,
-                          width: getDynamicSize.getWidth(context)*0.8,
-                          decoration: ShapeDecoration(
-                            color: Colors.white.withOpacity(0.8500000238418579),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 3,
-                                offset: Offset(0, 0),
-                                spreadRadius: 0,
-                              )
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          child: Container(
-                            padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
-                            child: Obx(() =>TextFormField(
-                              obscureText: notshowPass,
-                              controller: logInControllerTemp.passwordController,
-                              cursorColor: AppColors.blueColor,
-                              onChanged: (_){
-                                logInControllerTemp.passwordWrongController.text = '';
-                                logInControllerTemp.checkValidInput();
-                              },
-                              onTapOutside: (_) {
-                                logInControllerTemp.checkValidInput();
-                              },
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  logInControllerTemp.passwordWrongController.text = '';
-                                  return 'This field is required' ;
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                errorText: (logInControllerTemp.hasPasswordError.value) ? 'This field is required' :
-                                logInControllerTemp.passwordWrongController.text.isEmpty ? null :
-                                logInControllerTemp.passwordWrongControllerText.value,
-
-                                //errorStyle: TextStyle(fontSize: 2),
-                                border: InputBorder.none,
-
+                        Stack(
+                          children: [
+                            Container(
+                              height: getDynamicSize.getHeight(context)*0.06,
+                              width: getDynamicSize.getWidth(context)*0.8,
+                              decoration: ShapeDecoration(
+                                color: Colors.white.withOpacity(0.8500000238418579),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 3,
+                                    offset: Offset(0, 0),
+                                    spreadRadius: 0,
+                                  )
+                                ],
                               ),
-
-                            )),
-                          ),
-                        ),
-                        Positioned(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                              width: 40.w,
-                              margin: EdgeInsets.only(right: 20.w),
+                            ),
+                            Positioned(
                               child: Container(
-                                child: TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        notshowPass = !notshowPass;
-                                      });
-                                    },
-                                    clipBehavior: Clip.antiAlias,
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero, // <--add this
+                                padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
+                                child: Obx(() =>TextFormField(
+                                  obscureText: notshowPass,
+                                  controller: logInControllerTemp.passwordController,
+                                  cursorColor: AppColors.blueColor,
+                                  onChanged: (_){
+                                    logInControllerTemp.passwordWrongController.text = '';
+                                    logInControllerTemp.checkValidInput();
+                                  },
+                                  onTapOutside: (_) {
+                                    logInControllerTemp.checkValidInput();
+                                  },
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      logInControllerTemp.passwordWrongController.text = '';
+                                      return 'This field is required' ;
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    errorText: (logInControllerTemp.hasPasswordError.value) ? 'This field is required' :
+                                    logInControllerTemp.passwordWrongControllerText.value,
+
+                                    //errorStyle: TextStyle(fontSize: 2),
+                                    border: InputBorder.none,
+
+                                  ),
+
+                                )),
+                              ),
+                            ),
+                            Positioned(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Container(
+                                  width: 40.w,
+                                  margin: EdgeInsets.only(right: 20.w),
+                                  child: Container(
+                                    child: TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            notshowPass = !notshowPass;
+                                          });
+                                        },
+                                        clipBehavior: Clip.antiAlias,
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero, // <--add this
+                                        ),
+                                        child: Image.asset(
+                                          'images/passwordIcon.png',
+                                          fit: BoxFit.fitWidth,
+                                        )
                                     ),
-                                    child: Image.asset(
-                                      'images/passwordIcon.png',
-                                      fit: BoxFit.fitWidth,
-                                    )
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
 
-                        )
+                            )
 
 
 
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 8.h,),
-            Container(
-                width: 287.w,
-                height: 18.h,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                          checkColor: Colors.white,
-                          activeColor: AppColors.blueColor,
-                          value: isChecked,
-                          onChanged: (bool?value){
-                            setState((){
-                              isChecked = value!;
-                            });
-                          }
-                      ),
-                      BigText(text: 'Remember Me', size: 17.sp, color: Color(0xFF1A43BF), fontWeight: FontWeight.w400,)
-                    ],
-
-                ),
-
-
-            ),
-            SizedBox(height: 61.h,),
-            Container(
-                width: 287.w,
-                height: 47.h,
-                decoration: ShapeDecoration(
-                  color: Color(0xFF1A43BF),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                    borderRadius: BorderRadius.circular(15),
                   ),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x3F000000),
-                      blurRadius: 3,
-                      offset: Offset(0, 0),
-                      spreadRadius: 0,
-                    )
-                  ],
                 ),
 
-                child: ElevatedButton(
-                    clipBehavior: Clip.antiAlias,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:  Color(0xFF1A43BF),
+                SizedBox(height: 30.h,),
+                Container(
+                    width: 287.w,
+                    height: 47.h,
+                    decoration: ShapeDecoration(
+                      color: Color(0xFF1A43BF),
                       shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      padding: EdgeInsets.zero,
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0x3F000000),
+                          blurRadius: 3,
+                          offset: Offset(0, 0),
+                          spreadRadius: 0,
+                        )
+                      ],
                     ),
-                    onPressed: () async {
-                      logInControllerTemp.checkValidInput();
-                      if(!controller.hasEmailError.value ){
-                        User? user = await authService.signInWithEmailAndPassword(controller.emailControllerText.value, controller.passwordControllerText.value);
-                        logInControllerTemp.checkValidInput();
-                        if(user != null){
-                          controller.emailController.text = '';
-                          controller.passwordController.text = '';
-                          controller.emailNotFoundController.text = '';
-                          controller.passwordWrongController.text = '';
-                          controller.hasPasswordError = false.obs;
-                          controller.hasEmailError = false.obs;
-                          Navigator.of(context).push(createRouteGo(1));
 
-                        }
+                    child: ElevatedButton(
+                        clipBehavior: Clip.antiAlias,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:  Color(0xFF1A43BF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                        onPressed: () async {
+                          if(!controller.hasEmailError.value ){
+                            User? user;
+                            logInControllerTemp.loading.value = true;
+                            try{
+                              user = await authService.signInWithEmailAndPassword(controller.emailControllerText.value, controller.passwordControllerText.value);
+                            }catch (e){
 
+                            }finally{
+                              logInControllerTemp.loading.value = false;
+                            }
+                            logInControllerTemp.checkValidInput();
+                            if(user != null){
+                              controller.emailController.text = '';
+                              controller.passwordController.text = '';
+                              controller.emailNotFoundController.text = '';
+                              controller.passwordWrongController.text = '';
+                              controller.hasPasswordError = false.obs;
+                              controller.hasEmailError = false.obs;
+                              Navigator.of(context).push(createRouteGo(1));
 
-                      }
-
+                            }
+                          }
+                        },
+                        child: BigText(text:'Log In', color: Colors.white, fontWeight: FontWeight.w700,)
+                    )
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10.h),
+                  width: 287.w,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white
+                    ),
+                    onPressed: (){
+                      Navigator.of(context).push(createRouteGo(1));
                     },
-                    child: BigText(text:'Log In', color: Colors.white, fontWeight: FontWeight.w700,)
-                )
+                    child: Center(
+                      child: BigText(text: 'Forgot Password?', size: 15.sp, color: AppColors.blueColor,),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.h,)
+              ],
             ),
-            SizedBox(height: 10,)
+            Obx(()=>Positioned.fill(
+              child: logInControllerTemp.loading.value ? buildLoading(context) : Container()
+            ))
           ],
         )
       ),
     );
   }
+
+  Widget buildLoading(BuildContext context){
+    return Container(
+      color: Colors.black.withOpacity(0.5),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: AppColors.blueColor,
+            strokeWidth: 5.w,
+          ),
+          SizedBox(height: 10.h,),
+          BigText(text: 'Preparing...', color: Colors.white,)
+        ],
+      ),
+    );
+  }
 }
+
+
+
 
 
