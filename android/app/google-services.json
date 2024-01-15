@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "440899426284",
+    "firebase_url": "https://kumit-4cd27-default-rtdb.firebaseio.com",
+    "project_id": "kumit-4cd27",
+    "storage_bucket": "kumit-4cd27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440899426284:android:4ea3d92e52211efaf492c9",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiBiV1wggCX0gG2Un_TS4FNZjXYDLkRik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
