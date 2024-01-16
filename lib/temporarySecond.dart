@@ -1,6 +1,7 @@
 
 //import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/afterRegister.dart';
 import 'package:get/get.dart';
 import 'signInPage.dart';
 import 'package:flutter/material.dart';
@@ -10,16 +11,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'main.dart';
 import 'thirdPage.dart';
 import 'appColors.dart';
-import 'deleteTHISHIT.dart';
 import 'dart:convert';
 import 'widgets/big_texts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:flutter/services.dart' show rootBundle;
-
-
-
-
 
 
 void main(){
@@ -36,8 +32,11 @@ class LogInControllers extends GetxController{
 
   RxBool hasEmailError = false.obs;
   RxBool hasPasswordError = false.obs;
+
   RxBool passEnoughChar = false.obs;
   RxBool passHasUppercaseChar = false.obs;
+  RxBool passHasNum = false.obs;
+  RxBool passHasNoSpace = false.obs;
   RxBool loading = false.obs;
 
   RxString emailControllerText = ''.obs;
@@ -46,7 +45,8 @@ class LogInControllers extends GetxController{
   RxString passwordWrongControllerText = ''.obs;
 
   RegExp exp = RegExp(r'[a-z]*[A-Z][a-z]*');
-  RegExp exp1 = RegExp(r'[A-Za-z&&[^:;,/"]');//has at least one uppercase letter
+  RegExp exp2 = RegExp(r'[A-Za-z]*[0-9][A-Za-z]*');
+  RegExp exp3 = RegExp(r'[A-Za-z]*[\s][A-Za-z]*');
 
 
   void onInit(){
@@ -74,11 +74,26 @@ class LogInControllers extends GetxController{
     }else{
       passEnoughChar.value = false;
     }
+
     RegExpMatch? match = exp.firstMatch(passwordControllerText.value);
     if(match!=null){
       passHasUppercaseChar.value = true;
     }else{
       passHasUppercaseChar.value = false;
+    }
+
+    RegExpMatch? match2 = exp2.firstMatch(passwordControllerText.value);
+    if(match2!=null){
+      passHasNum.value = true;
+    }else{
+      passHasNum.value = false;
+    }
+
+    RegExpMatch? match3 = exp3.firstMatch(passwordControllerText.value);
+    if(match3!=null){
+      passHasNoSpace.value = false;
+    }else{
+      passHasNoSpace.value = true;
     }
 
     emailNotFoundControllerText.value = emailNotFoundController.text;
@@ -123,7 +138,7 @@ class Page1TextControllers extends GetxController{
     hasFirstNameError.value = firstNameController.text.isEmpty;
     hasLastNameError.value = lastNameController.text.isEmpty;
     hasAnyErrorPage1.value = hasAnyErrorPage1.value;
-    errorNotif.value = errorNotif.value;
+    errorNotif.value = hasFirstNameError.value||hasLastNameError.value;
     //return hasError;
     update();
   }
@@ -274,9 +289,9 @@ class _RegisterPageState extends State<RegisterPage>{
 
 
   List _items = [];
-
+  //sample reading of a json file
   Future <void> readJson() async{
-    final String response = await rootBundle.loadString('s.json');
+    final String response = await rootBundle.loadString('bldg.json');
     final data = await json.decode(response);
     setState((){
       _items = data["items"];
@@ -414,9 +429,7 @@ class _RegisterPageState extends State<RegisterPage>{
                     ]
                 ),
                 Container(
-
                   height: getDynamicSize.getHeight(context)*0.06,
-
                   child: SmoothPageIndicator(
                     controller: _controller,
                     count: 3,
@@ -428,8 +441,6 @@ class _RegisterPageState extends State<RegisterPage>{
                       spacing: 20,
                     ),
                   ),
-
-
                 ),
                 SizedBox(height: 10.h),
                 Stack(
@@ -467,25 +478,18 @@ class _RegisterPageState extends State<RegisterPage>{
                                       ),
                                       onPressed: () async {
                                         //await readJson();
-                                        //print("hi" + _items.length.toString());
                                         controller.checkValidInput();
                                         controller2.updateInputs();
-
+                                        //this is for putting json file to the firebase
+                                        //student.doc(_items[0]['bldg_id']).set({'hi': int.parse(_items[0]['bldg_id']), 'there': _items[0]['bldg_name']});
                                         User? user;
                                         try{
                                           user = await authService.signUpWithEmailAndPassword(controller3.emailControllerText.value, controller3.passwordWrongControllerText.value);
                                         }catch(error){
-
                                         }finally{
-
                                         }
-
                                         if(!controller.hasFirstNameError.value && !controller.hasLastNameError.value && !controller2.sexEmpty.value){
 
-
-
-
-                                          //student.doc(_items[0]['id']).set({'hi': _items[0]['name'], 'there': _items[0]['description']});
                                           student.doc(student.id).set({'first_name': controller.firstNameControllerText.value, 'last_name': controller.lastNameControllerText.value,
                                             'middle_name': controller.middleNameControllerText.value, 'sex': controller2.sexControllerText.value});
                                           //student.add({'first_name': controller.firstNameControllerText.value});
@@ -536,6 +540,8 @@ Route createRouteGo(int num){
     case 1: goToPage = MainHomePage();
     break;
     case 2: goToPage = SignInWindow();
+    break;
+    case 3: goToPage = Signproper();
     break;
   }
   return PageRouteBuilder(
@@ -1436,27 +1442,27 @@ class _Page3State extends State<Page3> {
               ),
             )),
             SizedBox(height: 5.h,),
-            Container(
+            Obx(()=>Container(
               width: getDynamicSize.getWidth(context)*0.8,
               child: Row(
                 children: [
-                  Icon(Icons.check_circle_rounded, color: temp1?Colors.green:Colors.grey.shade300, size: 20.w,),
+                  Icon(Icons.check_circle_rounded, color: page3controller.passHasNum.value?Colors.green:Colors.grey.shade300, size: 20.w,),
                   SizedBox(width: 10.w,),
-                  BigText(text: 'No special characters (:;,/")', size: 13.sp,)
+                  BigText(text: 'At least one number (0 to 9)', size: 13.sp,)
                 ],
               ),
-            ),
+            )),
             SizedBox(height: 5.h,),
-            Container(
+            Obx(()=>Container(
               width: getDynamicSize.getWidth(context)*0.8,
               child: Row(
                 children: [
-                  Icon(Icons.check_circle_rounded, color: temp1?Colors.green:Colors.grey.shade300, size: 20.w,),
+                  Icon(Icons.check_circle_rounded, color: page3controller.passHasNoSpace.value?Colors.green:Colors.grey.shade300, size: 20.w,),
                   SizedBox(width: 10.w,),
-                  BigText(text: 'No spaces', size: 13.sp,)
+                  BigText(text: 'No space', size: 13.sp,)
                 ],
               ),
-            ),
+            )),
 
           ]
         )
@@ -1464,18 +1470,3 @@ class _Page3State extends State<Page3> {
   }
 }
 
-
-
-
-Future<List<Sample>> kk() async {
-  // Read the JSON file
-  String jsonString = await rootBundle.loadString('images/s.json');
-
-  // Parse the JSON string into a List<dynamic>
-  List<dynamic> jsonList = json.decode(jsonString);
-
-  // Convert the list into a List<MyItem>
-  List<Sample> itemList = jsonList.map((json) => Sample.fromJson(json)).toList();
-
-  return itemList;
-}
