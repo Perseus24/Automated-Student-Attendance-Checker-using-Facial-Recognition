@@ -455,7 +455,7 @@ class _ClassesBodyState extends State<ClassesBody> {
     List<DocumentSnapshot> filteredSched = sched.where((doc) => doc['dayOfWeek'] == dayOfWeek+1).toList();
 
     filteredSched.sort((a, b) {
-      // Assuming 'time' is a string in HH:mm aa format
+
       Timestamp tsA = a['startTime'];
       Timestamp tsB = b['startTime'];
 
@@ -555,9 +555,7 @@ class _ClassesBodyState extends State<ClassesBody> {
                                               final professorSnapshot = professorDocs.firstWhere((doc) => doc['professorID'] == subjectSnapshot['professorID']);
                                               final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['roomID']);
                                               final bldgSnapshot = bldgDocs.firstWhere((doc) => doc['bldg_id'] == roomSnapshot['bldg_id']);
-                                              //);
-                                              //final schedSubjectSnapshot = schedSubjectDocs.firstWhere(
-                                              //(schedSubjectDoc) => schedSubjectDoc['subject_id'].toString() == subjectSnapshot['subjectID'].toString());
+
                                               return _buildPageItem(
                                                 schedSubjectSnapshot,
                                                 subjectSnapshot,
