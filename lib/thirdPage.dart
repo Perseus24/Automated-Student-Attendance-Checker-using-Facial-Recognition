@@ -53,17 +53,14 @@ class MainHomePage extends StatelessWidget{
                               padding: EdgeInsets.zero, // <--add this
                             ),
                             child: Image.asset('images/Bellpin.png'),
-
                           )
                       ),
                     ]
-
                 )
             ),
           ],
           toolbarHeight: getDynamicSize.getHeight(context)*0.12,
           iconTheme: IconThemeData(color: Colors.white, size: 25),
-
         ),
         body: Home1(),
         drawer: Container(
@@ -71,9 +68,7 @@ class MainHomePage extends StatelessWidget{
         ),
       ),
     );
-
   }
-
 }
 
 
@@ -97,16 +92,12 @@ class Home1State extends State<Home1> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        //height: getDynamicSize.getHeight(context),
-        //color: Colors.black12,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 140.h,
-              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
-                  right: getDynamicSize.getWidth(context)*0.05),
-
+              margin: EdgeInsets.only(top: 25.h, left: 25.w, right: 25.w),
               decoration: ShapeDecoration(
                 color: AppColors.blueColor,
                 shape: RoundedRectangleBorder(
@@ -123,8 +114,7 @@ class Home1State extends State<Home1> {
               ),
 
               child: Container(
-                padding: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.015, left: getDynamicSize.getWidth(context)*0.04,
-                    right: getDynamicSize.getWidth(context)*0.05),
+                padding: EdgeInsets.only(top: 10.h, left:22.w, right: 22.w, bottom: 20.h),
                 child: Column(
                   children: [
                     Row(
@@ -171,12 +161,14 @@ class Home1State extends State<Home1> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            BigText(text: 'You currently have an attendance rate of', color: Colors.white, letterSpacing: 0.06,
+                            BigText(text: 'You currently have an attendance rate', color: Colors.white, letterSpacing: 0.06,
                               size: 16.sp, fontWeight: FontWeight.w400,),
                             SizedBox(height: getDynamicSize.getHeight(context)*0.005,),
                             Row(
                               children: [
-                                BigText(text: '60%', color: Colors.white, letterSpacing: 0.06,
+                                BigText(text: 'of', color: Colors.white, letterSpacing: 0.06,
+                                  size: 16.sp, fontWeight: FontWeight.w400,),
+                                BigText(text: ' 60%', color: Colors.white, letterSpacing: 0.06,
                                   size: 16.sp, fontWeight: FontWeight.w700,),
                                 BigText(text: '. Keep up the good work!', color: Colors.white, letterSpacing: 0.06,
                                   size: 16.sp, fontWeight: FontWeight.w400,),
@@ -382,15 +374,42 @@ class _drawerPageState extends State<drawerPage> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        children: [
-          DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Column(
+      child: Padding(
+        padding: EdgeInsets.only(left: 30.w, right: 30.w, top: 65.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Image.asset('images/logo.png'),
+            SizedBox(height: 35.h,),
+            BigText(text: "Main Menu", color: Colors.black, fontWeight: FontWeight.w700,),
+            Container(
 
-              )
-          )
-        ],
+              height: 50.h,
+              decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1, color: Color(0x661A43BF)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+              ),
+              child: TextButton(
+                clipBehavior: Clip.antiAlias,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0x661A43BF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                onPressed: (){
+
+                },
+                child: BigText(text: "Dashboard", size: 18.sp, color: AppColors.blueColor, fontWeight: FontWeight.w700,)
+              ),
+            )
+
+
+          ],
+        ),
       ),
     );
   }
@@ -413,12 +432,7 @@ class _ClassesBodyState extends State<ClassesBody> {
   @override
   void initState() {
     super.initState();
-    //retrieveSubjects();
-    //retrieveSubjectsSchedule();
-    //mergeSubjectSchedule();
   }
-
-
 
   final CollectionReference subjectsTable = FirebaseFirestore.instance.collection('subjects');
   final CollectionReference professorsTable = FirebaseFirestore.instance.collection('professor');
@@ -448,7 +462,7 @@ class _ClassesBodyState extends State<ClassesBody> {
   }
   List<DocumentSnapshot<Object?>> getTomorrowSchedule(List<DocumentSnapshot> sched){
     final now = DateTime.now();
-    int dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
+    int dayOfWeek = now.weekday;
     if(dayOfWeek==7){
       dayOfWeek = 0;
     }
