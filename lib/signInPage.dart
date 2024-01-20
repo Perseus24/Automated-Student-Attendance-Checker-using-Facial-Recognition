@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
+import 'build_routes.dart';
 import 'temporarySecond.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'main.dart';
 import 'appColors.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_admin/firebase_admin.dart';
 
 void main(){
   runApp(SignInWindow());
@@ -155,7 +155,7 @@ class _SignInPageState extends State<SignInPage> {
                                   cursorColor: AppColors.blueColor,
                                   onChanged: (_){
                                     logInControllerTemp.emailNotFoundController.text = '';
-                                    logInControllerTemp.checkValidInput();
+                                    logInControllerTemp.updateInputs();
                                   },
 
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -232,10 +232,7 @@ class _SignInPageState extends State<SignInPage> {
                                   cursorColor: AppColors.blueColor,
                                   onChanged: (_){
                                     logInControllerTemp.passwordWrongController.text = '';
-                                    logInControllerTemp.checkValidInput();
-                                  },
-                                  onTapOutside: (_) {
-                                    logInControllerTemp.checkValidInput();
+                                    logInControllerTemp..updateInputs();
                                   },
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (value) {
@@ -334,7 +331,7 @@ class _SignInPageState extends State<SignInPage> {
                             }finally{
                               logInControllerTemp.loading.value = false;
                             }
-                            logInControllerTemp.checkValidInput();
+                            logInControllerTemp.updateInputs();
                             if(user != null){
                               controller.emailController.text = '';
                               controller.passwordController.text = '';

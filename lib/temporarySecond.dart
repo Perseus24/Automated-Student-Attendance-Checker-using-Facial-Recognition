@@ -1,15 +1,13 @@
 
 //import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/afterRegister.dart';
 import 'package:get/get.dart';
-import 'signInPage.dart';
+import 'build_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'main.dart';
-import 'thirdPage.dart';
 import 'appColors.dart';
 import 'dart:convert';
 import 'widgets/big_texts.dart';
@@ -39,6 +37,8 @@ class LogInControllers extends GetxController{
   RxBool passHasNoSpace = false.obs;
   RxBool loading = false.obs;
 
+  RxBool hasAnyErrorEmailPass = false.obs;
+
   RxString emailControllerText = ''.obs;
   RxString passwordControllerText = ''.obs;
   RxString emailNotFoundControllerText = ''.obs;
@@ -65,7 +65,7 @@ class LogInControllers extends GetxController{
     });
   }
 
-  void checkValidInput(){
+  void updateInputs(){
     hasEmailError.value = emailController.text.isEmpty;
     hasPasswordError.value = passwordController.text.isEmpty;
 
@@ -96,8 +96,10 @@ class LogInControllers extends GetxController{
       passHasNoSpace.value = true;
     }
 
-    emailNotFoundControllerText.value = emailNotFoundController.text;
-    passwordWrongControllerText.value = passwordWrongController.text;
+    //emailNotFoundControllerText.value = emailNotFoundController.text;
+    //passwordWrongControllerText.value = passwordWrongController.text;
+
+    hasAnyErrorEmailPass.value = hasEmailError.value||hasPasswordError.value||!passEnoughChar.value||!passHasUppercaseChar.value||!passHasNum.value||passHasNoSpace.value;
     update();
   }
 }
@@ -110,7 +112,6 @@ class Page1TextControllers extends GetxController{
   RxBool hasFirstNameError = false.obs;
   RxBool hasLastNameError = false.obs;
   RxBool hasAnyErrorPage1 = false.obs;
-  RxBool errorNotif = false.obs;
 
 
   RxString firstNameControllerText = ''.obs;
@@ -134,12 +135,11 @@ class Page1TextControllers extends GetxController{
       sexNameControllerText.value = sexController.text;
     });
   }
-  void checkValidInput(){
+  void updateInputs(){
     hasFirstNameError.value = firstNameController.text.isEmpty;
     hasLastNameError.value = lastNameController.text.isEmpty;
-    hasAnyErrorPage1.value = hasAnyErrorPage1.value;
-    errorNotif.value = hasFirstNameError.value||hasLastNameError.value;
-    //return hasError;
+    hasAnyErrorPage1.value = hasFirstNameError.value||hasLastNameError.value;
+
     update();
   }
 }
@@ -189,12 +189,13 @@ class Page2TextControllers extends GetxController{
     blocEmpty.value = blocController.text.isEmpty;
     yearLevelEmpty.value = yearLevelController.text.isEmpty;
 
-    hasAnyErrorPage2.value = hasAnyErrorPage2.value;
+    hasAnyErrorPage2.value = sexEmpty.value||courseEmpty.value||blocEmpty.value||yearLevelEmpty.value;
     //return hasError;
     update();
   }
 }
 
+RxBool errorForVibrateOnly = false.obs;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -291,7 +292,7 @@ class _RegisterPageState extends State<RegisterPage>{
   List _items = [];
   //sample reading of a json file
   Future <void> readJson() async{
-    final String response = await rootBundle.loadString('bldg.json');
+    final String response = await rootBundle.loadString('subjects.json');
     final data = await json.decode(response);
     setState((){
       _items = data["items"];
@@ -301,11 +302,10 @@ class _RegisterPageState extends State<RegisterPage>{
   @override
   Widget build(BuildContext context){
     //ScreenUtil.init(context, designSize: const Size(375, 677));
-    CollectionReference student = FirebaseFirestore.instance.collection('students');
+    CollectionReference student = FirebaseFirestore.instance.collection('subjects');
     final controller = Get.find<Page1TextControllers>();
     final controller2 = Get.find<Page2TextControllers>();
     final controller3 = Get.find<LogInControllers>();
-
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -356,7 +356,7 @@ class _RegisterPageState extends State<RegisterPage>{
                 ),
                 SizedBox(height: 20.h),
                 Obx(()=>Visibility(
-                  visible: !controller.errorNotif.value,
+                  visible: !controller.hasAnyErrorPage1.value && !controller2.hasAnyErrorPage2.value && !controller3.hasAnyErrorEmailPass.value,
                     child: Column(
                         children: [
                           BigText(text: "Register Now!", size: 22.sp, fontWeight: FontWeight.w700,),
@@ -368,11 +368,11 @@ class _RegisterPageState extends State<RegisterPage>{
                   ),
                 )),
                 Obx(() =>Visibility(
-                  visible: controller.errorNotif.value,
+                  visible:controller.hasAnyErrorPage1.value || controller2.hasAnyErrorPage2.value || controller3.hasAnyErrorEmailPass.value,
                   child: ShakeWidget(
                     duration: Duration(milliseconds: 10),
                     shakeConstant: shakeConstant,
-                    autoPlay: controller.hasAnyErrorPage1.value,
+                    autoPlay: errorForVibrateOnly.value,
                     child: Container(
                       padding: EdgeInsets.only(left: 10.w, right: 10.w),
                       height: 50.h,
@@ -477,38 +477,42 @@ class _RegisterPageState extends State<RegisterPage>{
                                         padding: EdgeInsets.zero,
                                       ),
                                       onPressed: () async {
+                                        Navigator.of(context).push(createRouteGo(3));
                                         //await readJson();
-                                        controller.checkValidInput();
+                                        controller.updateInputs();
                                         controller2.updateInputs();
                                         //this is for putting json file to the firebase
-                                        //student.doc(_items[0]['bldg_id']).set({'hi': int.parse(_items[0]['bldg_id']), 'there': _items[0]['bldg_name']});
+                                        //for(int i=0; i< _items.length; i++){
+                                        //  student.doc(_items[i]['SubjectID']).set({'subject_id': int.parse(_items[i]['SubjectID']),
+                                        //    'subject_code': _items[i]['subject_code'], 'subject_name': _items[i]['SubjectName'],
+                                        //    'professor_id': int.parse(_items[i]['ProfessorID']),});
+                                        //}
+
                                         User? user;
                                         try{
                                           user = await authService.signUpWithEmailAndPassword(controller3.emailControllerText.value, controller3.passwordWrongControllerText.value);
                                         }catch(error){
                                         }finally{
                                         }
-                                        if(!controller.hasFirstNameError.value && !controller.hasLastNameError.value && !controller2.sexEmpty.value){
+                                        if(!controller.hasAnyErrorPage1.value && !controller2.hasAnyErrorPage2.value && !controller3.hasAnyErrorEmailPass.value){
 
                                           student.doc(student.id).set({'first_name': controller.firstNameControllerText.value, 'last_name': controller.lastNameControllerText.value,
                                             'middle_name': controller.middleNameControllerText.value, 'sex': controller2.sexControllerText.value});
                                           //student.add({'first_name': controller.firstNameControllerText.value});
-                                          controller.firstNameController.text = '';
-                                          controller.hasFirstNameError.value = false;
-                                          controller.hasLastNameError.value = false;
-                                          controller.errorNotif.value = false;
-                                          controller.lastNameController.text = '';
-                                          controller2.sexController.text = '';
-                                          controller.hasAnyErrorPage1.value = false;
+                                          //controller.firstNameController.text = '';
+                                          //controller.hasFirstNameError.value = false;
+                                          //controller.hasLastNameError.value = false;
+                                          //controller.hasAnyErrorPage1.value = false;
+                                          //controller.lastNameController.text = '';
+                                          //controller2.sexController.text = '';
+                                          //controller.hasAnyErrorPage1.value = false;
                                           Navigator.of(context).push(createRouteGo(1));
                                         }else{
-                                          controller.errorNotif.value = true;
-                                          controller.hasAnyErrorPage1.value = true;
-                                          controller2.hasAnyErrorPage2.value = true;
+                                          hasAnyError.value = true;
+                                          errorForVibrateOnly.value = true;
                                           Duration duration  = Duration(milliseconds: 300);
                                           Future.delayed(duration, (){
-                                            controller2.hasAnyErrorPage2.value = false;
-                                            controller.hasAnyErrorPage1.value = false;
+                                            errorForVibrateOnly.value = false;
                                           });
                                         }
                                       },
@@ -528,68 +532,6 @@ class _RegisterPageState extends State<RegisterPage>{
       ),
     );
   }
-
-}
-
-Route createRouteGo(int num){
-  Widget goToPage = MyApp();
-
-  switch(num){
-    case 0: goToPage = RegisterWindow();
-    break;
-    case 1: goToPage = MainHomePage();
-    break;
-    case 2: goToPage = SignInWindow();
-    break;
-    case 3: goToPage = Signproper();
-    break;
-  }
-  return PageRouteBuilder(
-
-    pageBuilder:(context, animation, secondaryAnimation) => goToPage,
-    transitionsBuilder: (context, animation, secondaryAnimation, child){
-      const begin = Offset(0.0, -1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve:curve));
-
-      return SlideTransition(
-          position: animation.drive(tween),
-          child:child
-      );
-    },
-    transitionDuration: Duration(milliseconds: 500),
-
-  );
-
-}
-
-Route createRouteBack(int num){
-  Widget goToPage = MyApp();
-
-  switch(num){
-    case 0: goToPage = MyApp();
-    break;
-  }
-  return PageRouteBuilder(
-
-    pageBuilder:(context, animation, secondaryAnimation) => goToPage,
-    transitionsBuilder: (context, animation, secondaryAnimation, child){
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve:curve));
-
-      return SlideTransition(
-          position: animation.drive(tween),
-          child:child
-      );
-    },
-    transitionDuration: Duration(milliseconds: 500),
-
-  );
 
 }
 
@@ -620,7 +562,7 @@ class _Page1State extends State<Page1> {
           Obx(() =>ShakeWidget(
             duration: Duration(milliseconds: 10),
             shakeConstant: shakeConstant,
-            autoPlay: page1controller.hasAnyErrorPage1.value,
+            autoPlay: errorForVibrateOnly.value,
             child: Container(
               height: getDynamicSize.getHeight(context)*0.1,
               width: getDynamicSize.getWidth(context)*0.8,
@@ -656,15 +598,15 @@ class _Page1State extends State<Page1> {
                               controller: page1controller.firstNameController,
                               cursorColor: AppColors.blueColor,
                               onChanged: (_){
-                                page1controller.checkValidInput();
+                                page1controller.updateInputs();
                               },
                               autovalidateMode: AutovalidateMode.onUserInteraction,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  page1controller.checkValidInput();
+                                  page1controller.updateInputs();
                                   return 'This field is required' ;
                                 }
-                                page1controller.checkValidInput();
+                                page1controller.updateInputs();
                                 return null;
                               },
                               decoration: InputDecoration(
@@ -692,7 +634,7 @@ class _Page1State extends State<Page1> {
           Obx (() => ShakeWidget(
             duration: Duration(milliseconds: 10),
             shakeConstant: shakeConstant,
-            autoPlay: page1controller.hasAnyErrorPage1.value,
+            autoPlay: errorForVibrateOnly.value,
             child: Container(
               height: getDynamicSize.getHeight(context)*0.1,
               width: getDynamicSize.getWidth(context)*0.8,
@@ -729,7 +671,7 @@ class _Page1State extends State<Page1> {
                               cursorColor: AppColors.blueColor,
 
                               onChanged: (_){
-                                page1controller.checkValidInput();
+                                page1controller.updateInputs();
                               },
                               autovalidateMode: AutovalidateMode.onUserInteraction,
                               validator: (value) {
@@ -766,7 +708,7 @@ class _Page1State extends State<Page1> {
           Obx(() =>ShakeWidget(
             duration: Duration(milliseconds: 10),
             shakeConstant: shakeConstant,
-            autoPlay: page1controller.hasAnyErrorPage1.value,
+            autoPlay: errorForVibrateOnly.value,
             child: Container(
               height: getDynamicSize.getHeight(context)*0.1,
               width: getDynamicSize.getWidth(context)*0.8,
@@ -888,7 +830,7 @@ class Page2State extends State<Page2>{
                   Obx(()=>ShakeWidget(
                     duration: Duration(milliseconds: 10),
                     shakeConstant: shakeConstant,
-                    autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                    autoPlay: errorForVibrateOnly.value,
                     child: Container(
                       width: (getDynamicSize.getWidth(context) - 10)*0.63,
                       height: 45.h,
@@ -913,8 +855,9 @@ class Page2State extends State<Page2>{
                     child: Obx(()=>ShakeWidget(
                       duration: Duration(milliseconds: 10),
                       shakeConstant: shakeConstant,
-                      autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                      autoPlay: errorForVibrateOnly.value,
                       child: Container(
+                        width: (getDynamicSize.getWidth(context) - 10)*0.63,
                         padding: EdgeInsets.only(top: 0.h, left: 0.h, right: 0.h),
                         child: DropdownButtonFormField2<String>(
                           value: page2controller.sexController.text.isEmpty ?selectedSexValue: page2controller.sexControllerText.value,
@@ -983,7 +926,7 @@ class Page2State extends State<Page2>{
                   Obx(()=>ShakeWidget(
                     duration: Duration(milliseconds: 10),
                     shakeConstant: shakeConstant,
-                    autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                    autoPlay:errorForVibrateOnly.value,
                     child: Container(
                       width: (getDynamicSize.getWidth(context) - 10)*0.63,
                       height: 45.h,
@@ -1008,8 +951,9 @@ class Page2State extends State<Page2>{
                     child: Obx(()=>ShakeWidget(
                       duration: Duration(milliseconds: 10),
                       shakeConstant: shakeConstant,
-                      autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                      autoPlay: errorForVibrateOnly.value,
                       child: Container(
+                        width: (getDynamicSize.getWidth(context) - 10)*0.63,
                         padding: EdgeInsets.only(top: 0.h, left: 0.h, right: 0.h),
                         child: DropdownButtonFormField2<String>(
                           value: page2controller.courseController.text.isEmpty ?selectedCourseValue: page2controller.courseControllerText.value,
@@ -1073,7 +1017,7 @@ class Page2State extends State<Page2>{
                   Obx(()=>ShakeWidget(
                     duration: Duration(milliseconds: 10),
                     shakeConstant: shakeConstant,
-                    autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                    autoPlay: errorForVibrateOnly.value,
                     child: Container(
                       width: (getDynamicSize.getWidth(context) - 10)*0.63,
                       height: 45.h,
@@ -1098,8 +1042,9 @@ class Page2State extends State<Page2>{
                     child: Obx(()=>ShakeWidget(
                       duration: Duration(milliseconds: 10),
                       shakeConstant: shakeConstant,
-                      autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                      autoPlay: errorForVibrateOnly.value,
                       child: Container(
+                        width: (getDynamicSize.getWidth(context) - 10)*0.63,
                         padding: EdgeInsets.only(top: 0.h, left: 0.h, right: 0.h),
                         child: DropdownButtonFormField2<String>(
                           value: page2controller.yearLevelController.text.isEmpty ?selectedYearLevelValue: page2controller.yearLevelControllerText.value,
@@ -1163,7 +1108,7 @@ class Page2State extends State<Page2>{
                   Obx(()=>ShakeWidget(
                     duration: Duration(milliseconds: 10),
                     shakeConstant: shakeConstant,
-                    autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                    autoPlay:errorForVibrateOnly.value,
                     child: Container(
                       width: (getDynamicSize.getWidth(context) - 10)*0.63,
                       height: 45.h,
@@ -1188,8 +1133,9 @@ class Page2State extends State<Page2>{
                     child: Obx(()=>ShakeWidget(
                       duration: Duration(milliseconds: 10),
                       shakeConstant: shakeConstant,
-                      autoPlay: page1controller.hasAnyErrorPage1.value || page2controller.hasAnyErrorPage2.value,
+                      autoPlay: errorForVibrateOnly.value,
                       child: Container(
+                        width: (getDynamicSize.getWidth(context) - 10)*0.63,
                         padding: EdgeInsets.only(top: 0.h, left: 0.h, right: 0.h),
                         child: DropdownButtonFormField2<String>(
                           value: page2controller.blocController.text.isEmpty ?selectedBlocValue: page2controller.blocControllerText.value,
@@ -1287,7 +1233,7 @@ class _Page3State extends State<Page3> {
             Obx(() =>ShakeWidget(
               duration: Duration(milliseconds: 10),
               shakeConstant: shakeConstant,
-              autoPlay: page1controller.hasAnyErrorPage1.value,
+              autoPlay: errorForVibrateOnly.value,
               child: Container(
                 height: getDynamicSize.getHeight(context)*0.1,
                 width: getDynamicSize.getWidth(context)*0.8,
@@ -1323,15 +1269,15 @@ class _Page3State extends State<Page3> {
                                 controller: page3controller.emailController,
                                 cursorColor: AppColors.blueColor,
                                 onChanged: (_){
-                                  page3controller.checkValidInput();
+                                  page3controller.updateInputs();
                                 },
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    page3controller.checkValidInput();
+                                    page3controller.updateInputs();
                                     return 'This field is required' ;
                                   }
-                                  page3controller.checkValidInput();
+                                  page3controller.updateInputs();
                                   return null;
                                 },
                                 decoration: InputDecoration(
@@ -1358,7 +1304,7 @@ class _Page3State extends State<Page3> {
             Obx(() =>ShakeWidget(
               duration: Duration(milliseconds: 10),
               shakeConstant: shakeConstant,
-              autoPlay: page1controller.hasAnyErrorPage1.value,
+              autoPlay: errorForVibrateOnly.value,
               child: Container(
                 height: getDynamicSize.getHeight(context)*0.1,
                 width: getDynamicSize.getWidth(context)*0.8,
@@ -1394,15 +1340,15 @@ class _Page3State extends State<Page3> {
                                 controller: page3controller.passwordController,
                                 cursorColor: AppColors.blueColor,
                                 onChanged: (_){
-                                  page3controller.checkValidInput();
+                                  page3controller.updateInputs();
                                 },
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    page3controller.checkValidInput();
+                                    page3controller.updateInputs();
                                     return 'This field is required' ;
                                   }
-                                  page3controller.checkValidInput();
+                                  page3controller.updateInputs();
                                   return null;
                                 },
                                 decoration: InputDecoration(

@@ -35,6 +35,7 @@ class BigText extends StatelessWidget {
         fontWeight: fontWeight,
         fontSize: size,
         letterSpacing: letterSpacing,
+        decoration: TextDecoration.none,
       ),
       maxLines: maxLines,
 

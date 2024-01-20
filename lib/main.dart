@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/signInPage.dart';
 import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'temporarySecond.dart';
+import 'build_routes.dart';
 import 'appColors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -26,8 +24,6 @@ Future <void> main() async{
 Future<bool> checkLoggedIn() async{
       //check if there's a user already logged in
   Completer<bool> complete = Completer();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('authKey');
   FirebaseAuth.instance
       .authStateChanges()
       .listen((User? user) {
@@ -111,7 +107,6 @@ class _MainPageState extends State<MainPage> {
                     ),
                     Container(
                       padding: EdgeInsets.only(top: 30.h),
-                      //height: getDynamicSize.getHeight(context)*0.11,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -205,30 +200,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class getDynamicSize{
   static double getHeight(BuildContext context){
     return MediaQuery.of(context).size.height;
@@ -239,22 +210,3 @@ class getDynamicSize{
 
 }
 
-Route _createRoute(){
-  return PageRouteBuilder(
-    pageBuilder:(context, animation, secondaryAnimation) => RegisterWindow(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child){
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve:curve));
-
-      return SlideTransition(
-          position: animation.drive(tween),
-          child:child
-      );
-    },
-
-  );
-
-}

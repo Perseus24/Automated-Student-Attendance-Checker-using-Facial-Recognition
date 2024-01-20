@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/subjects.dart';
+import 'build_routes.dart';
 import 'main.dart';
-import 'temporarySecond.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
-import 'widgets/icons_and_text.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -375,24 +372,30 @@ class _drawerPageState extends State<drawerPage> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Padding(
-        padding: EdgeInsets.only(left: 30.w, right: 30.w, top: 65.h),
+        padding: EdgeInsets.only(left: 15.w, right: 30.w, top: 65.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.asset('images/logo.png'),
+            Padding(
+              padding: EdgeInsets.all(25.h),
+              child: Image.asset('images/logo.png'),
+            ),
             SizedBox(height: 35.h,),
-            BigText(text: "Main Menu", color: Colors.black, fontWeight: FontWeight.w700,),
+            Padding(
+              padding: EdgeInsets.only(left: 22.w),
+              child: BigText(text: "Main Menu", color: Colors.black, size: 18.sp,fontWeight: FontWeight.w700,),
+            ),
+            SizedBox(height: 10.h),
             Container(
-
               height: 50.h,
               decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0x661A43BF)),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color: Color(0x661A43BF)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: TextButton(
-                clipBehavior: Clip.antiAlias,
+                  clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0x661A43BF),
                     shape: RoundedRectangleBorder(
@@ -400,12 +403,145 @@ class _drawerPageState extends State<drawerPage> {
                     ),
                     padding: EdgeInsets.zero,
                   ),
-                onPressed: (){
+                  onPressed: (){
 
-                },
-                child: BigText(text: "Dashboard", size: 18.sp, color: AppColors.blueColor, fontWeight: FontWeight.w700,)
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+                    child: Row(
+                      children: [
+                        Image.asset('images/dashboard_p.png'),
+                        SizedBox(width: 10.w,),
+                        BigText(text: "Dashboard", size: 18.sp, color: AppColors.blueColor, fontWeight: FontWeight.w700,),
+                      ],
+                    ),
+                  )
               ),
-            )
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              height: 50.h,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: TextButton(
+                  clipBehavior: Clip.antiAlias,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: (){
+
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+                    child: Row(
+                      children: [
+                        Image.asset('images/statistics_notP.png'),
+                        SizedBox(width: 10.w,),
+                        BigText(text: "Statistics", size: 18.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                      ],
+                    ),
+                  )
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              height: 50.h,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: TextButton(
+                  clipBehavior: Clip.antiAlias,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: (){
+
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+                    child: Row(
+                      children: [
+                        Image.asset('images/calendar_notP.png'),
+                        SizedBox(width: 10.w,),
+                        BigText(text: "Calendar", size: 18.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                      ],
+                    ),
+                  )
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              height: 50.h,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: TextButton(
+                  clipBehavior: Clip.antiAlias,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: (){
+
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+                    child: Row(
+                      children: [
+                        Image.asset('images/profile_notP.png'),
+                        SizedBox(width: 10.w,),
+                        BigText(text: "Profile", size: 18.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                      ],
+                    ),
+                  )
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              height: 50.h,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: TextButton(
+                  clipBehavior: Clip.antiAlias,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: (){
+
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+                    child: Row(
+                      children: [
+                        Image.asset('images/log_out.png'),
+                        SizedBox(width: 10.w,),
+                        BigText(text: "Log out", size: 18.sp, color:  Color(0xFFFF0000), fontWeight: FontWeight.w700,),
+                      ],
+                    ),
+                  )
+              ),
+            ),
 
 
           ],
@@ -440,16 +576,16 @@ class _ClassesBodyState extends State<ClassesBody> {
   final CollectionReference roomTable = FirebaseFirestore.instance.collection('room');
   final CollectionReference bldgTable = FirebaseFirestore.instance.collection('bldg');
 
-  List<DocumentSnapshot<Object?>> getTodaysSchedule(List<DocumentSnapshot> sched){
+  List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched, bool swtch){
+
     final now = DateTime.now();
     final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
-
-    List<DocumentSnapshot> filteredSched = sched.where((doc) => doc['dayOfWeek'] == dayOfWeek).toList();
-
+    List<DocumentSnapshot> filteredSched = sched.where((doc) =>
+                                                        doc['day_of_week'] == (swtch? dayOfWeek: dayOfWeek+ 1)).toList();
     filteredSched.sort((a, b) {
       // Assuming 'time' is a string in HH:mm aa format
-      Timestamp tsA = a['startTime'];
-      Timestamp tsB = b['startTime'];
+      Timestamp tsA = a['start_time'];
+      Timestamp tsB = b['start_time'];
 
       DateTime dtA = tsA.toDate();
       DateTime dtB = tsB.toDate();
@@ -459,30 +595,8 @@ class _ClassesBodyState extends State<ClassesBody> {
       return dtA.hour.compareTo(dtB.hour);
     });
     return filteredSched;
+
   }
-  List<DocumentSnapshot<Object?>> getTomorrowSchedule(List<DocumentSnapshot> sched){
-    final now = DateTime.now();
-    int dayOfWeek = now.weekday;
-    if(dayOfWeek==7){
-      dayOfWeek = 0;
-    }
-    List<DocumentSnapshot> filteredSched = sched.where((doc) => doc['dayOfWeek'] == dayOfWeek+1).toList();
-
-    filteredSched.sort((a, b) {
-
-      Timestamp tsA = a['startTime'];
-      Timestamp tsB = b['startTime'];
-
-      DateTime dtA = tsA.toDate();
-      DateTime dtB = tsB.toDate();
-      //final timeA = a['startTime'] as Timestamp;
-      //final timeB = b['startTime'] as Timestamp;
-      // Comparing DateTime objects
-      return dtA.hour.compareTo(dtB.hour);
-    });
-    return filteredSched;
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -496,68 +610,81 @@ class _ClassesBodyState extends State<ClassesBody> {
             return Center(child: CircularProgressIndicator());
           } else {
             final List<DocumentSnapshot> schedSubjectDocs = schedSubjectSnapshot.data!.docs;
-            return StreamBuilder<QuerySnapshot>(                                                  //get the professors table
-                stream: professorsTable.snapshots(),
-                builder: (context, professorsSnapshot) {
-                  if (!professorsSnapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    final List<DocumentSnapshot> professorDocs = professorsSnapshot.data!.docs;
-                    return StreamBuilder<QuerySnapshot>(                                              //get the subjects table
-                      stream: subjectsTable.snapshots(),
-                      builder: (context, subjectSnapshot) {
-                        if (!subjectSnapshot.hasData) {
-                          return Center(child: CircularProgressIndicator());
-                        } else {
-                          final List<
-                              DocumentSnapshot> subjectDocs = subjectSnapshot.data!.docs;
-                          return StreamBuilder<QuerySnapshot>(                                            // get the room table
-                            stream: roomTable.snapshots(),
-                            builder: (context, roomSnapshot) {
-                              if (!roomSnapshot.hasData) {
-                                return Center(child: CircularProgressIndicator());
-                              } else {
-                                final List<DocumentSnapshot> roomDocs = roomSnapshot.data!.docs;
-                                return StreamBuilder<QuerySnapshot>(                                      //get the bldg table
-                                  stream: bldgTable.snapshots(),
-                                  builder: (context, bldgSnapshot) {
-                                    if (!bldgSnapshot.hasData) {
-                                      return Center(child: CircularProgressIndicator());
-                                    } else {
-                                      final List<DocumentSnapshot> bldgDocs = bldgSnapshot.data!.docs;
+            List<DocumentSnapshot> schedule = schedSubjectSnapshot.data!.docs;
+            if (switchSched == 0) {
+              wordToday = 'today';
+              schedule = getSchedule(schedSubjectDocs, true);
+            } else {
+              wordToday = 'tomorrow';
+              schedule = getSchedule(schedSubjectDocs, false);
+            }
+            final subjectIDs = schedule.map((docs) => docs['subject_id']).toList();
+            final roomIDs = schedule.map((docs) => docs['room_id']).toList();
 
-                                      List<DocumentSnapshot> schedule = schedSubjectSnapshot.data!.docs;
-                                      if (switchSched == 0) {
-                                        wordToday = 'today';
-                                        schedule = getTodaysSchedule(schedSubjectDocs);
+            if (schedule.isEmpty) {
+              return Container(
+                  height: getDynamicSize.getHeight(context) * 0.1,
+                  width: getDynamicSize.getWidth(context) * 0.8,
+                  margin: EdgeInsets.only(left: getDynamicSize.getWidth(context) * 0.08, right: getDynamicSize.getWidth(
+                      context) * 0.05),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x3F000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Center(child: BigText(text: 'You have no classes $wordToday!', size: 15.sp, color: Colors.black,
+                      fontWeight: FontWeight.w700))
+              );
+            } else {
+
+              return StreamBuilder<QuerySnapshot>(                                                  //get the professors table
+                  stream: subjectsTable.where('subject_id', whereIn: subjectIDs).snapshots(),
+                  builder: (context, subjectSnapshot) {
+                    if (!subjectSnapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      final List<DocumentSnapshot> subjectDocs = subjectSnapshot.data!.docs;
+                      final professorIDs = subjectDocs.map((docs) => docs['professor_id']).toList();
+
+
+                      return StreamBuilder<QuerySnapshot>(                                              //get the subjects table
+                        stream: professorsTable.where('professor_id', whereIn: professorIDs).snapshots(),
+                        builder: (context, professorSnapshot) {
+                          if (!professorSnapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            final List<DocumentSnapshot> professorDocs = professorSnapshot.data!.docs;
+
+
+                            return StreamBuilder<QuerySnapshot>(                                            // get the room table
+                              stream: roomTable.where('room_id', whereIn: roomIDs).snapshots(),
+                              builder: (context, roomSnapshot) {
+                                if (!roomSnapshot.hasData) {
+                                  return Center(child: CircularProgressIndicator());
+                                } else {
+                                  final List<DocumentSnapshot> roomDocs = roomSnapshot.data!.docs;
+                                  final bldgIDs = roomDocs.map((docs) =>  docs['bldg_id']).toList();
+
+
+                                  return StreamBuilder<QuerySnapshot>(                                      //get the bldg table
+                                    stream: bldgTable.where('bldg_id', whereIn: bldgIDs).snapshots(),
+                                    builder: (context, bldgSnapshot) {
+                                      if (!bldgSnapshot.hasData) {
+                                        return Center(child: CircularProgressIndicator());
                                       } else {
-                                        wordToday = 'tomorrow';
-                                        schedule = getTomorrowSchedule(schedSubjectDocs);
-                                      }
-                                      if (schedule.isEmpty) {
-                                        return Container(
-                                            height: getDynamicSize.getHeight(context) * 0.1,
-                                            width: getDynamicSize.getWidth(context) * 0.8,
-                                            margin: EdgeInsets.only(left: getDynamicSize.getWidth(context) * 0.08, right: getDynamicSize.getWidth(
-                                                context) * 0.05),
-                                            decoration: ShapeDecoration(
-                                              color: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(15),
-                                              ),
-                                              shadows: [
-                                                BoxShadow(
-                                                  color: Color(0x3F000000),
-                                                  blurRadius: 4,
-                                                  offset: Offset(0, 4),
-                                                  spreadRadius: 0,
-                                                )
-                                              ],
-                                            ),
-                                            child: Center(child: BigText(text: 'You have no classes $wordToday!', size: 15.sp, color: Colors.black,
-                                                fontWeight: FontWeight.w700))
-                                        );
-                                      } else {
+                                        final List<DocumentSnapshot> bldgDocs = bldgSnapshot.data!.docs;
+                                        //print(schedule[0]['subject_id']);
+                                        //print(subjectDocs[0]['subject_id']);
+
                                         return Container(
                                           height: getDynamicSize.getHeight(context) * 0.17,
                                           child: PageView.builder(
@@ -565,9 +692,9 @@ class _ClassesBodyState extends State<ClassesBody> {
                                             controller: PageController(viewportFraction: 0.85),
                                             itemBuilder: (context, position) {
                                               final schedSubjectSnapshot = schedule[position];
-                                              final subjectSnapshot = subjectDocs.firstWhere((doc) => doc['subjectID'] == schedSubjectSnapshot['subject_id']);
-                                              final professorSnapshot = professorDocs.firstWhere((doc) => doc['professorID'] == subjectSnapshot['professorID']);
-                                              final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['roomID']);
+                                              final subjectSnapshot = subjectDocs.firstWhere((doc) => doc['subject_id'] == schedSubjectSnapshot['subject_id']);
+                                              final professorSnapshot = professorDocs.firstWhere((doc) => doc['professor_id'] == subjectSnapshot['professor_id']);
+                                              final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['room_id']);
                                               final bldgSnapshot = bldgDocs.firstWhere((doc) => doc['bldg_id'] == roomSnapshot['bldg_id']);
 
                                               return _buildPageItem(
@@ -582,18 +709,21 @@ class _ClassesBodyState extends State<ClassesBody> {
                                           ),
                                         );
                                       }
-                                    }
-                                  },
-                                );
-                              }
-                            },
-                          );
-                        }
-                      },
-                    );
+                                    },
+                                  );
+                                }
+                              },
+                            );
+                          }
+                        },
+                      );
+                    }
                   }
-                }
-            );
+              );
+
+
+            }
+            //filtered schedule table
           }
         }
     );
@@ -603,8 +733,8 @@ class _ClassesBodyState extends State<ClassesBody> {
   Widget _buildPageItem(DocumentSnapshot schedSubjectSnapshot, DocumentSnapshot subjectSnapshot, DocumentSnapshot professorSnapshot,
       DocumentSnapshot roomSnapshot, DocumentSnapshot bldgSnapshot){
 
-    Timestamp startTime = schedSubjectSnapshot['startTime'];
-    Timestamp endTime = schedSubjectSnapshot['endTime'];
+    Timestamp startTime = schedSubjectSnapshot['start_time'];
+    Timestamp endTime = schedSubjectSnapshot['end_time'];
 
     DateTime startTimeCon = startTime.toDate();
     DateTime endTimeCon = endTime.toDate();
@@ -627,7 +757,8 @@ class _ClassesBodyState extends State<ClassesBody> {
 
 
     return Container(
-      margin: EdgeInsets.only(left: 0, right: 10, bottom: 10),
+      //previously margin
+      padding: EdgeInsets.only(left: 0, right: 10, bottom: 10),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -677,7 +808,7 @@ class _ClassesBodyState extends State<ClassesBody> {
                       width: getDynamicSize.getWidth(context)*0.39,
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: BigText(text: subjectSnapshot['subjectName'].toString(), color: Colors.black,
+                        child: BigText(text: subjectSnapshot['subject_name'].toString(), color: Colors.black,
                           fontWeight: FontWeight.w700, size: 16.sp, maxLines: 2,),
                       )
                   ),
@@ -688,7 +819,7 @@ class _ClassesBodyState extends State<ClassesBody> {
                       children: [
                         Icon(Icons.person, color: Colors.black, size: 15.sp,),
                         Expanded(
-                          child: BigText(text: professorSnapshot['FirstName'].toString() + " " + professorSnapshot['LastName'].toString(), color: Colors.black,
+                          child: BigText(text: professorSnapshot['first_name'].toString() + " " + professorSnapshot['last_name'].toString(), color: Colors.black,
                             fontWeight: FontWeight.w500, size: 15.sp, maxLines: 1,),
                         )
                       ],
