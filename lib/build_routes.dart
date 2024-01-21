@@ -9,22 +9,11 @@ import 'package:flutter_application_1/thirdPage.dart';
 import 'main.dart';
 import 'registerFaceAdmin.dart';
 
-Route createRouteGo(int num){
-  Widget goToPage = MyApp();
+Route createRouteGo(Widget widget){
 
-  switch(num){
-    case 0: goToPage = RegisterWindow();
-    break;
-    case 1: goToPage = MainHomePage();
-    break;
-    case 2: goToPage = SignInWindow();
-    break;
-    case 3: goToPage = RegisterFace();
-    break;
-  }
   return PageRouteBuilder(
 
-    pageBuilder:(context, animation, secondaryAnimation) => goToPage,
+    pageBuilder:(context, animation, secondaryAnimation) => widget,
     transitionsBuilder: (context, animation, secondaryAnimation, child){
       const begin = Offset(0.0, -1.0);
       const end = Offset.zero;
@@ -43,16 +32,11 @@ Route createRouteGo(int num){
 
 }
 
-Route createRouteBack(int num){
-  Widget goToPage = MyApp();
+Route createRouteBack(Widget widget){
 
-  switch(num){
-    case 0: goToPage = MyApp();
-    break;
-  }
   return PageRouteBuilder(
 
-    pageBuilder:(context, animation, secondaryAnimation) => goToPage,
+    pageBuilder:(context, animation, secondaryAnimation) => widget,
     transitionsBuilder: (context, animation, secondaryAnimation, child){
       const begin = Offset(0.0, 1.0);
       const end = Offset.zero;

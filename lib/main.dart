@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/signInPage.dart';
+import 'package:flutter_application_1/temporarySecond.dart';
 import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'build_routes.dart';
@@ -153,7 +155,7 @@ class _MainPageState extends State<MainPage> {
                             padding: EdgeInsets.zero,
                           ),
                           onPressed: (){
-                            Navigator.of(context).push(createRouteGo(2));
+                            Navigator.of(context).push(createRouteGo(SignInWindow()));
                           },
                           child: Center(
                               child: BigText(text: 'Log In', color: Colors.white, size: 20.sp, fontWeight: FontWeight.w700,)),
@@ -183,7 +185,7 @@ class _MainPageState extends State<MainPage> {
                             padding: EdgeInsets.zero,
                           ),
                           onPressed: (){
-                            Navigator.of(context).push(createRouteGo(0));
+                            Navigator.of(context).push(createRouteGo(RegisterWindow()));
                           },
                           child: Center(
                               child: BigText(text: 'Register', color: Colors.black, size: 20.sp, fontWeight: FontWeight.w700,)),

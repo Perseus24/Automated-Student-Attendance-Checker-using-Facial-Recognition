@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/calendarPage.dart';
 import 'build_routes.dart';
+import 'getStringsDate.dart';
 import 'main.dart';
 import 'appColors.dart';
 import 'widgets/big_texts.dart';
@@ -38,7 +40,7 @@ class MainHomePage extends StatelessWidget{
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              Navigator.of(context).push(createRouteBack(0));
+                              Navigator.of(context).push(createRouteBack(MyApp()));
                             },
                             clipBehavior: Clip.antiAlias,
                             style: ElevatedButton.styleFrom(
@@ -308,56 +310,7 @@ class Home1State extends State<Home1> {
 
 
   }
-  String getDayOfWeek(int day) {
-    switch (day) {
-      case 1:
-        return 'Monday';
-      case 2:
-        return 'Tuesday';
-      case 3:
-        return 'Wednesday';
-      case 4:
-        return 'Thursday';
-      case 5:
-        return 'Friday';
-      case 6:
-        return 'Saturday';
-      case 7:
-        return 'Sunday';
-      default:
-        return '';
-    }
-  }
-  String getMonth(int month) {
-    switch (month) {
-      case 1:
-        return 'January';
-      case 2:
-        return 'February';
-      case 3:
-        return 'March';
-      case 4:
-        return 'April';
-      case 5:
-        return 'May';
-      case 6:
-        return 'June';
-      case 7:
-        return 'July';
-      case 8:
-        return 'August';
-      case 9:
-        return 'September';
-      case 10:
-        return 'October';
-      case 11:
-        return 'November';
-      case 12:
-        return 'December';
-      default:
-        return '';
-    }
-  }
+
 }
 
 class drawerPage extends StatefulWidget {
@@ -371,8 +324,9 @@ class _drawerPageState extends State<drawerPage> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: 250.w,
       child: Padding(
-        padding: EdgeInsets.only(left: 15.w, right: 30.w, top: 65.h),
+        padding: EdgeInsets.only(left: 15.w, right: 30.w, top: 45.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -380,7 +334,7 @@ class _drawerPageState extends State<drawerPage> {
               padding: EdgeInsets.all(25.h),
               child: Image.asset('images/logo.png'),
             ),
-            SizedBox(height: 35.h,),
+            SizedBox(height: 20.h,),
             Padding(
               padding: EdgeInsets.only(left: 22.w),
               child: BigText(text: "Main Menu", color: Colors.black, size: 18.sp,fontWeight: FontWeight.w700,),
@@ -404,6 +358,7 @@ class _drawerPageState extends State<drawerPage> {
                     padding: EdgeInsets.zero,
                   ),
                   onPressed: (){
+                    Navigator.of(context).push(createRouteGo(MainHomePage()));
 
                   },
                   child: Padding(
@@ -412,13 +367,13 @@ class _drawerPageState extends State<drawerPage> {
                       children: [
                         Image.asset('images/dashboard_p.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Dashboard", size: 18.sp, color: AppColors.blueColor, fontWeight: FontWeight.w700,),
+                        BigText(text: "Dashboard", size: 16.sp, color: AppColors.blueColor, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Container(
               height: 50.h,
               decoration: ShapeDecoration(
@@ -443,13 +398,13 @@ class _drawerPageState extends State<drawerPage> {
                       children: [
                         Image.asset('images/statistics_notP.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Statistics", size: 18.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Statistics", size: 16.sp, color: Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Container(
               height: 50.h,
               decoration: ShapeDecoration(
@@ -466,6 +421,7 @@ class _drawerPageState extends State<drawerPage> {
                     padding: EdgeInsets.zero,
                   ),
                   onPressed: (){
+                    Navigator.of(context).push(createRouteGo(CalendarHome()));
 
                   },
                   child: Padding(
@@ -474,13 +430,13 @@ class _drawerPageState extends State<drawerPage> {
                       children: [
                         Image.asset('images/calendar_notP.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Calendar", size: 18.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Calendar", size: 16.sp, color: Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Container(
               height: 50.h,
               decoration: ShapeDecoration(
@@ -505,13 +461,13 @@ class _drawerPageState extends State<drawerPage> {
                       children: [
                         Image.asset('images/profile_notP.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Profile", size: 18.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Profile", size: 16.sp, color: Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Container(
               height: 50.h,
               decoration: ShapeDecoration(
@@ -536,7 +492,7 @@ class _drawerPageState extends State<drawerPage> {
                       children: [
                         Image.asset('images/log_out.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Log out", size: 18.sp, color:  Color(0xFFFF0000), fontWeight: FontWeight.w700,),
+                        BigText(text: "Log out", size: 16.sp, color:  Color(0xFFFF0000), fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -581,7 +537,7 @@ class _ClassesBodyState extends State<ClassesBody> {
     final now = DateTime.now();
     final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
     List<DocumentSnapshot> filteredSched = sched.where((doc) =>
-                                                        doc['day_of_week'] == (swtch? dayOfWeek: dayOfWeek+ 1)).toList();
+                                                        doc['day_of_week'] == (swtch? dayOfWeek: (dayOfWeek == 7)?1:dayOfWeek+1)).toList();
     filteredSched.sort((a, b) {
       // Assuming 'time' is a string in HH:mm aa format
       Timestamp tsA = a['start_time'];
@@ -589,8 +545,7 @@ class _ClassesBodyState extends State<ClassesBody> {
 
       DateTime dtA = tsA.toDate();
       DateTime dtB = tsB.toDate();
-      //final timeA = a['startTime'] as Timestamp;
-      //final timeB = b['startTime'] as Timestamp;
+
       // Comparing DateTime objects
       return dtA.hour.compareTo(dtB.hour);
     });
@@ -758,7 +713,7 @@ class _ClassesBodyState extends State<ClassesBody> {
 
     return Container(
       //previously margin
-      padding: EdgeInsets.only(left: 0, right: 10, bottom: 10),
+      margin: EdgeInsets.only(left: 0, right: 10.w, bottom: 8.h),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(

@@ -1,6 +1,8 @@
 
 //import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/registerFaceAdmin.dart';
+import 'package:flutter_application_1/thirdPage.dart';
 import 'package:get/get.dart';
 import 'build_routes.dart';
 import 'package:flutter/material.dart';
@@ -321,7 +323,7 @@ class _RegisterPageState extends State<RegisterPage>{
                               height: 45.h,
                               child: ElevatedButton(
                                 onPressed: (){
-                                  Navigator.of(context).push(createRouteBack(0));
+                                  Navigator.of(context).push(createRouteBack(MyApp()));
                                 },
                                 clipBehavior: Clip.antiAlias,
                                 style: ElevatedButton.styleFrom(
@@ -477,7 +479,7 @@ class _RegisterPageState extends State<RegisterPage>{
                                         padding: EdgeInsets.zero,
                                       ),
                                       onPressed: () async {
-                                        Navigator.of(context).push(createRouteGo(3));
+                                        Navigator.of(context).push(createRouteGo(RegisterFace()));
                                         //await readJson();
                                         controller.updateInputs();
                                         controller2.updateInputs();
@@ -506,7 +508,7 @@ class _RegisterPageState extends State<RegisterPage>{
                                           //controller.lastNameController.text = '';
                                           //controller2.sexController.text = '';
                                           //controller.hasAnyErrorPage1.value = false;
-                                          Navigator.of(context).push(createRouteGo(1));
+                                          Navigator.of(context).push(createRouteGo(RegisterFace()));
                                         }else{
                                           hasAnyError.value = true;
                                           errorForVibrateOnly.value = true;

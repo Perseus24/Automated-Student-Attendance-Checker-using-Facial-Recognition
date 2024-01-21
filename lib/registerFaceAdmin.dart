@@ -1,12 +1,10 @@
 
-import 'package:flutter_application_1/main.dart';
-import 'package:flutter_application_1/temporarySecond.dart';
-import 'package:flutter_application_1/widgets/big_texts.dart';
-
+import 'main.dart';
+import 'thirdPage.dart';
+import 'widgets/big_texts.dart';
 import 'appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'build_routes.dart';
 
 void main(){
@@ -31,12 +29,12 @@ class _RegisterFaceState extends State<RegisterFace> {
             child: Row(
               children: [
                 Container(
-                    margin: EdgeInsets.only(top: 30.h, left: 10.w),
+                    margin: EdgeInsets.only(top: 40.h, left: 10.w),
                     width: 45.h,
                     height: 45.h,
                     child: TextButton(
                       onPressed: (){
-                        Navigator.of(context).push(createRouteBack(0));
+                        Navigator.of(context).push(createRouteBack(MyApp()));
                       },
                       clipBehavior: Clip.antiAlias,
                       style: TextButton.styleFrom(
@@ -81,15 +79,15 @@ class _RegisterFaceState extends State<RegisterFace> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       BigText(text: "To register your face, please go to the administrator’s office to capture your facial images using the dedicated webcam.",
-                        maxLines: 10, textAlign: TextAlign.center, fontWeight: FontWeight.w300, size: 16.sp,),
+                        maxLines: 10, textAlign: TextAlign.center, fontWeight: FontWeight.w300, size: 18.sp,),
                     ],
                   ),
                 ),
-                SizedBox(height: 100.h),
+                SizedBox(height: 50.h),
                 Container(
                   width: getDynamicSize.getWidth(context)*0.8,
                   child: BigText(text: 'This is in order for all the images trained to have a consistent source.',
-                    maxLines: 3, textAlign: TextAlign.center, fontWeight: FontWeight.w700, size: 13.sp,),
+                    maxLines: 3, textAlign: TextAlign.center, fontWeight: FontWeight.w700, size: 15.sp,),
                 ),
                 SizedBox(height: 40.h,),
                 Container(
@@ -111,7 +109,7 @@ class _RegisterFaceState extends State<RegisterFace> {
                         padding: EdgeInsets.zero,
                       ),
                       onPressed: (){
-                        Navigator.of(context).push(createRouteGo(2));
+                        Navigator.of(context).push(createRouteGo(MainHomePage()));
                       },
                       child: Center(
                           child: BigText(text: 'Done', color: Colors.white, size: 20.sp, fontWeight: FontWeight.w700,)),

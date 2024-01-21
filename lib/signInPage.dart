@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/forgotPass.dart';
+import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'build_routes.dart';
 import 'temporarySecond.dart';
@@ -67,7 +69,7 @@ class _SignInPageState extends State<SignInPage> {
                               height: 45.h,
                               child: ElevatedButton(
                                 onPressed: (){
-                                  Navigator.of(context).push(createRouteBack(0));
+                                  Navigator.of(context).push(createRouteBack(MyApp()));
                                 },
                                 clipBehavior: Clip.antiAlias,
                                 style: ElevatedButton.styleFrom(
@@ -339,7 +341,7 @@ class _SignInPageState extends State<SignInPage> {
                               controller.passwordWrongController.text = '';
                               controller.hasPasswordError = false.obs;
                               controller.hasEmailError = false.obs;
-                              Navigator.of(context).push(createRouteGo(1));
+                              Navigator.of(context).push(createRouteGo(MainHomePage()));
 
                             }
                           }
@@ -356,7 +358,7 @@ class _SignInPageState extends State<SignInPage> {
                       backgroundColor: Colors.white
                     ),
                     onPressed: (){
-                      Navigator.of(context).push(createRouteGo(1));
+                      Navigator.of(context).push(createRouteGo(ForgotPassPage()));
                     },
                     child: Center(
                       child: BigText(text: 'Forgot Password?', size: 15.sp, color: AppColors.blueColor,),

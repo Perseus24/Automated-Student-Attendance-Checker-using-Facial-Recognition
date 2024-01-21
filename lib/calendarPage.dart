@@ -2,8 +2,10 @@
 import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import 'build_routes.dart';
+import 'getStringsDate.dart';
 import 'main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,8 +87,10 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+
   @override
   Widget build(BuildContext context) {
+    buildCalendarBlocks();
     return Container(
       color: AppColors.blueColor,
       child: Stack(
@@ -114,80 +118,13 @@ class _CalendarPageState extends State<CalendarPage> {
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'S', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '21', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                    //SizedBox(width: 30.w,),
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'M', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '22', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                    //SizedBox(width: 30.w,),
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'T', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '23', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                    //SizedBox(width: 30.w,),
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'W', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '24', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                    //SizedBox(width: 30.w,),
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'Th', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '25', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                    //SizedBox(width: 30.w,),
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'F', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '26', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                    //SizedBox(width: 30.w,),
-                    Container(
-                      width: 18.w,
-                      child: Column(
-                        children: [
-                          BigText(text: 'S', color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                          BigText(text: '27', color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-                        ],
-                      ),
-                    ),
-                  ],
+                child: PageView.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, position){
+                    return buildScrollableCalendar(context, position);
+                  }
                 ),
+
               ),
               Container(
                 margin: EdgeInsets.only(top:10.h),
@@ -206,6 +143,63 @@ class _CalendarPageState extends State<CalendarPage> {
         ],
       ),
 
+    );
+  }
+  List<Widget> days = [];
+  void buildCalendarBlocks(){
+    String dayOfWeek;
+    int pos = 1;
+
+    DateTime nextMonthFirst = DateTime(DateTime.now().year, DateTime.now().month + 1, 1);
+    DateTime lastDayOfMonth = nextMonthFirst.subtract(Duration(days: 1));
+
+
+      for(int i=0; i<7; i++){
+        DateTime now = DateTime(2024, 1, pos);
+        String dayOfWeek = getDayOfWeek(now.weekday);
+        if(now.weekday != ((i==0)?7:i)){
+          days.add(Container(
+            width: 18.w,
+            child: Column(
+              children: [
+                BigText(text: dayOfWeek[0], color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
+                BigText(text: ' '.toString(), color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
+              ],
+            ),
+          ));
+        }else{
+          days.add(Container(
+            width: 18.w,
+            child: Column(
+              children: [
+                BigText(text: dayOfWeek[0], color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
+                BigText(text: (pos+i).toString(), color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
+              ],
+            ),
+          ));
+          pos++;
+
+        }
+        if(i==6){
+          i = 0;
+        }
+        if(pos==7){
+          break;
+        }
+      }
+
+
+
+  }
+  int temp = 0;
+
+
+  Widget buildScrollableCalendar(BuildContext context, int position){
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: days.take(7).toList()
+      ),
     );
   }
 }
