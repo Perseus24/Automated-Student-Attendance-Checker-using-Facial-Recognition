@@ -508,7 +508,6 @@ class _drawerPageState extends State<drawerPage> {
 }
 
 
-
 class ClassesBody extends StatefulWidget {
   final int i;
 
@@ -712,7 +711,7 @@ class _ClassesBodyState extends State<ClassesBody> {
 
 
     return Container(
-      //previously margin
+
       margin: EdgeInsets.only(left: 0, right: 10.w, bottom: 8.h),
       decoration: ShapeDecoration(
         color: Colors.white,
