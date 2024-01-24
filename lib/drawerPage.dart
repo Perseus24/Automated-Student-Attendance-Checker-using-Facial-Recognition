@@ -10,12 +10,24 @@ import 'build_routes.dart';
 import 'calendarPage.dart';
 
 class buildDrawer extends StatelessWidget {
+  int num0 = 0;
+  int num1 = 0;
+  int num2 = 0;
+  int num3 = 0;
 
-  bool isPressed = false;
-  bool initialPage = true;
-  Color calendarBackground = Colors.white;
 
   Widget drawer(BuildContext context, int pageIndication) {
+    switch(pageIndication){
+      case 0: num0 = 1;
+              break;
+      case 1: num1 = 1;
+              break;
+      case 2: num2 = 1;
+              break;
+      case 3: num3 = 1;
+              break;
+    }
+    print(num0);
     return Drawer(
       width: 250.w,
       child: Padding(
@@ -37,14 +49,14 @@ class buildDrawer extends StatelessWidget {
               height: 50.h,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1, color: pageIndication==0? Color(0x661A43BF):Colors.white),
+                  side: BorderSide(width: 1, color: pageIndication==0? Color(0x661A43BF):Colors.transparent),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: TextButton(
                   clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: pageIndication==0? Color(0x661A43BF):Colors.white,
+                    backgroundColor: pageIndication==0? Color(0x661A43BF):Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -58,9 +70,9 @@ class buildDrawer extends StatelessWidget {
                     padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
                     child: Row(
                       children: [
-                        Image.asset('images/dashboard_p.png'),
+                        Image.asset('images/dashboard_$num0.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Dashboard", size: 16.sp, color: AppColors.blueColor, fontWeight: FontWeight.w700,),
+                        BigText(text: "Dashboard", size: 16.sp, color:pageIndication==0?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -71,12 +83,14 @@ class buildDrawer extends StatelessWidget {
               height: 50.h,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color:pageIndication==1? Color(0x661A43BF):Colors.transparent),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: TextButton(
                   clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: pageIndication==1? Color(0x661A43BF):Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -89,9 +103,9 @@ class buildDrawer extends StatelessWidget {
                     padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
                     child: Row(
                       children: [
-                        Image.asset('images/statistics_notP.png'),
+                        Image.asset('images/statistics_$num1.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Statistics", size: 16.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Statistics", size: 16.sp, color: pageIndication==1?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -102,14 +116,14 @@ class buildDrawer extends StatelessWidget {
               height: 50.h,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1, color:pageIndication==2? Color(0x661A43BF):Colors.white),
+                  side: BorderSide(width: 1, color:pageIndication==2? Color(0x661A43BF):Colors.transparent),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: TextButton(
                   clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: pageIndication==2? Color(0x661A43BF):Colors.white,
+                    backgroundColor: pageIndication==2? Color(0x661A43BF):Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -122,9 +136,9 @@ class buildDrawer extends StatelessWidget {
                     padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
                     child: Row(
                       children: [
-                        Image.asset('images/calendar_notP.png'),
+                        Image.asset('images/calendar_$num2.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Calendar", size: 16.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Calendar", size: 16.sp, color: pageIndication==2?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -135,12 +149,14 @@ class buildDrawer extends StatelessWidget {
               height: 50.h,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color:pageIndication==3? Color(0x661A43BF):Colors.transparent),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: TextButton(
                   clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: pageIndication==3? Color(0x661A43BF):Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -153,9 +169,9 @@ class buildDrawer extends StatelessWidget {
                     padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
                     child: Row(
                       children: [
-                        Image.asset('images/profile_notP.png'),
+                        Image.asset('images/profile_$num3.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Profile", size: 16.sp, color: Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Profile", size: 16.sp, color: pageIndication==3?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
