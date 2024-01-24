@@ -1,23 +1,28 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admin/firebase_admin.dart';
+import 'package:flutter_application_1/appBar.dart';
 import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'build_routes.dart';
+import 'drawerPage.dart';
 import 'getStringsDate.dart';
+import 'getUserInformations.dart';
 import 'main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/appColors.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class CalendarHome extends StatelessWidget {
   const CalendarHome({super.key});
 
   @override
   Widget build(BuildContext context){
-    DateTime now = DateTime(2024, 1, DateTime.now().day);
+    DateTime now = DateTime(2024, DateTime.now().month, DateTime.now().day);
     String dayOfWeek = getDayOfWeek(now.weekday);
 
     return MaterialApp(
@@ -75,8 +80,8 @@ class CalendarHome extends StatelessWidget {
           toolbarHeight: getDynamicSize.getHeight(context)*0.12,
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
-        body: CalendarPage(),
-        drawer: drawerPage(),
+        body: AppBarPage().createState().hi(context, 2),
+        drawer: buildDrawer().drawer(context, 2),
       ),
     );
   }
@@ -91,13 +96,17 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+
+  DateTime nextMonthFirst = DateTime(DateTime.now().year, DateTime.now().month + 1, 1);
+
+  final userDataControllers = Get.put(UserDataControllers());
+
 
   @override
   Widget build(BuildContext context) {
-    days.clear();
-    buildCalendarBlocks();
-    int index = daysNum.firstWhere((element) => element == DateTime.now().day);
-    index = (index/7).floor();
+    DateTime lastDayOfMonth = nextMonthFirst.subtract(Duration(days: 1));
 
     return Container(
       color: AppColors.blueColor,
@@ -119,18 +128,64 @@ class _CalendarPageState extends State<CalendarPage> {
             children: [
               Container(
                 padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 10.h),
-                height: 60.h,
+                height: 70.h,
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
                   ),
                 ),
-                child: PageView.builder(
-                  itemCount: 5 - (index-1),
-                  itemBuilder: (context, position){ //position starts at 1
-                    return buildScrollableCalendar(context, position+(index ));
-                  }
+                child: TableCalendar(
+                  firstDay: DateTime.utc(2024,DateTime.now().month,1),
+                  lastDay: DateTime.utc(2024,DateTime.now().month,lastDayOfMonth.day),
+                  focusedDay: _focusedDay,
+                  calendarFormat: CalendarFormat.week,
+                  availableGestures: AvailableGestures.horizontalSwipe,
+                  headerVisible: false,
+
+                  onDaySelected: (selectedDay, focusedDay){
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                      print(_selectedDay.day);
+                    });
+                  },
+
+                  selectedDayPredicate: (DateTime date) {
+                    return isSameDay(_selectedDay, date);
+                  },
+
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(color: Color(0xFFBCC1CD), fontWeight: FontWeight.w500),
+                    weekendStyle: TextStyle(color: Color(0xFFBCC1CD), fontWeight: FontWeight.w500)
+                  ),
+
+
+                  calendarStyle: CalendarStyle(
+                    isTodayHighlighted: true,
+                    selectedDecoration: BoxDecoration(
+                      color: Colors.orange,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    todayTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+                    selectedTextStyle: TextStyle(color: Colors.white),
+                    defaultTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+                    weekendTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+                    todayDecoration: BoxDecoration(
+                      //color: Colors.orange,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    defaultDecoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    weekendDecoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
                 ),
               ),
               Container(
@@ -153,88 +208,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
     );
   }
-  List<Widget> days = [];
-  List<int> daysNum = [];
-  void buildCalendarBlocks(){
 
-    int pos = 1;
-    DateTime nextMonthFirst = DateTime(DateTime.now().year, DateTime.now().month + 1, 1);
-    DateTime lastDayOfMonth = nextMonthFirst.subtract(Duration(days: 1));
-
-      for(int i=0; i<7; i++){
-
-        DateTime now = DateTime(2024, 1, pos);
-        String dayOfWeek = getDayOfWeek(now.weekday);
-
-        if(pos>lastDayOfMonth.day){
-          days.add(Container(
-            padding: EdgeInsets.only(top:5.h, bottom: 5.h),
-            width: 45.w,
-            child: Column(
-              children: [
-                BigText(text: dayOfWeek[0], color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                BigText(text: ' '.toString(), color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-              ],
-            ),
-          ));
-          daysNum.add(0);
-          pos++;
-
-        }
-        else if((now.weekday != ((i==0)?7:i))){
-          dayOfWeek = getDayOfWeek(((i==0)?7:i));
-          days.add(Container(
-            padding: EdgeInsets.only(top:5.h, bottom: 5.h),
-            width: 45.w,
-            child: Column(
-              children: [
-                BigText(text: dayOfWeek[0], color: Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                BigText(text: ' '.toString(), color: Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-              ],
-            ),
-          ));
-          daysNum.add(0);
-        }
-        else{
-          days.add(Container(
-            padding: EdgeInsets.only(top:5.h, bottom: 5.h),
-            width: 45.w,
-            decoration: ShapeDecoration(
-              color: (DateTime.now().day == pos)?Color(0xFFFF7648):Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Column(
-              children: [
-                BigText(text: dayOfWeek[0], color: (DateTime.now().day == pos)?Colors.white:Color(0xFFBCC1CD), size: 15.sp, fontWeight: FontWeight.w500,),
-                BigText(text: (pos).toString(), color: (DateTime.now().day == pos)?Colors.white:Colors.black, size: 15.sp, fontWeight: FontWeight.w600,),
-              ],
-            ),
-          ));
-          daysNum.add(pos);
-          pos++;
-        }
-        if(i==6){
-          i = -1;
-        }
-        if(pos==35){
-          break;
-        }
-      }
-  }
-
-  Widget buildScrollableCalendar(BuildContext context, int position){
-    
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children:days.skip(position*7).take(7).toList()
-      ),
-    );
-  }
-
-  int temporary = 0;
 
   Widget buildSchedules(){
     final CollectionReference subjectsTable = FirebaseFirestore.instance.collection('subjects');
@@ -243,12 +217,12 @@ class _CalendarPageState extends State<CalendarPage> {
     final CollectionReference roomTable = FirebaseFirestore.instance.collection('room');
     final CollectionReference bldgTable = FirebaseFirestore.instance.collection('bldg');
 
-    List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched, bool swtch){
+    List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched){
 
-      final now = DateTime.now();
+      final now = DateTime(2024,1,_selectedDay.day);
       final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
       List<DocumentSnapshot> filteredSched = sched.where((doc) =>
-      doc['day_of_week'] == 1).toList();
+      doc['day_of_week'] == dayOfWeek).toList();
       filteredSched.sort((a, b) {
         // Assuming 'time' is a string in HH:mm aa format
         Timestamp tsA = a['start_time'];
@@ -265,124 +239,39 @@ class _CalendarPageState extends State<CalendarPage> {
     }
 
 
-    return StreamBuilder<QuerySnapshot>(                                            //get the subject schedule table
-        stream: schedSubjectTable.snapshots(),
-        builder: (context, schedSubjectSnapshot) {
-          if (!schedSubjectSnapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            final List<DocumentSnapshot> schedSubjectDocs = schedSubjectSnapshot.data!.docs;
-            List<DocumentSnapshot> schedule = getSchedule(schedSubjectDocs, true);
-
-            final subjectIDs = schedule.map((docs) => docs['subject_id']).toList();
-            final roomIDs = schedule.map((docs) => docs['room_id']).toList();
-
-            if (schedule.isEmpty) {
-              return Container(
-                  height: getDynamicSize.getHeight(context) * 0.1,
-                  width: getDynamicSize.getWidth(context) * 0.8,
-                  margin: EdgeInsets.only(left: getDynamicSize.getWidth(context) * 0.08, right: getDynamicSize.getWidth(
-                      context) * 0.05),
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                  child: Center(child: BigText(text: 'You have no classes today!', size: 15.sp, color: Colors.black,
-                      fontWeight: FontWeight.w700))
-              );
-            } else {
-
-              return StreamBuilder<QuerySnapshot>(                                                  //get the professors table
-                  stream: subjectsTable.where('subject_id', whereIn: subjectIDs).snapshots(),
-                  builder: (context, subjectSnapshot) {
-                    if (!subjectSnapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    } else {
-                      final List<DocumentSnapshot> subjectDocs = subjectSnapshot.data!.docs;
-                      final professorIDs = subjectDocs.map((docs) => docs['professor_id']).toList();
+    List<DocumentSnapshot> schedule = getSchedule(userDataControllers.scheduleSnapshot);
+    List<DocumentSnapshot> subjectDocs = Get.find<UserDataControllers>().subjectSnapshot;
+    List<DocumentSnapshot> professorDocs = userDataControllers.professorSnapshot;
+    List<DocumentSnapshot> roomDocs = userDataControllers.roomSnapshot;
+    List<DocumentSnapshot> bldgDocs = userDataControllers.bldgSnapshot;
 
 
-                      return StreamBuilder<QuerySnapshot>(                                              //get the subjects table
-                        stream: professorsTable.where('professor_id', whereIn: professorIDs).snapshots(),
-                        builder: (context, professorSnapshot) {
-                          if (!professorSnapshot.hasData) {
-                            return Center(child: CircularProgressIndicator());
-                          } else {
-                            final List<DocumentSnapshot> professorDocs = professorSnapshot.data!.docs;
+    return Container(
+      height: 450.h,
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: schedule.length,
+        //scrollBehavior: ScrollBehavior(),
+        controller: PageController(viewportFraction: 0.2),
+        itemBuilder: (context, position) {
+          final schedSubjectSnapshot = schedule[position];
+          final subjectSnapshot = subjectDocs.firstWhere((doc) => doc['subject_id'] == schedSubjectSnapshot['subject_id']);
+          final professorSnapshot = professorDocs.firstWhere((doc) => doc['professor_id'] == subjectSnapshot['professor_id']);
+          final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['room_id']);
+          final bldgSnapshot = bldgDocs.firstWhere((doc) => doc['bldg_id'] == roomSnapshot['bldg_id']);
 
 
-                            return StreamBuilder<QuerySnapshot>(                                            // get the room table
-                              stream: roomTable.where('room_id', whereIn: roomIDs).snapshots(),
-                              builder: (context, roomSnapshot) {
-                                if (!roomSnapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
-                                } else {
-                                  final List<DocumentSnapshot> roomDocs = roomSnapshot.data!.docs;
-                                  final bldgIDs = roomDocs.map((docs) =>  docs['bldg_id']).toList();
+          return buildSchedItems(
+              schedSubjectSnapshot,
+              subjectSnapshot,
+              professorSnapshot,
+              roomSnapshot,
+              bldgSnapshot,
+              position
 
-
-                                  return StreamBuilder<QuerySnapshot>(                                      //get the bldg table
-                                    stream: bldgTable.where('bldg_id', whereIn: bldgIDs).snapshots(),
-                                    builder: (context, bldgSnapshot) {
-                                      if (!bldgSnapshot.hasData) {
-                                        return Center(child: CircularProgressIndicator());
-                                      } else {
-                                        final List<DocumentSnapshot> bldgDocs = bldgSnapshot.data!.docs;
-
-                                        return Container(
-                                          height: 450.h,
-                                          child: PageView.builder(
-                                            scrollDirection: Axis.vertical,
-                                            itemCount: schedule.length,
-                                            //scrollBehavior: ScrollBehavior(),
-                                            controller: PageController(viewportFraction: 0.2),
-                                            itemBuilder: (context, position) {
-                                              final schedSubjectSnapshot = schedule[position];
-                                              final subjectSnapshot = subjectDocs.firstWhere((doc) => doc['subject_id'] == schedSubjectSnapshot['subject_id']);
-                                              final professorSnapshot = professorDocs.firstWhere((doc) => doc['professor_id'] == subjectSnapshot['professor_id']);
-                                              final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['room_id']);
-                                              final bldgSnapshot = bldgDocs.firstWhere((doc) => doc['bldg_id'] == roomSnapshot['bldg_id']);
-
-                                              return buildSchedItems(
-                                                schedSubjectSnapshot,
-                                                subjectSnapshot,
-                                                professorSnapshot,
-                                                roomSnapshot,
-                                                bldgSnapshot,
-                                                position
-
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                }
-                              },
-                            );
-                          }
-                        },
-                      );
-                    }
-                  }
-              );
-
-
-            }
-            //filtered schedule table
-          }
-        }
+          );
+        },
+      ),
     );
 
   }

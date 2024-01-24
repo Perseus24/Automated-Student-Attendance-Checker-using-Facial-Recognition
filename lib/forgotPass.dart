@@ -3,6 +3,7 @@ import 'package:flutter_application_1/appColors.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/signInPage.dart';
 import 'package:flutter_application_1/temporarySecond.dart';
+import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ import 'build_routes.dart';
 
 
 void main() => runApp(ForgotPassPage());
+
 class ForgotPassPage extends StatelessWidget {
 
   final logInControllerTemp = Get.put(LogInControllers());
@@ -190,9 +192,14 @@ class ForgotPassPage extends StatelessWidget {
                             ],
 
                           ),
-                          child: Center(
-                            child: BigText(text:'Request Resend', color: Colors.white, fontWeight: FontWeight.w700,),
-                          )
+                          child: TextButton(
+                            onPressed: (){
+                              Navigator.of(context).push(createRouteGo(MainHomePage()));
+                            },
+                              child: Center(
+                                child: BigText(text:'Request Resend', color: Colors.white, fontWeight: FontWeight.w700,),
+                              )
+                          ),
                       ),
                     ],
                   )

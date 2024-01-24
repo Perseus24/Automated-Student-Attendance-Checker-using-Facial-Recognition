@@ -1,18 +1,21 @@
+import 'package:firebase_admin/firebase_admin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class drawerPage extends StatefulWidget {
-  const drawerPage({super.key});
+import 'appColors.dart';
+import 'build_routes.dart';
+import 'calendarPage.dart';
 
-  @override
-  State<drawerPage> createState() => _drawerPageState();
-}
+class buildDrawer extends StatelessWidget {
 
-class _drawerPageState extends State<drawerPage> {
-  @override
-  Widget build(BuildContext context) {
+  bool isPressed = false;
+  bool initialPage = true;
+  Color calendarBackground = Colors.white;
+
+  Widget drawer(BuildContext context, int pageIndication) {
     return Drawer(
       width: 250.w,
       child: Padding(
@@ -34,14 +37,14 @@ class _drawerPageState extends State<drawerPage> {
               height: 50.h,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1, color: Color(0x661A43BF)),
+                  side: BorderSide(width: 1, color: pageIndication==0? Color(0x661A43BF):Colors.white),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: TextButton(
                   clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0x661A43BF),
+                    backgroundColor: pageIndication==0? Color(0x661A43BF):Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -99,12 +102,14 @@ class _drawerPageState extends State<drawerPage> {
               height: 50.h,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color:pageIndication==2? Color(0x661A43BF):Colors.white),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: TextButton(
                   clipBehavior: Clip.antiAlias,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: pageIndication==2? Color(0x661A43BF):Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -112,7 +117,6 @@ class _drawerPageState extends State<drawerPage> {
                   ),
                   onPressed: (){
                     Navigator.of(context).push(createRouteGo(CalendarHome()));
-
                   },
                   child: Padding(
                     padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
@@ -195,4 +199,12 @@ class _drawerPageState extends State<drawerPage> {
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
 }
+
+

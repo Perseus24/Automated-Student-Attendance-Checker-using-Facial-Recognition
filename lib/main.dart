@@ -26,9 +26,7 @@ Future <void> main() async{
 Future<bool> checkLoggedIn() async{
       //check if there's a user already logged in
   Completer<bool> complete = Completer();
-  FirebaseAuth.instance
-      .authStateChanges()
-      .listen((User? user) {
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
     if (user != null) {
       complete.complete(true);
     }else{
@@ -36,7 +34,7 @@ Future<bool> checkLoggedIn() async{
     }
   });
   //uncomment this once all the pages before main homepage completes
-  //return complete.future;
+  return complete.future;
   return false;
 
 }

@@ -3,16 +3,10 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_application_1/signInPage.dart';
-import 'package:flutter_application_1/temporarySecond.dart';
-import 'package:flutter_application_1/thirdPage.dart';
-import 'main.dart';
-import 'registerFaceAdmin.dart';
 
 Route createRouteGo(Widget widget){
 
   return PageRouteBuilder(
-
     pageBuilder:(context, animation, secondaryAnimation) => widget,
     transitionsBuilder: (context, animation, secondaryAnimation, child){
       const begin = Offset(0.0, -1.0);
@@ -27,9 +21,7 @@ Route createRouteGo(Widget widget){
       );
     },
     transitionDuration: Duration(milliseconds: 500),
-
   );
-
 }
 
 Route createRouteBack(Widget widget){
