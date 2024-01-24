@@ -365,7 +365,6 @@ class _ClassesBodyState extends State<ClassesBody>{
   Widget build(BuildContext context) {
     int switchSched = widget.i;
     String wordToday;
-    print(hi);
 
     return StreamBuilder<QuerySnapshot>(
       stream: studentTable.where('middle_name', isEqualTo: hi).snapshots(),

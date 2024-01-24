@@ -1,7 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_admin/firebase_admin.dart';
-import 'package:flutter_application_1/appBar.dart';
 import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,7 +66,7 @@ class CalendarHome extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18.0),
                               ),
-                              padding: EdgeInsets.zero, // <--add this
+                              padding: EdgeInsets.zero,
                             ),
                             child: Image.asset('images/Bellpin.png'),
                           )
@@ -80,7 +78,7 @@ class CalendarHome extends StatelessWidget {
           toolbarHeight: getDynamicSize.getHeight(context)*0.12,
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
-        body: AppBarPage().createState().hi(context, 2),
+        body: CalendarPage(),
         drawer: buildDrawer().drawer(context, 2),
       ),
     );
@@ -211,11 +209,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
 
   Widget buildSchedules(){
-    final CollectionReference subjectsTable = FirebaseFirestore.instance.collection('subjects');
-    final CollectionReference professorsTable = FirebaseFirestore.instance.collection('professor');
-    final CollectionReference schedSubjectTable = FirebaseFirestore.instance.collection('subject_sched');
-    final CollectionReference roomTable = FirebaseFirestore.instance.collection('room');
-    final CollectionReference bldgTable = FirebaseFirestore.instance.collection('bldg');
 
     List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched){
 
@@ -285,18 +278,15 @@ class _CalendarPageState extends State<CalendarPage> {
     DateTime startTimeCon = startTime.toDate();
     DateTime endTimeCon = endTime.toDate();
 
-    String morningVar;
     int hour1;
     int hour2;
 
     if(startTimeCon.hour> 12 || endTimeCon.hour > 12){
       hour1 = startTimeCon.hour - 12;
       hour2 = endTimeCon.hour - 12;
-      morningVar = 'PM';
     }else{
       hour1 = startTimeCon.hour;
       hour2 = endTimeCon.hour;
-      morningVar = 'AM';
     }
     String startTimeString = hour1.toString().padLeft(1, '0') + ":" + startTimeCon.minute.toString().padLeft(2, '0');
     String endTimeString = hour2.toString().padLeft(1, '0') + ":" + endTimeCon.minute.toString().padLeft(2, '0');
