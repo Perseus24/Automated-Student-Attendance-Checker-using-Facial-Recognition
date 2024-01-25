@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/signInPage.dart';
-import 'package:flutter_application_1/temporarySecond.dart';
-import 'package:flutter_application_1/thirdPage.dart';
+import 'package:flutter_application_1/screens/login_page.dart';
+import 'package:flutter_application_1/screens/register_user.dart';
+import 'package:flutter_application_1/screens/main_homepage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
-import 'build_routes.dart';
-import 'appColors.dart';
+import '../utilities/build_routes.dart';
+import '../utilities/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import '../firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
@@ -78,7 +78,7 @@ class _MainPageState extends State<MainPage> {
     ScreenUtil.init(context, designSize: const Size(375, 677));
     return Scaffold(
       body: Container(
-        color: AppColors.blueColor,
+        color: blueColor,
         height: getDynamicSize.getHeight(context),
         child: Stack(
           children: [
@@ -114,7 +114,7 @@ class _MainPageState extends State<MainPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              BigText(text: "KUMIT", color: AppColors.blueColor, size: 30.sp, fontWeight: FontWeight.w700,),
+                              BigText(text: "KUMIT", color: blueColor, size: 30.sp, fontWeight: FontWeight.w700,),
                               BigText(text: " App", color: Colors.black.withOpacity(0.8500000238418579), size: ScreenUtil().setSp(30), fontWeight: FontWeight.w700,),
                             ],
                           )
@@ -138,7 +138,7 @@ class _MainPageState extends State<MainPage> {
                         height: 47.h,
                         width: 289.w,
                         decoration: ShapeDecoration(
-                          color: AppColors.blueColor,
+                          color: blueColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -146,7 +146,7 @@ class _MainPageState extends State<MainPage> {
                         child: ElevatedButton(
                           clipBehavior: Clip.antiAlias,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.blueColor,
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),

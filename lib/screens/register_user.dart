@@ -1,18 +1,16 @@
 
-//import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/registerFaceAdmin.dart';
-import 'package:flutter_application_1/thirdPage.dart';
+import 'package:flutter_application_1/screens/register_face.dart';
 import 'package:get/get.dart';
-import 'build_routes.dart';
+import '../utilities/build_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'main.dart';
-import 'appColors.dart';
+import '../utilities/constants.dart';
 import 'dart:convert';
-import 'widgets/big_texts.dart';
+import '../widgets/big_texts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -436,7 +434,7 @@ class _RegisterPageState extends State<RegisterPage>{
                     controller: _controller,
                     count: 3,
                     effect: ExpandingDotsEffect(
-                      activeDotColor: AppColors.blueColor,
+                      activeDotColor:blueColor,
                       dotColor: Colors.blue.shade100,
                       dotHeight: 10,
                       dotWidth: 10,
@@ -598,7 +596,7 @@ class _Page1State extends State<Page1> {
                             padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                             child: TextFormField(
                               controller: page1controller.firstNameController,
-                              cursorColor: AppColors.blueColor,
+                              cursorColor: blueColor,
                               onChanged: (_){
                                 page1controller.updateInputs();
                               },
@@ -670,7 +668,7 @@ class _Page1State extends State<Page1> {
                             padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                             child: TextFormField(
                               controller: page1controller.lastNameController,
-                              cursorColor: AppColors.blueColor,
+                              cursorColor: blueColor,
 
                               onChanged: (_){
                                 page1controller.updateInputs();
@@ -744,7 +742,7 @@ class _Page1State extends State<Page1> {
                             padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                             child: TextFormField(
                               controller: page1controller.middleNameController,
-                              cursorColor: AppColors.blueColor,
+                              cursorColor:blueColor,
                               decoration: InputDecoration(
                                 errorText: page1controller.hasLastNameError.value ? null : null,
                                 //errorStyle: TextStyle(fontSize: 2),
@@ -1269,7 +1267,7 @@ class _Page3State extends State<Page3> {
                               padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                               child: TextFormField(
                                 controller: page3controller.emailController,
-                                cursorColor: AppColors.blueColor,
+                                cursorColor: blueColor,
                                 onChanged: (_){
                                   page3controller.updateInputs();
                                 },
@@ -1340,7 +1338,7 @@ class _Page3State extends State<Page3> {
                               padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                               child: TextFormField(
                                 controller: page3controller.passwordController,
-                                cursorColor: AppColors.blueColor,
+                                cursorColor: blueColor,
                                 onChanged: (_){
                                   page3controller.updateInputs();
                                 },

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/appColors.dart';
-import 'package:flutter_application_1/main.dart';
-import 'package:flutter_application_1/signInPage.dart';
-import 'package:flutter_application_1/temporarySecond.dart';
-import 'package:flutter_application_1/thirdPage.dart';
+import 'package:flutter_application_1/utilities/constants.dart';
+import 'package:flutter_application_1/screens/main.dart';
+import 'package:flutter_application_1/screens/login_page.dart';
+import 'package:flutter_application_1/screens/register_user.dart';
+import 'package:flutter_application_1/screens/main_homepage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
-import 'build_routes.dart';
+import '../utilities/build_routes.dart';
 
 
 void main() => runApp(ForgotPassPage());
@@ -23,7 +23,7 @@ class ForgotPassPage extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
       child: Container(
-        color: AppColors.blueColor,
+        color: blueColor,
           height: getDynamicSize.getHeight(context),
           child: Stack(
             children: [
@@ -40,7 +40,7 @@ class ForgotPassPage extends StatelessWidget {
                               },
                               clipBehavior: Clip.antiAlias,
                               style: TextButton.styleFrom(
-                                backgroundColor: AppColors.blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
@@ -141,7 +141,7 @@ class ForgotPassPage extends StatelessWidget {
                                       padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                                       child: Obx(() =>TextFormField(
                                         controller: logInControllerTemp.passwordController,
-                                        cursorColor: AppColors.blueColor,
+                                        cursorColor: blueColor,
                                         onChanged: (_){
                                           logInControllerTemp.passwordWrongController.text = '';
                                           logInControllerTemp..updateInputs();

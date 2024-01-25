@@ -1,22 +1,26 @@
 import 'package:firebase_admin/firebase_admin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/thirdPage.dart';
+import 'package:flutter_application_1/screens/main_homepage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'appColors.dart';
-import 'build_routes.dart';
-import 'calendarPage.dart';
+import '../utilities/constants.dart';
+import '../utilities/build_routes.dart';
+import '../screens/calendar_page.dart';
 
-class buildDrawer extends StatelessWidget {
+
+class BuildDrawer extends StatelessWidget {
+
+  BuildDrawer({required this.pageIndication});
+  final int pageIndication;
   int num0 = 0;
   int num1 = 0;
   int num2 = 0;
   int num3 = 0;
 
-
-  Widget drawer(BuildContext context, int pageIndication) {
+  @override
+  Widget build(BuildContext context) {
     switch(pageIndication){
       case 0: num0 = 1;
               break;
@@ -72,7 +76,7 @@ class buildDrawer extends StatelessWidget {
                       children: [
                         Image.asset('images/dashboard_$num0.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Dashboard", size: 16.sp, color:pageIndication==0?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Dashboard", size: 16.sp, color:pageIndication==0?blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -105,7 +109,7 @@ class buildDrawer extends StatelessWidget {
                       children: [
                         Image.asset('images/statistics_$num1.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Statistics", size: 16.sp, color: pageIndication==1?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Statistics", size: 16.sp, color: pageIndication==1?blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -138,7 +142,7 @@ class buildDrawer extends StatelessWidget {
                       children: [
                         Image.asset('images/calendar_$num2.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Calendar", size: 16.sp, color: pageIndication==2?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Calendar", size: 16.sp, color: pageIndication==2?blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -171,7 +175,7 @@ class buildDrawer extends StatelessWidget {
                       children: [
                         Image.asset('images/profile_$num3.png'),
                         SizedBox(width: 10.w,),
-                        BigText(text: "Profile", size: 16.sp, color: pageIndication==3?AppColors.blueColor:Colors.black, fontWeight: FontWeight.w700,),
+                        BigText(text: "Profile", size: 16.sp, color: pageIndication==3?blueColor:Colors.black, fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -216,11 +220,6 @@ class buildDrawer extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
 }
 
 

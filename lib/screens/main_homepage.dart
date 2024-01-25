@@ -2,13 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'build_routes.dart';
-import 'drawerPage.dart';
-import 'getStringsDate.dart';
-import 'getUserInformations.dart';
+import '../utilities/build_routes.dart';
+import '../widgets/hamburger.dart';
+import '../utilities/get_weekdays_strings.dart';
+import '../utilities/get_user_data.dart';
 import 'main.dart';
-import 'appColors.dart';
-import 'widgets/big_texts.dart';
+import '../utilities/constants.dart';
+import '../widgets/big_texts.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,7 +32,7 @@ class MainHomePage extends StatelessWidget{
       home: Scaffold(
         appBar: AppBar(
           title: BigText(text: "Dashboard", color: Colors.white, size:25, fontWeight: FontWeight.w700,),
-          backgroundColor: AppColors.blueColor,
+          backgroundColor: blueColor,
           actions: [
             Container(
                 margin: EdgeInsets.only(right: getDynamicSize.getWidth(context)*0.07),
@@ -66,7 +66,7 @@ class MainHomePage extends StatelessWidget{
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
         body: Home1(),
-        drawer: buildDrawer().drawer(context, 0),
+        drawer: BuildDrawer(pageIndication: 0),
       ),
     );
   }
@@ -100,7 +100,7 @@ class Home1State extends State<Home1> {
               height: 140.h,
               margin: EdgeInsets.only(top: 25.h, left: 25.w, right: 25.w),
               decoration: ShapeDecoration(
-                color: AppColors.blueColor,
+                color: blueColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),
@@ -212,7 +212,7 @@ class Home1State extends State<Home1> {
                   right: getDynamicSize.getWidth(context)*0.05),
 
               decoration: ShapeDecoration(
-                color: AppColors.blueColor,
+                color: blueColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),
@@ -260,7 +260,7 @@ class Home1State extends State<Home1> {
                   right: getDynamicSize.getWidth(context)*0.05),
 
               decoration: ShapeDecoration(
-                color: AppColors.blueColor,
+                color: blueColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),

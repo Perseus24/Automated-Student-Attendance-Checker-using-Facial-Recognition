@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/forgotPass.dart';
-import 'package:flutter_application_1/thirdPage.dart';
+import 'package:flutter_application_1/screens/forgot_pass.dart';
+import 'package:flutter_application_1/screens/main_homepage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
-import 'build_routes.dart';
-import 'temporarySecond.dart';
+import '../utilities/build_routes.dart';
+import 'register_user.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'main.dart';
-import 'appColors.dart';
+import '../utilities/constants.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -154,7 +154,7 @@ class _SignInPageState extends State<SignInPage> {
                                 padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                                 child: Obx(() =>TextFormField(
                                   controller: logInControllerTemp.emailController,
-                                  cursorColor: AppColors.blueColor,
+                                  cursorColor: blueColor,
                                   onChanged: (_){
                                     logInControllerTemp.emailNotFoundController.text = '';
                                     logInControllerTemp.updateInputs();
@@ -231,7 +231,7 @@ class _SignInPageState extends State<SignInPage> {
                                 child: Obx(() =>TextFormField(
                                   obscureText: notshowPass,
                                   controller: logInControllerTemp.passwordController,
-                                  cursorColor: AppColors.blueColor,
+                                  cursorColor: blueColor,
                                   onChanged: (_){
                                     logInControllerTemp.passwordWrongController.text = '';
                                     logInControllerTemp..updateInputs();
@@ -281,11 +281,7 @@ class _SignInPageState extends State<SignInPage> {
                                   ),
                                 ),
                               ),
-
                             )
-
-
-
                           ],
                         ),
                       ],
@@ -361,7 +357,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).push(createRouteGo(ForgotPassPage()));
                     },
                     child: Center(
-                      child: BigText(text: 'Forgot Password?', size: 15.sp, color: AppColors.blueColor,),
+                      child: BigText(text: 'Forgot Password?', size: 15.sp, color: blueColor,),
                     ),
                   ),
                 ),
@@ -384,7 +380,7 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            color: AppColors.blueColor,
+            color: blueColor,
             strokeWidth: 5.w,
           ),
           SizedBox(height: 10.h,),

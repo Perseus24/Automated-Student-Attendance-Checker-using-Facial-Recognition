@@ -1,11 +1,11 @@
 
 import 'main.dart';
-import 'thirdPage.dart';
-import 'widgets/big_texts.dart';
-import 'appColors.dart';
+import 'main_homepage.dart';
+import '../widgets/big_texts.dart';
+import '../utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'build_routes.dart';
+import '../utilities/build_routes.dart';
 
 void main(){
   runApp((RegisterFace()));
@@ -22,7 +22,7 @@ class _RegisterFaceState extends State<RegisterFace> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.blueColor,
+      color: blueColor,
       child: Stack(
         children: [
           Positioned(
@@ -38,7 +38,7 @@ class _RegisterFaceState extends State<RegisterFace> {
                       },
                       clipBehavior: Clip.antiAlias,
                       style: TextButton.styleFrom(
-                        backgroundColor: AppColors.blueColor,
+                        backgroundColor: blueColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -94,7 +94,7 @@ class _RegisterFaceState extends State<RegisterFace> {
                     height: 47.h,
                     width: 289.w,
                     decoration: ShapeDecoration(
-                      color: AppColors.blueColor,
+                      color: blueColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -102,7 +102,7 @@ class _RegisterFaceState extends State<RegisterFace> {
                     child: ElevatedButton(
                       clipBehavior: Clip.antiAlias,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blueColor,
+                        backgroundColor: blueColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),

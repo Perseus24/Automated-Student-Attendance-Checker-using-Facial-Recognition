@@ -1,18 +1,16 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/thirdPage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'build_routes.dart';
-import 'drawerPage.dart';
-import 'getStringsDate.dart';
-import 'getUserInformations.dart';
+import '../utilities/build_routes.dart';
+import '../widgets/hamburger.dart';
+import '../utilities/get_weekdays_strings.dart';
+import '../utilities/get_user_data.dart';
 import 'main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/appColors.dart';
+import 'package:flutter_application_1/utilities/constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarHome extends StatelessWidget {
@@ -45,7 +43,7 @@ class CalendarHome extends StatelessWidget {
               ],
             ),
           ),
-          backgroundColor: AppColors.blueColor,
+          backgroundColor: blueColor,
           actions: [
             Container(
                 margin: EdgeInsets.only(right: getDynamicSize.getWidth(context)*0.07),
@@ -79,7 +77,7 @@ class CalendarHome extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
         body: CalendarPage(),
-        drawer: buildDrawer().drawer(context, 2),
+        drawer: BuildDrawer(pageIndication: 2),
       ),
     );
   }
@@ -107,7 +105,7 @@ class _CalendarPageState extends State<CalendarPage> {
     DateTime lastDayOfMonth = nextMonthFirst.subtract(Duration(days: 1));
 
     return Container(
-      color: AppColors.blueColor,
+      color: blueColor,
       child: Stack(
         children: [
           Positioned(
@@ -317,7 +315,7 @@ class _CalendarPageState extends State<CalendarPage> {
               width: 265.w,
               padding: EdgeInsets.only(top: 12.h, left: 20.w, right: 20.w, bottom: 10.h),
               decoration: ShapeDecoration(
-                color: (position.isOdd)?AppColors.blueColor:Color(0x771A43BF),
+                color: (position.isOdd)?blueColor:Color(0x771A43BF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
