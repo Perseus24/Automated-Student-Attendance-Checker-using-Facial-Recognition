@@ -6,7 +6,7 @@ import '../utilities/build_routes.dart';
 import '../widgets/hamburger.dart';
 import '../utilities/get_weekdays_strings.dart';
 import '../utilities/get_user_data.dart';
-import 'main.dart';
+import 'landing_page.dart';
 import '../utilities/constants.dart';
 import '../widgets/big_texts.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
@@ -32,7 +32,7 @@ class MainHomePage extends StatelessWidget{
       home: Scaffold(
         appBar: AppBar(
           title: BigText(text: "Dashboard", color: Colors.white, size:25, fontWeight: FontWeight.w700,),
-          backgroundColor: blueColor,
+          backgroundColor: kBlueColor,
           actions: [
             Container(
                 margin: EdgeInsets.only(right: getDynamicSize.getWidth(context)*0.07),
@@ -100,7 +100,7 @@ class Home1State extends State<Home1> {
               height: 140.h,
               margin: EdgeInsets.only(top: 25.h, left: 25.w, right: 25.w),
               decoration: ShapeDecoration(
-                color: blueColor,
+                color: kBlueColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),
@@ -212,7 +212,7 @@ class Home1State extends State<Home1> {
                   right: getDynamicSize.getWidth(context)*0.05),
 
               decoration: ShapeDecoration(
-                color: blueColor,
+                color: kBlueColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),
@@ -260,7 +260,7 @@ class Home1State extends State<Home1> {
                   right: getDynamicSize.getWidth(context)*0.05),
 
               decoration: ShapeDecoration(
-                color: blueColor,
+                color: kBlueColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)
                 ),
@@ -328,205 +328,101 @@ class _ClassesBodyState extends State<ClassesBody>{
     super.initState();
   }
 
-  final String? hi = FirebaseAuth.instance.currentUser?.uid;
-
-  final CollectionReference studentTable = FirebaseFirestore.instance.collection('students');
-  final CollectionReference studentSubjectTable = FirebaseFirestore.instance.collection('student_subject');
-  final CollectionReference subjectsTable = FirebaseFirestore.instance.collection('subjects');
-  final CollectionReference professorsTable = FirebaseFirestore.instance.collection('professor');
-  final CollectionReference schedSubjectTable = FirebaseFirestore.instance.collection('subject_sched');
-  final CollectionReference roomTable = FirebaseFirestore.instance.collection('room');
-  final CollectionReference bldgTable = FirebaseFirestore.instance.collection('bldg');
-
   final userDataControllers = Get.put(UserDataControllers());
 
-
-  List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched, bool swtch){
-
-    final now = DateTime.now();
-    final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
-    List<DocumentSnapshot> filteredSched = sched.where((doc) =>
-                                                        doc['day_of_week'] == (swtch? dayOfWeek: (dayOfWeek == 7)?1:dayOfWeek+1)).toList();
-    filteredSched.sort((a, b) {
-      // Assuming 'time' is a string in HH:mm aa format
-      Timestamp tsA = a['start_time'];
-      Timestamp tsB = b['start_time'];
-
-      DateTime dtA = tsA.toDate();
-      DateTime dtB = tsB.toDate();
-
-      // Comparing DateTime objects
-      return dtA.hour.compareTo(dtB.hour);
-    });
-    return filteredSched;
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     int switchSched = widget.i;
-    String wordToday;
+    String wordToday = '';
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: studentTable.where('middle_name', isEqualTo: hi).snapshots(),
-      builder: (context, studentSnapshot){
-        if(!studentSnapshot.hasData){
-          return Center(child: CircularProgressIndicator());
-        }else{
-          final List<DocumentSnapshot> subjectDocs = studentSnapshot.data!.docs;
+    List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched, bool swtch){
 
-          return StreamBuilder<QuerySnapshot>(
-            stream: studentSubjectTable.where('student_id', isEqualTo: subjectDocs[0]['student_ID']).snapshots(),
-            builder: (context, studentSubjectSnapshot){
-              if(!studentSubjectSnapshot.hasData){
-                return Center(child: CircularProgressIndicator());
-              }else {
-                final List<DocumentSnapshot> studentSubjectDocs = studentSubjectSnapshot.data!.docs;
-                final subjectIDs = studentSubjectDocs.map((docs) => docs['subject_id']).toList();
+      final now = DateTime.now();
+      final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
+      List<DocumentSnapshot> filteredSched = sched.where((doc) =>
+      doc['day_of_week'] == (swtch? dayOfWeek: (dayOfWeek == 7)?1:dayOfWeek+1)).toList();
+      filteredSched.sort((a, b) {
+        // Assuming 'time' is a string in HH:mm aa format
+        Timestamp tsA = a['start_time'];
+        Timestamp tsB = b['start_time'];
 
-                return StreamBuilder<QuerySnapshot>(
-                  stream: subjectsTable.where('subject_id', whereIn: subjectIDs).snapshots(),
-                  builder: (context, subjectsSnapshot){
-                    if(!subjectsSnapshot.hasData){
-                      return Center(child: CircularProgressIndicator());
-                    }else {
-                      final List<DocumentSnapshot> subjectsDocs = subjectsSnapshot.data!.docs;
-                      final professorIDs = subjectsDocs.map((docs) => docs['professor_id']).toList();
-                      userDataControllers.setSubjectSnapshot(subjectsDocs);
+        DateTime dtA = tsA.toDate();
+        DateTime dtB = tsB.toDate();
 
-                      return StreamBuilder<QuerySnapshot>(
-                        stream: schedSubjectTable.where('subject_id', whereIn: subjectIDs).snapshots(),
-                        builder: (context, schedSubjectSnapshot){
-                          if(!schedSubjectSnapshot.hasData){
-                            return Center(child: CircularProgressIndicator());
-                          }else {
-                            final List<DocumentSnapshot> schedSubjectDocs = schedSubjectSnapshot.data!.docs;
-                            List<DocumentSnapshot> schedule = schedSubjectSnapshot.data!.docs;
-                            if (switchSched == 0) {
-                              wordToday = 'today';
-                              schedule = getSchedule(schedSubjectDocs, true);
-                            } else {
-                              wordToday = 'tomorrow';
-                              schedule = getSchedule(schedSubjectDocs, false);
-                            }
-                            final roomIDs = schedule.map((docs) => docs['room_id']).toList();
-                            final roomIDs2 = schedSubjectDocs.map((docs) => docs['room_id']).toList();
-                            userDataControllers.setScheduleSnapshot(schedSubjectDocs);
+        // Comparing DateTime objects
+        return dtA.hour.compareTo(dtB.hour);
+      });
+      return filteredSched;
+    }
 
-                            if (schedule.isEmpty) {
-                              return Container(
-                                  height: getDynamicSize.getHeight(context) * 0.1,
-                                  width: getDynamicSize.getWidth(context) * 0.8,
-                                  margin: EdgeInsets.only(left: getDynamicSize.getWidth(context) * 0.08, right: getDynamicSize.getWidth(
-                                      context) * 0.05),
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    shadows: [
-                                      BoxShadow(
-                                        color: Color(0x3F000000),
-                                        blurRadius: 4,
-                                        offset: Offset(0, 4),
-                                        spreadRadius: 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: Center(child: BigText(text: 'You have no classes $wordToday!', size: 15.sp, color: Colors.black,
-                                      fontWeight: FontWeight.w700))
-                              );
-                            }else{
-                              return StreamBuilder<QuerySnapshot>(
-                                stream: professorsTable.where('professor_id', whereIn: professorIDs).snapshots(),
-                                builder: (context, professorsSnapshot){
-                                  if(!professorsSnapshot.hasData){
-                                    return Center(child: CircularProgressIndicator());
-                                  }else {
-                                    final List<DocumentSnapshot> professorsDocs = professorsSnapshot.data!.docs;
-                                    userDataControllers.setProfessorSnapshot(professorsDocs);
+    List<DocumentSnapshot> schedule = userDataControllers.scheduleSnapshot;
+    List<DocumentSnapshot> subjectDocs = Get.find<UserDataControllers>().subjectSnapshot;
+    List<DocumentSnapshot> professorDocs = userDataControllers.professorSnapshot;
+    List<DocumentSnapshot> roomDocs = userDataControllers.roomSnapshot;
+    List<DocumentSnapshot> bldgDocs = userDataControllers.bldgSnapshot;
 
-                                    return StreamBuilder<QuerySnapshot>(
-                                      stream: roomTable.where('room_id', whereIn: roomIDs2).snapshots(),
-                                      builder: (context, roomSnapshot) {
-                                        if(!roomSnapshot.hasData) {
-                                          return Center(child: CircularProgressIndicator());
-                                        }else {
-                                          final List<DocumentSnapshot> roomDocs = roomSnapshot.data!.docs;
-                                          final bldgIDs2 = roomDocs.map((docs) => docs['bldg_id']).toList();
-                                          userDataControllers.setRoomSnapshot(roomDocs);
+    if (switchSched == 0) {
+      wordToday = 'today';
+      schedule = getSchedule(schedule, true);
+    } else {
+      wordToday = 'tomorrow';
+      schedule = getSchedule(schedule, false);
+    }
 
+    if(schedule.isEmpty){
+      return Container(
+          height: getDynamicSize.getHeight(context) * 0.1,
+          width: getDynamicSize.getWidth(context) * 0.8,
+          margin: EdgeInsets.only(left: getDynamicSize.getWidth(context) * 0.08, right: getDynamicSize.getWidth(
+              context) * 0.05),
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            shadows: [
+              BoxShadow(
+                color: Color(0x3F000000),
+                blurRadius: 4,
+                offset: Offset(0, 4),
+                spreadRadius: 0,
+              )
+            ],
+          ),
+          child: Center(child: BigText(text: 'You have no classes $wordToday!', size: 15.sp, color: Colors.black,
+              fontWeight: FontWeight.w700))
+      );
+    }else{
+      return Container(
+        height: getDynamicSize.getHeight(context) * 0.17,
+        child: PageView.builder(
+          itemCount: schedule.length,
+          controller: PageController(viewportFraction: 0.85),
+          itemBuilder: (context, position) {
+            final schedSubjectSnapshot = schedule[position];
+            final subjectSnapshot = subjectDocs.firstWhere((doc) => doc['subject_id'] == schedSubjectSnapshot['subject_id']);
+            final professorSnapshot = professorDocs.firstWhere((doc) => doc['professor_id'] == subjectSnapshot['professor_id']);
+            final roomSnapshot = roomDocs.firstWhere((doc) => doc['room_id'] == schedSubjectSnapshot['room_id']);
+            final bldgSnapshot = bldgDocs.firstWhere((doc) => doc['bldg_id'] == roomSnapshot['bldg_id']);
 
-                                          return StreamBuilder<QuerySnapshot>(
-                                            stream: roomTable.where('room_id', whereIn: roomIDs).snapshots(),
-                                            builder: (context, roomSnapshot) {
-                                              if (!roomSnapshot.hasData) {
-                                               return Center(child: CircularProgressIndicator());
-                                                } else {
-                                                  final List<DocumentSnapshot> roomDocs = roomSnapshot.data!.docs;
-                                                  final bldgIDs = roomDocs.map((docs) => docs['bldg_id']).toList();
+            return _buildPageItem(
+              schedSubjectSnapshot,
+              subjectSnapshot,
+              professorSnapshot,
+              roomSnapshot,
+              bldgSnapshot,
 
-                                                  return StreamBuilder<QuerySnapshot>(
-                                                    stream: bldgTable.where('bldg_id', whereIn: bldgIDs2).snapshots(),
-                                                      builder: (context, bldgSnapshot) {
-                                                        if (!bldgSnapshot.hasData) {
-                                                          return Center(child: CircularProgressIndicator());
-                                                        } else {
-                                                          final List<DocumentSnapshot> bldgDocs = bldgSnapshot.data!.docs;
-                                                          userDataControllers.setBldgSnapshot(bldgDocs);
+            );
+          },
+        ),
+      );
+    }
 
-                                                          return Container(
-                                                            height: getDynamicSize.getHeight(context) * 0.17,
-                                                            child: PageView.builder(
-                                                              itemCount: schedule.length,
-                                                              controller: PageController(viewportFraction: 0.85),
-                                                              itemBuilder: (context, position) {
-                                                                final schedSubjectSnapshot = schedule[position];
-                                                                final subjectSnapshot = subjectsDocs.firstWhere((doc) =>
-                                                                    doc['subject_id'] == schedSubjectSnapshot['subject_id']);
-                                                                final professorSnapshot = professorsDocs.firstWhere((doc) =>
-                                                                    doc['professor_id'] == subjectSnapshot['professor_id']);
-                                                                final roomSnapshot = roomDocs.firstWhere((doc) =>
-                                                                    doc['room_id'] == schedSubjectSnapshot['room_id']);
-                                                                final bldgSnapshot = bldgDocs.firstWhere((doc) =>
-                                                                    doc['bldg_id'] == roomSnapshot['bldg_id']);
-
-                                                                return _buildPageItem(
-                                                                  schedSubjectSnapshot,
-                                                                  subjectSnapshot,
-                                                                  professorSnapshot,
-                                                                  roomSnapshot,
-                                                                  bldgSnapshot,
-
-                                                                );
-                                                              },
-                                                            ),
-                                                          );
-                                                        }
-                                                      }
-                                                  );
-                                                }
-                                              }
-                                          );
-                                        }
-                                      }
-                                    );
-                                  }
-                                }
-                              );
-                            }
-                          }
-                        }
-                      );
-                    }
-                  }
-                );
-              }
-            }
-          );
-        }
-      }
-    );
   }
+
+
+
+
 
 
   Widget _buildPageItem(DocumentSnapshot schedSubjectSnapshot, DocumentSnapshot subjectSnapshot, DocumentSnapshot professorSnapshot,

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'main.dart';
+import 'landing_page.dart';
 import '../utilities/constants.dart';
 import 'dart:convert';
 import '../widgets/big_texts.dart';
@@ -434,7 +434,7 @@ class _RegisterPageState extends State<RegisterPage>{
                     controller: _controller,
                     count: 3,
                     effect: ExpandingDotsEffect(
-                      activeDotColor:blueColor,
+                      activeDotColor:kBlueColor,
                       dotColor: Colors.blue.shade100,
                       dotHeight: 10,
                       dotWidth: 10,
@@ -596,7 +596,7 @@ class _Page1State extends State<Page1> {
                             padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                             child: TextFormField(
                               controller: page1controller.firstNameController,
-                              cursorColor: blueColor,
+                              cursorColor: kBlueColor,
                               onChanged: (_){
                                 page1controller.updateInputs();
                               },
@@ -668,7 +668,7 @@ class _Page1State extends State<Page1> {
                             padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                             child: TextFormField(
                               controller: page1controller.lastNameController,
-                              cursorColor: blueColor,
+                              cursorColor: kBlueColor,
 
                               onChanged: (_){
                                 page1controller.updateInputs();
@@ -742,7 +742,7 @@ class _Page1State extends State<Page1> {
                             padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                             child: TextFormField(
                               controller: page1controller.middleNameController,
-                              cursorColor:blueColor,
+                              cursorColor:kBlueColor,
                               decoration: InputDecoration(
                                 errorText: page1controller.hasLastNameError.value ? null : null,
                                 //errorStyle: TextStyle(fontSize: 2),
@@ -1267,7 +1267,7 @@ class _Page3State extends State<Page3> {
                               padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                               child: TextFormField(
                                 controller: page3controller.emailController,
-                                cursorColor: blueColor,
+                                cursorColor: kBlueColor,
                                 onChanged: (_){
                                   page3controller.updateInputs();
                                 },
@@ -1338,7 +1338,7 @@ class _Page3State extends State<Page3> {
                               padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                               child: TextFormField(
                                 controller: page3controller.passwordController,
-                                cursorColor: blueColor,
+                                cursorColor: kBlueColor,
                                 onChanged: (_){
                                   page3controller.updateInputs();
                                 },

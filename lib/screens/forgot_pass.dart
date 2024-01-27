@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utilities/constants.dart';
-import 'package:flutter_application_1/screens/main.dart';
+import 'package:flutter_application_1/screens/landing_page.dart';
 import 'package:flutter_application_1/screens/login_page.dart';
 import 'package:flutter_application_1/screens/register_user.dart';
 import 'package:flutter_application_1/screens/main_homepage.dart';
@@ -23,7 +23,7 @@ class ForgotPassPage extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
       child: Container(
-        color: blueColor,
+        color: kBlueColor,
           height: getDynamicSize.getHeight(context),
           child: Stack(
             children: [
@@ -40,7 +40,7 @@ class ForgotPassPage extends StatelessWidget {
                               },
                               clipBehavior: Clip.antiAlias,
                               style: TextButton.styleFrom(
-                                backgroundColor: blueColor,
+                                backgroundColor: kBlueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
@@ -141,7 +141,7 @@ class ForgotPassPage extends StatelessWidget {
                                       padding: EdgeInsets.only(top: 0.h, left: 10.h, right: 10.h),
                                       child: Obx(() =>TextFormField(
                                         controller: logInControllerTemp.passwordController,
-                                        cursorColor: blueColor,
+                                        cursorColor: kBlueColor,
                                         onChanged: (_){
                                           logInControllerTemp.passwordWrongController.text = '';
                                           logInControllerTemp..updateInputs();

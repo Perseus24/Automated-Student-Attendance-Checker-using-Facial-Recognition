@@ -7,7 +7,7 @@ import '../utilities/build_routes.dart';
 import '../widgets/hamburger.dart';
 import '../utilities/get_weekdays_strings.dart';
 import '../utilities/get_user_data.dart';
-import 'main.dart';
+import 'landing_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utilities/constants.dart';
@@ -43,7 +43,7 @@ class CalendarHome extends StatelessWidget {
               ],
             ),
           ),
-          backgroundColor: blueColor,
+          backgroundColor: kBlueColor,
           actions: [
             Container(
                 margin: EdgeInsets.only(right: getDynamicSize.getWidth(context)*0.07),
@@ -105,7 +105,7 @@ class _CalendarPageState extends State<CalendarPage> {
     DateTime lastDayOfMonth = nextMonthFirst.subtract(Duration(days: 1));
 
     return Container(
-      color: blueColor,
+      color: kBlueColor,
       child: Stack(
         children: [
           Positioned(
@@ -315,7 +315,7 @@ class _CalendarPageState extends State<CalendarPage> {
               width: 265.w,
               padding: EdgeInsets.only(top: 12.h, left: 20.w, right: 20.w, bottom: 10.h),
               decoration: ShapeDecoration(
-                color: (position.isOdd)?blueColor:Color(0x771A43BF),
+                color: (position.isOdd)?kBlueColor:Color(0x771A43BF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

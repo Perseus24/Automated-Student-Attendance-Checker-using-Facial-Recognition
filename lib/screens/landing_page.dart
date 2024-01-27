@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/login_page.dart';
 import 'package:flutter_application_1/screens/register_user.dart';
 import 'package:flutter_application_1/screens/main_homepage.dart';
+import 'package:flutter_application_1/utilities/get_user_data.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import '../utilities/build_routes.dart';
 import '../utilities/constants.dart';
@@ -23,30 +24,16 @@ Future <void> main() async{
   );
 }
 
-Future<bool> checkLoggedIn() async{
-      //check if there's a user already logged in
-  Completer<bool> complete = Completer();
-  FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    if (user != null) {
-      complete.complete(true);
-    }else{
-      complete.complete(false);
-    }
-  });
-  //uncomment this once all the pages before main homepage completes
-  return complete.future;
-  return false;
-
-}
-
 
 class MyApp extends StatelessWidget {
+
+  UserDataControllers userDataControllers = UserDataControllers();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: FutureBuilder(
-        future: checkLoggedIn(),
+        future: userDataControllers.checkLoggedIn(),
         builder: (context, snapshot){
           if(snapshot.connectionState == ConnectionState.done){
             if (snapshot.data == true) {
@@ -78,7 +65,7 @@ class _MainPageState extends State<MainPage> {
     ScreenUtil.init(context, designSize: const Size(375, 677));
     return Scaffold(
       body: Container(
-        color: blueColor,
+        color: kBlueColor,
         height: getDynamicSize.getHeight(context),
         child: Stack(
           children: [
@@ -114,7 +101,7 @@ class _MainPageState extends State<MainPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              BigText(text: "KUMIT", color: blueColor, size: 30.sp, fontWeight: FontWeight.w700,),
+                              BigText(text: "KUMIT", color: kBlueColor, size: 30.sp, fontWeight: FontWeight.w700,),
                               BigText(text: " App", color: Colors.black.withOpacity(0.8500000238418579), size: ScreenUtil().setSp(30), fontWeight: FontWeight.w700,),
                             ],
                           )
@@ -138,7 +125,7 @@ class _MainPageState extends State<MainPage> {
                         height: 47.h,
                         width: 289.w,
                         decoration: ShapeDecoration(
-                          color: blueColor,
+                          color: kBlueColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -146,7 +133,7 @@ class _MainPageState extends State<MainPage> {
                         child: ElevatedButton(
                           clipBehavior: Clip.antiAlias,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
+                            backgroundColor: kBlueColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
