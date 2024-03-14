@@ -15,10 +15,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 Future <void> main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(
     MyApp()
   );
@@ -39,10 +35,10 @@ class MyApp extends StatelessWidget {
             if (snapshot.data == true) {
               return MainHomePage();
             } else {
-              return MainPage();
+              return LandingPage();
             }
           }else{
-            return MainPage();
+            return LandingPage();
           }
         },
       )
@@ -50,14 +46,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class LandingPage extends StatefulWidget {
+  const LandingPage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<LandingPage> createState() => _LandingPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {

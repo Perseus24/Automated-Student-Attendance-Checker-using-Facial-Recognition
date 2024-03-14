@@ -1,5 +1,7 @@
+import 'package:firebase_admin/firebase_admin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/notification_page.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import '../utilities/build_routes.dart';
@@ -19,8 +21,14 @@ void main(){
   runApp(MainHomePage());
 }
 
+class NotifContoller extends GetxController{
+  RxBool tempNotif = false.obs;
+}
+
 class MainHomePage extends StatelessWidget{
-  const MainHomePage({Key? key}) : super(key:key);
+
+
+  final notifController = Get.put(NotifContoller());
 
   @override
   Widget build(BuildContext context){
@@ -44,7 +52,7 @@ class MainHomePage extends StatelessWidget{
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              Navigator.of(context).push(createRouteBack(MyApp()));
+                              notifController.tempNotif.value = !notifController.tempNotif.value;
                             },
                             clipBehavior: Clip.antiAlias,
                             style: ElevatedButton.styleFrom(
@@ -66,7 +74,7 @@ class MainHomePage extends StatelessWidget{
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
         body: Home1(),
-        drawer: BuildDrawer(pageIndication: 0),
+        drawer: BuildDrawer(selectedAppPage: AppPages.Dashboard,),
       ),
     );
   }
@@ -82,6 +90,7 @@ class Home1 extends StatefulWidget {
 }
 
 class Home1State extends State<Home1> {
+  final notifController = Get.put(NotifContoller());
 
   @override
   Widget build(BuildContext context) {
@@ -91,221 +100,234 @@ class Home1State extends State<Home1> {
     String month = getMonth(now.month);
     String dateShow = "$month ${now.day}, $dayOfWeek";
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 140.h,
-              margin: EdgeInsets.only(top: 25.h, left: 25.w, right: 25.w),
-              decoration: ShapeDecoration(
-                color: kBlueColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x3F000000),
-                    blurRadius: 4,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  )
-                ],
-              ),
-
-              child: Container(
-                padding: EdgeInsets.only(top: 10.h, left:22.w, right: 22.w, bottom: 20.h),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        BigText(text: dateShow, size: 15.sp, color:Color(0xFFD7D7D8), fontWeight: FontWeight.w400,
-                          letterSpacing: 0.05,),
-                        Container(
-                            child: DigitalClock(
-                              areaHeight: getDynamicSize.getHeight(context)*0.03,
-                              hourMinuteDigitTextStyle: TextStyle(
-                                color: Color(0xFFD7D7D8),
-                                fontFamily: 'SF Pro Display',
-                                fontSize: 15.sp,
-                              ),
-                              secondDigitTextStyle: TextStyle(
-                                color: Color(0xFFD7D7D8),
-                                fontFamily: 'SF Pro Display',
-                                fontSize: 10.sp,
-                              ),
-                              colon: Text(
-                                  ":",
-
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    color: Color(0xFFD7D7D8),
-                                  )
-                              ),
-                            )
-
-                        ),
-                      ],
+    return Stack(
+      children: [
+        Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 140.h,
+                  margin: EdgeInsets.only(top: 25.h, left: 25.w, right: 25.w),
+                  decoration: ShapeDecoration(
+                    color: kBlueColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
                     ),
-                    SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
-                    Row(
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x3F000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+
+                  child: Container(
+                    padding: EdgeInsets.only(top: 10.h, left:22.w, right: 22.w, bottom: 20.h),
+                    child: Column(
                       children: [
-                        BigText(text: "Welcome back, Cy!", color: Colors.white, size: 22.sp, fontWeight: FontWeight.w700,
-                          letterSpacing: 0.08,)
-                      ],
-                    ),
-                    SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            BigText(text: 'You currently have an attendance rate', color: Colors.white, letterSpacing: 0.06,
-                              size: 16.sp, fontWeight: FontWeight.w400,),
-                            SizedBox(height: getDynamicSize.getHeight(context)*0.005,),
-                            Row(
+                            BigText(text: dateShow, size: 15.sp, color:Color(0xFFD7D7D8), fontWeight: FontWeight.w400,
+                              letterSpacing: 0.05,),
+                            Container(
+                                child: DigitalClock(
+                                  areaHeight: getDynamicSize.getHeight(context)*0.03,
+                                  hourMinuteDigitTextStyle: TextStyle(
+                                    color: Color(0xFFD7D7D8),
+                                    fontFamily: 'SF Pro Display',
+                                    fontSize: 15.sp,
+                                  ),
+                                  secondDigitTextStyle: TextStyle(
+                                    color: Color(0xFFD7D7D8),
+                                    fontFamily: 'SF Pro Display',
+                                    fontSize: 10.sp,
+                                  ),
+                                  colon: Text(
+                                      ":",
+
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        color: Color(0xFFD7D7D8),
+                                      )
+                                  ),
+                                )
+
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
+                        Row(
+                          children: [
+                            BigText(text: "Welcome back, Cy!", color: Colors.white, size: 22.sp, fontWeight: FontWeight.w700,
+                              letterSpacing: 0.08,)
+                          ],
+                        ),
+                        SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                BigText(text: 'of', color: Colors.white, letterSpacing: 0.06,
+                                BigText(text: 'You currently have an attendance rate', color: Colors.white, letterSpacing: 0.06,
                                   size: 16.sp, fontWeight: FontWeight.w400,),
-                                BigText(text: ' 60%', color: Colors.white, letterSpacing: 0.06,
-                                  size: 16.sp, fontWeight: FontWeight.w700,),
-                                BigText(text: '. Keep up the good work!', color: Colors.white, letterSpacing: 0.06,
-                                  size: 16.sp, fontWeight: FontWeight.w400,),
+                                SizedBox(height: getDynamicSize.getHeight(context)*0.005,),
+                                Row(
+                                  children: [
+                                    BigText(text: 'of', color: Colors.white, letterSpacing: 0.06,
+                                      size: 16.sp, fontWeight: FontWeight.w400,),
+                                    BigText(text: ' 60%', color: Colors.white, letterSpacing: 0.06,
+                                      size: 16.sp, fontWeight: FontWeight.w700,),
+                                    BigText(text: '. Keep up the good work!', color: Colors.white, letterSpacing: 0.06,
+                                      size: 16.sp, fontWeight: FontWeight.w400,),
+                                  ],
+                                )
                               ],
                             )
                           ],
+
                         )
                       ],
-
-                    )
-                  ],
-                ),
-              ),
-
-            ),
-            Container(
-                height: getDynamicSize.getHeight(context)*0.05,
-                margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
-                    right: getDynamicSize.getWidth(context)*0.05),
-                child: BigText(text: "Today's schedule", size: 20.sp, fontWeight: FontWeight.w700, color: Colors.black,)
-            ),
-            ClassesBody(0),
-            Container(
-                height: getDynamicSize.getHeight(context)*0.05,
-                margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
-                    right: getDynamicSize.getWidth(context)*0.05),
-                child: BigText(text: "Tomorrow's schedule",size: 20.sp, fontWeight: FontWeight.w700, color: Colors.black,)
-            ),
-            ClassesBody(1),
-            Container(
-                height: getDynamicSize.getHeight(context)*0.03,
-                margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
-                    right: getDynamicSize.getWidth(context)*0.05),
-                child: BigText(text: "Related Websites", size: 20.sp, fontWeight: FontWeight.w700, color: Colors.black,)
-            ),
-            Container(
-              width: getDynamicSize.getWidth(context)*1,
-              height: getDynamicSize.getHeight(context)*0.1,
-              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
-                  right: getDynamicSize.getWidth(context)*0.05),
-
-              decoration: ShapeDecoration(
-                color: kBlueColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x3F000000),
-                    blurRadius: 4,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  )
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                      margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.04),
-                      child: Image.asset('images/BU_Logo.png')
+                    ),
                   ),
-                  Column(
+
+                ),
+                Container(
+                    height: getDynamicSize.getHeight(context)*0.05,
+                    margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                        right: getDynamicSize.getWidth(context)*0.05),
+                    child: BigText(text: "Today's schedule", size: 20.sp, fontWeight: FontWeight.w700, color: Colors.black,)
+                ),
+                ClassesBody(0),
+                Container(
+                    height: getDynamicSize.getHeight(context)*0.05,
+                    margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                        right: getDynamicSize.getWidth(context)*0.05),
+                    child: BigText(text: "Tomorrow's schedule",size: 20.sp, fontWeight: FontWeight.w700, color: Colors.black,)
+                ),
+                ClassesBody(1),
+                Container(
+                    height: getDynamicSize.getHeight(context)*0.03,
+                    margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                        right: getDynamicSize.getWidth(context)*0.05),
+                    child: BigText(text: "Related Websites", size: 20.sp, fontWeight: FontWeight.w700, color: Colors.black,)
+                ),
+                Container(
+                  width: getDynamicSize.getWidth(context)*1,
+                  height: getDynamicSize.getHeight(context)*0.1,
+                  margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                      right: getDynamicSize.getWidth(context)*0.05),
+
+                  decoration: ShapeDecoration(
+                    color: kBlueColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x3F000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Row(
                     children: [
                       Container(
-                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
-                          width: getDynamicSize.getWidth(context)*0.65,
-                          child: BigText(text: 'Bicol University Student Portal', color: Colors.white, fontWeight: FontWeight.w700,size: 16, maxLines: 1,)
+                          margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.04),
+                          child: Image.asset('images/BU_Logo.png')
                       ),
-                      Container(
-                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.0035, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
-                          width: getDynamicSize.getWidth(context)*0.65,
-                          child: GestureDetector(
-                              onTap: () => launchUrl(Uri.parse("https://ibu.bicol-u.edu.ph")),
-                              child: BigText(text: "https://ibu.bicol-u.edu.ph", color: Colors.white, fontWeight: FontWeight.w400,size: 15, maxLines: 1,)
-                          )
-                      ),
+                      Column(
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                              width: getDynamicSize.getWidth(context)*0.65,
+                              child: BigText(text: 'Bicol University Student Portal', color: Colors.white, fontWeight: FontWeight.w700,size: 16, maxLines: 1,)
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.0035, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                              width: getDynamicSize.getWidth(context)*0.65,
+                              child: GestureDetector(
+                                  onTap: () => launchUrl(Uri.parse("https://ibu.bicol-u.edu.ph")),
+                                  child: BigText(text: "https://ibu.bicol-u.edu.ph", color: Colors.white, fontWeight: FontWeight.w400,size: 15, maxLines: 1,)
+                              )
+                          ),
+
+                        ],
+                      )
 
                     ],
-                  )
-
-                ],
-              ),
-            ),
-            Container(
-              width: getDynamicSize.getWidth(context)*1,
-              height: getDynamicSize.getHeight(context)*0.1,
-              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
-                  right: getDynamicSize.getWidth(context)*0.05),
-
-              decoration: ShapeDecoration(
-                color: kBlueColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x3F000000),
-                    blurRadius: 4,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  )
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                      margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.04),
-                      child: Image.asset('images/BU.png')
                   ),
-                  Column(
+                ),
+                Container(
+                  width: getDynamicSize.getWidth(context)*1,
+                  height: getDynamicSize.getHeight(context)*0.1,
+                  margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.03, left: getDynamicSize.getWidth(context)*0.05,
+                      right: getDynamicSize.getWidth(context)*0.05),
+
+                  decoration: ShapeDecoration(
+                    color: kBlueColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x3F000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Row(
                     children: [
                       Container(
-                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
-                          width: getDynamicSize.getWidth(context)*0.65,
-                          child: BigText(text: 'Bicol University Learning Management System', color: Colors.white, fontWeight: FontWeight.w700,size: 16.sp, maxLines: 1,)
+                          margin: EdgeInsets.only(left: getDynamicSize.getWidth(context)*0.04),
+                          child: Image.asset('images/BU.png')
                       ),
-                      Container(
-                          margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.0035, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
-                          width: getDynamicSize.getWidth(context)*0.65,
-                          child: GestureDetector(
-                              onTap: () => launchUrl(Uri.parse("https://bulms.bicol-u.edu.ph/login/index.php")),
-                              child: BigText(text: "https://bulms.bicol-u.edu.ph/login/index.php", color: Colors.white, fontWeight: FontWeight.w400,size: 16.sp, maxLines: 1,)
-                          )
-                      ),
-
+                      Column(
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.02, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                              width: getDynamicSize.getWidth(context)*0.65,
+                              child: BigText(text: 'Bicol University Learning Management System', color: Colors.white, fontWeight: FontWeight.w700,size: 16.sp, maxLines: 1,)
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(top: getDynamicSize.getHeight(context)*0.0035, left: getDynamicSize.getWidth(context)*0.02, right: getDynamicSize.getWidth(context)*0.02,),
+                              width: getDynamicSize.getWidth(context)*0.65,
+                              child: GestureDetector(
+                                  onTap: () => launchUrl(Uri.parse("https://bulms.bicol-u.edu.ph/login/index.php")),
+                                  child: BigText(text: "https://bulms.bicol-u.edu.ph/login/index.php", color: Colors.white, fontWeight: FontWeight.w400,size: 16.sp, maxLines: 1,)
+                              )
+                          ),
+                        ],
+                      )
                     ],
-                  )
-
-                ],
-              ),
+                  ),
+                ),
+                SizedBox(height:10),
+              ],
             ),
-            SizedBox(height:10)
-          ],
+          ),
+          //drawer: drawerPage(),
         ),
-      ),
-      //drawer: drawerPage(),
+        Obx(()=>Positioned.fill(
+          top: getDynamicSize.getHeight(context)*0.3,
+          child: notifController.tempNotif.value ? NotificationPage2(context) : Container()
+        ))
+      ],
+    );
+  }
+
+  Widget NotificationPage2(BuildContext context){
+    return Container(
+      height: 200.h,
+      color: Colors.red,
     );
   }
 }
@@ -540,6 +562,7 @@ class _ClassesBodyState extends State<ClassesBody>{
             ],
           )
       ),
+
 
     );
   }
