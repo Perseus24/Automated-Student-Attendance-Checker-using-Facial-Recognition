@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admin/firebase_admin.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,14 +13,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utilities/constants.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../utilities/constants.dart';
 
 class CalendarHome extends StatelessWidget {
   const CalendarHome({super.key});
 
   @override
   Widget build(BuildContext context){
+
     DateTime now = DateTime(2024, DateTime.now().month, DateTime.now().day);
     String dayOfWeek = getDayOfWeek(now.weekday);
+    String monthString = getMonth(now.month);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -31,13 +35,13 @@ class CalendarHome extends StatelessWidget {
           title: Container(
             child: Row(
               children: [
-                BigText(text: now.day.toString(), color: Color(0xFFFFC278), size: 45.sp, fontWeight: FontWeight.w500,),
+                BigText(text: now.day.toString(), color: Color(0xFFFFC278), size: 45, fontWeight: FontWeight.w500,),
                 SizedBox(width: 8.w,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BigText(text: dayOfWeek.toString(), color: Color(0xFFBCC1CD), size: 14.sp, fontWeight: FontWeight.w500,),
-                    BigText(text: 'Jan 2024', color: Color(0xFFBCC1CD), size: 14.sp, fontWeight: FontWeight.w500,)
+                    BigText(text: dayOfWeek.toString(), color: Color(0xFFBCC1CD), size: 15, fontWeight: FontWeight.w500,),
+                    BigText(text: '${monthString} 2024', color: Color(0xFFBCC1CD), size: 15, fontWeight: FontWeight.w500,)
                   ],
                 )
               ],
@@ -46,7 +50,7 @@ class CalendarHome extends StatelessWidget {
           backgroundColor: kBlueColor,
           actions: [
             Container(
-                margin: EdgeInsets.only(right: getDynamicSize.getWidth(context)*0.07),
+                margin: EdgeInsets.only(right: 20),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -73,11 +77,12 @@ class CalendarHome extends StatelessWidget {
                 )
             ),
           ],
-          toolbarHeight: getDynamicSize.getHeight(context)*0.12,
+          toolbarHeight: 90,
+          //leadingWidth: 40,
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
         body: CalendarPage(),
-        drawer: BuildDrawer(pageIndication: 2),
+        drawer: BuildDrawer(selectedAppPage: AppPages.Calendar,),
       ),
     );
   }
@@ -210,7 +215,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
     List<DocumentSnapshot<Object?>> getSchedule(List<DocumentSnapshot> sched){
 
-      final now = DateTime(2024,1,_selectedDay.day);
+      final now = DateTime(2024,DateTime.now().month,_selectedDay.day);
       final dayOfWeek = now.weekday; // This is an integer representing the day of the week (1=Monday, 2=Tuesday, etc.)
       List<DocumentSnapshot> filteredSched = sched.where((doc) =>
       doc['day_of_week'] == dayOfWeek).toList();
@@ -311,9 +316,9 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
           //SizedBox(width: 50.w,),
           Container(
-              height: 96.h,
-              width: 265.w,
-              padding: EdgeInsets.only(top: 12.h, left: 20.w, right: 20.w, bottom: 10.h),
+              height: 100,
+              width: 265,
+              padding: EdgeInsets.only(top: 12, left: 20, right: 20, bottom: 10),
               decoration: ShapeDecoration(
                 color: (position.isOdd)?kBlueColor:Color(0x771A43BF),
                 shape: RoundedRectangleBorder(
@@ -322,19 +327,21 @@ class _CalendarPageState extends State<CalendarPage> {
 
               ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                BigText(text: subjectSnapshot['subject_name'].toString(), size: 16.sp, color: Colors.white,),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.meeting_room, color: Colors.white, size: 15.sp,),
-                    Expanded(
-                      child: BigText(text: bldgSnapshot['bldg_name'].toString() + " " + roomSnapshot['room_id'].toString(), color: Colors.white,
-                        fontWeight: FontWeight.w500, size: 15.sp, maxLines: 2,),
-                    )
+                    Expanded(child: SizedBox(child: BigText(text: subjectSnapshot['subject_name'].toString(), size: 16, color: Colors.white, overFlow: TextOverflow.ellipsis,))),
+                    BigText(text: "CS" + bldgSnapshot['bldg_name'].toString().substring(0,1) +
+                        bldgSnapshot['bldg_name'].toString().substring(bldgSnapshot['bldg_name'].toString().length-1,bldgSnapshot['bldg_name'].toString().length) +
+                      " Rm." + roomSnapshot['room_id'].toString(),
+                      size: 13, color: Colors.white,),
                   ],
                 ),
+                BigText(text: "Prof. " + professorSnapshot['first_name'].toString() + " " + professorSnapshot['last_name'].toString(), size: 16, color: Colors.white,)
               ],
             ),
           )
