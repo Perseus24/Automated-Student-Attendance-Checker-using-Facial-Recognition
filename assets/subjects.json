@@ -1,0 +1,19 @@
+{
+"items":[
+{"SubjectID":"31001","subject_code":"CS 114","SubjectName":"Operating Systems","ProfessorID":"1001"},
+{"SubjectID":"31002","subject_code":"CS 115","SubjectName":"Computer Architecture and Organization","ProfessorID":"1007"},
+{"SubjectID":"31003","subject_code":"CS 116","SubjectName":"Automata Theory and Formal Languages","ProfessorID":"1006"},
+{"SubjectID":"31004","subject_code":"CS 117","SubjectName":"Software Engineering 1","ProfessorID":"1004"},
+{"SubjectID":"31005","subject_code":"CS ELEC 1","SubjectName":"Artificial Intelligence","ProfessorID":"1002"},
+{"SubjectID":"31006","subject_code":"FIL 21","SubjectName":"Kontekstwalisadong Komunikasyon sa Filipino","ProfessorID":"1005"},
+{"SubjectID":"31007","subject_code":"GEC 16","SubjectName":"Art Appreciation","ProfessorID":"1003"},
+{"SubjectID":"31008","subject_code":"CS 118","SubjectName":"Software Engineering 2","ProfessorID":"1004"},
+{"SubjectID":"31009","subject_code":"CS 119","SubjectName":"Networks And Communication","ProfessorID":"1008"},
+{"SubjectID":"31010","subject_code":"CS 120","SubjectName":"Human Computer Interaction","ProfessorID":"1009"},
+{"SubjectID":"31011","subject_code":"CS 121","SubjectName":"Information Assurance and Security","ProfessorID":"1010"},
+{"SubjectID":"31012","subject_code":"CS ELEC 2","SubjectName":"Data Mining","ProfessorID":"1011"},
+{"SubjectID":"31013","subject_code":"FIL 22","SubjectName":"SOSLIT","ProfessorID":"1012"},
+{"SubjectID":"31014","subject_code":"GEC 17","SubjectName":"Science, Technology and Society","ProfessorID":"1013"},
+{"SubjectID":"31015","subject_code":"GEC 18","SubjectName":"Ethics","ProfessorID":"1014"}
+]
+}

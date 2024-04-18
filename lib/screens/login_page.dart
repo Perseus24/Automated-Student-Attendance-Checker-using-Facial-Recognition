@@ -3,12 +3,14 @@ import 'package:flutter_application_1/screens/forgot_pass.dart';
 import 'package:flutter_application_1/screens/main_homepage.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import '../utilities/build_routes.dart';
+import '../utilities/get_user_data.dart';
 import 'register_user.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'landing_page.dart';
 import '../utilities/constants.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/screens/loading_screen.dart';
 
 void main(){
   runApp(SignInWindow());
@@ -324,6 +326,8 @@ class _SignInPageState extends State<SignInPage> {
                             logInControllerTemp.loading.value = true;
                             try{
                               user = await authService.signInWithEmailAndPassword(controller.emailControllerText.value, controller.passwordControllerText.value);
+                              GetUserFirebaseInfo getUserFirebaseInfo = GetUserFirebaseInfo();    //note that  new users are not able to log in
+                              await getUserFirebaseInfo.fetchStudentFirebaseInfos();
                             }catch (e){
 
                             }finally{

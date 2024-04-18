@@ -104,7 +104,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
   final userDataControllers = Get.put(UserDataControllers());
 
-
   @override
   Widget build(BuildContext context) {
     DateTime lastDayOfMonth = nextMonthFirst.subtract(Duration(days: 1));

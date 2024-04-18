@@ -2,8 +2,10 @@ import 'package:firebase_admin/firebase_admin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/notification_page.dart';
+import 'package:flutter_application_1/screens/statistics_page.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../utilities/build_routes.dart';
 import '../widgets/hamburger.dart';
 import '../utilities/get_weekdays_strings.dart';
@@ -21,14 +23,9 @@ void main(){
   runApp(MainHomePage());
 }
 
-class NotifContoller extends GetxController{
-  RxBool tempNotif = false.obs;
-}
-
 class MainHomePage extends StatelessWidget{
 
-
-  final notifController = Get.put(NotifContoller());
+  final HomepageController homepageController = Get.put(HomepageController());
 
   @override
   Widget build(BuildContext context){
@@ -52,7 +49,8 @@ class MainHomePage extends StatelessWidget{
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              notifController.tempNotif.value = !notifController.tempNotif.value;
+                              homepageController.expandNotifContainer();
+                              homepageController.notifButtonTapped.toggle();
                             },
                             clipBehavior: Clip.antiAlias,
                             style: ElevatedButton.styleFrom(
@@ -90,8 +88,21 @@ class Home1 extends StatefulWidget {
 }
 
 class Home1State extends State<Home1> {
-  final notifController = Get.put(NotifContoller());
 
+  final HomepageController homepageController = Get.put(HomepageController());
+  final userDataControllers = Get.put(UserDataControllers());
+  late List<DocumentSnapshot> thisWeekAttendance;
+  late List<DocumentSnapshot> lastWeekAttendance;
+  late List<DocumentSnapshot> longTimeAttendance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    thisWeekAttendance = StatisticsMethods().getThisWeekNotif(userDataControllers .attendanceSnapshot);
+    lastWeekAttendance = StatisticsMethods().getLastWeekNotif(userDataControllers .attendanceSnapshot);
+    longTimeAttendance = StatisticsMethods().getLongTimeNotif(userDataControllers .attendanceSnapshot);
+  }
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(375, 677));
@@ -108,7 +119,7 @@ class Home1State extends State<Home1> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 140.h,
+                  height: 165,
                   margin: EdgeInsets.only(top: 25.h, left: 25.w, right: 25.w),
                   decoration: ShapeDecoration(
                     color: kBlueColor,
@@ -163,7 +174,7 @@ class Home1State extends State<Home1> {
                         SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
                         Row(
                           children: [
-                            BigText(text: "Welcome back, Cy!", color: Colors.white, size: 22.sp, fontWeight: FontWeight.w700,
+                            BigText(text: "Welcome back, Cy!", color: Colors.white, size: 22, fontWeight: FontWeight.w700,
                               letterSpacing: 0.08,)
                           ],
                         ),
@@ -174,16 +185,16 @@ class Home1State extends State<Home1> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 BigText(text: 'You currently have an attendance rate', color: Colors.white, letterSpacing: 0.06,
-                                  size: 16.sp, fontWeight: FontWeight.w400,),
+                                  size: 16, fontWeight: FontWeight.w400,),
                                 SizedBox(height: getDynamicSize.getHeight(context)*0.005,),
                                 Row(
                                   children: [
                                     BigText(text: 'of', color: Colors.white, letterSpacing: 0.06,
-                                      size: 16.sp, fontWeight: FontWeight.w400,),
+                                      size: 16, fontWeight: FontWeight.w400,),
                                     BigText(text: ' 60%', color: Colors.white, letterSpacing: 0.06,
-                                      size: 16.sp, fontWeight: FontWeight.w700,),
+                                      size: 16, fontWeight: FontWeight.w700,),
                                     BigText(text: '. Keep up the good work!', color: Colors.white, letterSpacing: 0.06,
-                                      size: 16.sp, fontWeight: FontWeight.w400,),
+                                      size: 16, fontWeight: FontWeight.w400,),
                                   ],
                                 )
                               ],
@@ -315,19 +326,145 @@ class Home1State extends State<Home1> {
             ),
           ),
           //drawer: drawerPage(),
+          bottomNavigationBar: NotificationPage(thisWeekAttendance: thisWeekAttendance, lastWeekAttendance:lastWeekAttendance, longTimeAttendance:longTimeAttendance),
         ),
-        Obx(()=>Positioned.fill(
-          top: getDynamicSize.getHeight(context)*0.3,
-          child: notifController.tempNotif.value ? NotificationPage2(context) : Container()
-        ))
       ],
     );
   }
 
-  Widget NotificationPage2(BuildContext context){
-    return Container(
-      height: 200.h,
-      color: Colors.red,
+}
+
+
+class NotificationPage extends StatelessWidget {
+
+  NotificationPage({required this.thisWeekAttendance, required this.lastWeekAttendance, required this.longTimeAttendance});
+
+  final List<DocumentSnapshot> thisWeekAttendance;
+  final List<DocumentSnapshot> lastWeekAttendance;
+  final List<DocumentSnapshot> longTimeAttendance;
+  final HomepageController homepageController = Get.put(HomepageController());
+  final userDataControllers = Get.put(UserDataControllers());
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    final List<DocumentSnapshot> attendanceHist = userDataControllers.attendanceSnapshot;
+    final List<DocumentSnapshot> schedule = userDataControllers.scheduleSnapshot;
+    final List<DocumentSnapshot> subject = userDataControllers.subjectSnapshot;
+
+    return Obx(()=>AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.ease,
+      height: homepageController.notifContainer.value,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              height: 50,
+              decoration: ShapeDecoration(
+                color: kBlueColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+                ),
+              ),
+              child: Center(
+                child: BigText(text: "Notification", size: 15, color: Colors.white,),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 6,
+            child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 25, right: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20,),
+                      BigText(text: "Today", size: 16, color: kGreyColor,),
+                      BigText(text: "Yesterday", size: 16, color: kGreyColor,),
+                      BigText(text: "This week", size: 16, color: kGreyColor,),
+                      SizedBox(height: 10,),
+                      ListView.builder(
+                        shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: thisWeekAttendance.length,
+                          itemBuilder: (context, position) {
+
+                            final attendanceDocs = thisWeekAttendance[position];
+                            final schedDocs = schedule.firstWhere((element) => element['subject_sched_id'] == attendanceDocs['subject_sched_id']);
+                            final subjectDocs = subject.firstWhere((element) => element['subject_id'] == schedDocs['subject_id']);
+
+                            return buildNotifHistory(subjectDocs);
+                          }
+                      ),
+                      SizedBox(height: 10,),
+                      BigText(text: "Last week", size: 16, color: kGreyColor,),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: lastWeekAttendance.length,
+                          itemBuilder: (context, position) {
+
+                            final attendanceDocs = lastWeekAttendance[position];
+                            final schedDocs = schedule.firstWhere((element) => element['subject_sched_id'] == attendanceDocs['subject_sched_id']);
+                            final subjectDocs = subject.firstWhere((element) => element['subject_id'] == schedDocs['subject_id']);
+
+                            return buildNotifHistory(subjectDocs);
+                          }
+                      ),
+                      SizedBox(height: 10,),
+                      BigText(text: "Long time ago", size: 16, color: kGreyColor,),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemCount: longTimeAttendance.length,
+                          itemBuilder: (context, position) {
+
+                            final attendanceDocs = longTimeAttendance[position];
+                            final schedDocs = schedule.firstWhere((element) => element['subject_sched_id'] == attendanceDocs['subject_sched_id']);
+                            final subjectDocs = subject.firstWhere((element) => element['subject_id'] == schedDocs['subject_id']);
+
+                            return buildNotifHistory(subjectDocs);
+                          }
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ),
+        ],
+      )
+    ));
+  }
+  Widget buildNotifHistory(DocumentSnapshot attendance){
+    return Column(
+      children: [
+        SizedBox(height: 10,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Container(
+                child: Text(
+                    "You are blah blah for your class " + attendance['subject_name'],
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ),
+            SizedBox(width: 10,),
+            //BigText(text: "You are blah blah for your class " + attendance['subject_name'], size: 14, overFlow: TextOverflow.ellipsis,),
+            Container(
+              width: 20,
+              child: BigText(text:"4d", size: 14, color: kGreyColor,))
+          ],
+        ),
+      ],
     );
   }
 }
@@ -416,7 +553,7 @@ class _ClassesBodyState extends State<ClassesBody>{
       );
     }else{
       return Container(
-        height: getDynamicSize.getHeight(context) * 0.17,
+        height: 140,
         child: PageView.builder(
           itemCount: schedule.length,
           controller: PageController(viewportFraction: 0.85),

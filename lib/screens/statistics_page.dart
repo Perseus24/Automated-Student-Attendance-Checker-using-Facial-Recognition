@@ -127,7 +127,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
     // TODO: implement initState
     super.initState();
     attendance = StatisticsMethods().getTotalAttendance(userDataControllers.attendanceSnapshot);
-    hi = StatisticsMethods().getDatesForPresent(attendance[0]);
   }
 
   @override
@@ -751,12 +750,53 @@ class StatisticsMethods{
       Timestamp ts = datesTemp['date'];
       dates.add(ts.toDate());
     }
-
-
     return dates;
-
   }
 
+  List<DocumentSnapshot> getThisWeekNotif(List<DocumentSnapshot> attendance){
+    List<DocumentSnapshot> thisWeekNotifs = [];
+
+    for(dynamic weekDates in attendance){
+      Timestamp ts = weekDates['date'];
+      DateTime dm = ts.toDate();
+
+      if(DateTime.now().difference(dm).inDays <= 7 && DateTime.now().difference(dm).inDays > 1){
+        thisWeekNotifs.add(weekDates);
+      }
+    }
+
+    return thisWeekNotifs;
+  }
+
+  List<DocumentSnapshot> getLastWeekNotif(List<DocumentSnapshot> attendance){
+    List<DocumentSnapshot> thisWeekNotifs = [];
+
+    for(dynamic weekDates in attendance){
+      Timestamp ts = weekDates['date'];
+      DateTime dm = ts.toDate();
+
+      if(DateTime.now().difference(dm).inDays <= 14 && DateTime.now().difference(dm).inDays > 7){
+        thisWeekNotifs.add(weekDates);
+      }
+    }
+
+    return thisWeekNotifs;
+  }
+
+  List<DocumentSnapshot> getLongTimeNotif(List<DocumentSnapshot> attendance){
+    List<DocumentSnapshot> thisWeekNotifs = [];
+
+    for(dynamic weekDates in attendance){
+      Timestamp ts = weekDates['date'];
+      DateTime dm = ts.toDate();
+
+      if(DateTime.now().difference(dm).inDays > 14){
+        thisWeekNotifs.add(weekDates);
+      }
+    }
+
+    return thisWeekNotifs;
+  }
 }
 
 class PieChartLegend extends StatelessWidget {

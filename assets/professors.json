@@ -1,0 +1,18 @@
+{
+    "items":[
+        {"ProfessorID":"1001","FirstName":"Mary Jane","MiddleName":"","LastName":"Burce","sex":"F","department_id":"300","SubjectID":"31001"},
+        {"ProfessorID":"1002","FirstName":"Arlene","MiddleName":"","LastName":"Satuito","sex":"F","department_id":"300","SubjectID":"31005"},
+        {"ProfessorID":"1003","FirstName":"Dominica","MiddleName":"","LastName":"Poja","sex":"F","department_id":"600","SubjectID":"31007"},
+        {"ProfessorID":"1004","FirstName":"Lany","MiddleName":"","LastName":"Maceda","sex":"F","department_id":"300","SubjectID":"31004"},
+        {"ProfessorID":"1005","FirstName":"Marisa","MiddleName":"","LastName":"Gamboa","sex":"F","department_id":"700","SubjectID":"31006"},
+        {"ProfessorID":"1006","FirstName":"Rolando","MiddleName":"","LastName":"Mendones","sex":"M","department_id":"300","SubjectID":"31003"},
+        {"ProfessorID":"1007","FirstName":"Davie","MiddleName":"","LastName":"Balmadrid","sex":"M","department_id":"400","SubjectID":"31002"},
+        {"ProfessorID":"1008","FirstName":"Jhosua","MiddleName":"B","LastName":"Mostar","sex":"M","department_id":"400","SubjectID":"31009"},
+        {"ProfessorID":"1009","FirstName":"Jeffrey","MiddleName":"T","LastName":"Banico","sex":"M","department_id":"400","SubjectID":"31010"},
+        {"ProfessorID":"1010","FirstName":"Noel Chris","MiddleName":"H","LastName":"Hernandez","sex":"M","department_id":"400","SubjectID":"31011"},
+        {"ProfessorID":"1011","FirstName":"Jennifer ","MiddleName":"L","LastName":"Llovido","sex":"F","department_id":"300","SubjectID":"31012"},
+        {"ProfessorID":"1012","FirstName":"Nasayao","MiddleName":"","LastName":"Joseph","sex":"F","department_id":"600","SubjectID":"31013"},
+        {"ProfessorID":"1013","FirstName":"Mark","MiddleName":"H","LastName":"Daen","sex":"M","department_id":"300","SubjectID":"31014"},
+        {"ProfessorID":"1014","FirstName":"Jose Carlo","MiddleName":"B","LastName":"Lavapie","sex":"M","department_id":"600","SubjectID":"31015"}
+    ]
+}

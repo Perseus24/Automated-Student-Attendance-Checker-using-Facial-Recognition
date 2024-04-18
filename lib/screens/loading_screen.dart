@@ -29,7 +29,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void ifUserExists() async{
     await userDataControllers.checkLoggedIn()? getUserData() :
-    Navigator.of(context).push(createRouteGo(MainPage()));
+    Navigator.of(context).push(createRouteGo(LandingPage()));
   }
 
   void getUserData() async{
@@ -44,7 +44,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       body: Center(
         child: LoadingAnimationWidget.discreteCircle(
          color: kBlueColor,
-         size: 100,
+         size: 60,
         secondRingColor: Colors.orange,
         thirdRingColor: Colors.white30),
       )

@@ -1,0 +1,16 @@
+{
+"items":[
+{"subject_sched_id":"30313","subject_id":"31008","day_of_week":"1","start_time":"09:00:00","endTime":"12:00:00","room_id":"2105"},
+{"subject_sched_id":"30314","subject_id":"31008","day_of_week":"1","start_time":"17:00:00","endTime":"19:00:00","room_id":"2105"},
+{"subject_sched_id":"30315","subject_id":"31008","day_of_week":"3","start_time":"09:00:00","endTime":"12:00:00","room_id":"2105"},
+{"subject_sched_id":"30316","subject_id":"31009","day_of_week":"2","start_time":"16:00:00","endTime":"19:00:00","room_id":"2203"},
+{"subject_sched_id":"30317","subject_id":"31009","day_of_week":"3","start_time":"15:00:00","endTime":"17:00:00","room_id":"2203"},
+{"subject_sched_id":"30318","subject_id":"31009","day_of_week":"4","start_time":"16:00:00","endTime":"19:00:00","room_id":"2205"},
+{"subject_sched_id":"30319","subject_id":"31010","day_of_week":"3","start_time":"14:00:00","endTime":"15:00:00","room_id":"4205"},
+{"subject_sched_id":"30320","subject_id":"31011","day_of_week":"3","start_time":"17:30:00","endTime":"19:30:00","room_id":"4205"},
+{"subject_sched_id":"30321","subject_id":"31012","day_of_week":"2","start_time":"10:00:00","endTime":"12:00:00","room_id":"4205"},
+{"subject_sched_id":"30322","subject_id":"31012","day_of_week":"4","start_time":"13:00:00","endTime":"16:00:00","room_id":"2202"},
+{"subject_sched_id":"30323","subject_id":"31014","day_of_week":"5","start_time":"09:00:00","endTime":"12:00:00","room_id":"0"},
+{"subject_sched_id":"30324","subject_id":"31015","day_of_week":"1","start_time":"13:00:00","endTime":"16:00:00","room_id":"4204"}
+]
+}

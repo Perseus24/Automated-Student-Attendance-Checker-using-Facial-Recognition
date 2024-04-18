@@ -1,0 +1,15 @@
+{
+"items":[
+{"room_id":"0","bldg_id":"0"},
+{"room_id":"1101","bldg_id":"25001"},
+{"room_id":"1102","bldg_id":"25001"},
+{"room_id":"2201","bldg_id":"25002"},
+{"room_id":"2202","bldg_id":"25002"},
+{"room_id":"2209","bldg_id":"25002"},
+{"room_id":"2210","bldg_id":"25002"},
+{"room_id":"4201","bldg_id":"25004"},
+{"room_id":"4203","bldg_id":"25004"},
+{"room_id":"4208","bldg_id":"25004"},
+{"room_id":"4210","bldg_id":"25004"}
+]
+}

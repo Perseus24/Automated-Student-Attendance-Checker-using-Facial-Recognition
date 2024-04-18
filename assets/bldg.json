@@ -1,0 +1,11 @@
+
+{
+    "items": [
+        {"bldg_id":"0","bldg_name":"TBA"},
+        {"bldg_id":"25001","bldg_name":"Building 1"},
+        {"bldg_id":"25002","bldg_name":"Building 2"},
+        {"bldg_id":"25003","bldg_name":"Building 3"},
+        {"bldg_id":"25004","bldg_name":"Building 4"}
+    ]
+}
+
