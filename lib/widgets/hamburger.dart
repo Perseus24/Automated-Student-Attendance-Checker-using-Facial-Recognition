@@ -9,6 +9,7 @@ import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_application_1/widgets/hamburger_pages.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../screens/profile_page.dart';
 import '../utilities/constants.dart';
 import '../utilities/build_routes.dart';
 import '../screens/calendar_page.dart';
@@ -52,7 +53,7 @@ class BuildDrawer extends StatelessWidget {
             HamburgerPages(selectedAppPage: selectedAppPage, widget: CalendarHome(),
               drawerPage: AppPages.Calendar, icon: 'images/calendar_',),
             SizedBox(height: 5.h),
-            HamburgerPages(selectedAppPage: selectedAppPage, widget: MainHomePage(),
+            HamburgerPages(selectedAppPage: selectedAppPage, widget: ProfilePage(),
               drawerPage: AppPages.Profile, icon: 'images/profile_',),
             SizedBox(height: 5.h),
             Container(
