@@ -35,6 +35,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void getUserData() async{
     GetUserFirebaseInfo getUserFirebaseInfo = GetUserFirebaseInfo();
     await getUserFirebaseInfo.fetchStudentFirebaseInfos();
+    getUserFirebaseInfo.fetchNotificationHistory();
     Navigator.push(context, createRouteGo(MainHomePage()));
 
   }

@@ -1,11 +1,9 @@
 
 import 'dart:async';
 
-import 'package:flutter_application_1/screens/landing_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_application_1/utilities/constants.dart';
 import 'package:get/get.dart';
 
 
@@ -17,6 +15,10 @@ class UserDataControllers extends GetxController{
   late List<DocumentSnapshot> _bldgSnapshot;
   late List<DocumentSnapshot> _scheduleSnapshot;
   late List<DocumentSnapshot> _attendanceSnapshot;
+  late List<DocumentSnapshot> _thisDayAttendance;
+  late List<DocumentSnapshot> _yesterdayAttendance;
+  late List<DocumentSnapshot> _thisWeekAttendance;
+  late List<DocumentSnapshot> _longTimeAttendance;
 
 
   List<DocumentSnapshot> get subjectSnapshot => _subjectSnapshot;
@@ -25,6 +27,11 @@ class UserDataControllers extends GetxController{
   List<DocumentSnapshot> get bldgSnapshot => _bldgSnapshot;
   List<DocumentSnapshot> get scheduleSnapshot => _scheduleSnapshot;
   List<DocumentSnapshot> get attendanceSnapshot => _attendanceSnapshot;
+
+  List<DocumentSnapshot> get thisDayAttendance => _thisDayAttendance;
+  List<DocumentSnapshot> get yesterdayAttendance => _yesterdayAttendance;
+  List<DocumentSnapshot> get thisWeekAttendance => _thisWeekAttendance;
+  List<DocumentSnapshot> get longTimeAttendance => _longTimeAttendance;
 
   void setSubjectSnapshot(List<DocumentSnapshot> docs) {
     _subjectSnapshot = docs;
@@ -50,6 +57,26 @@ class UserDataControllers extends GetxController{
   void setAttendanceSnapshot(List<DocumentSnapshot> docs){
     _attendanceSnapshot = docs;
     update();
+  }
+
+  void setThisDayAttendance(List<DocumentSnapshot> docs) {
+    _thisDayAttendance = docs;
+    update(); // Updates UI dependent on this controller
+  }
+
+  void setYesterdayAttendance(List<DocumentSnapshot> docs) {
+    _yesterdayAttendance = docs;
+    update(); // Updates UI dependent on this controller
+  }
+
+  void setThisWeekAttendance(List<DocumentSnapshot> docs) {
+    _thisWeekAttendance = docs;
+    update(); // Updates UI dependent on this controller
+  }
+
+  void setLongTimeAttendance(List<DocumentSnapshot> docs) {
+    _longTimeAttendance = docs;
+    update(); // Updates UI dependent on this controller
   }
 
   Future<bool> checkLoggedIn() async{
@@ -85,6 +112,7 @@ class GetUserFirebaseInfo{
   final CollectionReference attendanceTable = FirebaseFirestore.instance.collection('student_attendance');
 
   final userDataControllers = Get.put(UserDataControllers());
+  final StatisticsMethods statisticsMethods = StatisticsMethods();
 
   late final List<DocumentSnapshot> getStudentID;
   List<DocumentSnapshot> getStudentSubject = [];
@@ -94,6 +122,11 @@ class GetUserFirebaseInfo{
   late final List<DocumentSnapshot> getRooms;
   late final List<DocumentSnapshot> getBldg;
   late final List<DocumentSnapshot> getAttendance;
+
+  late final List<DocumentSnapshot> thisDayAttendance;
+  late final List<DocumentSnapshot> yesterdayAttendance;
+  late final List<DocumentSnapshot> thisWeekAttendance;
+  late final List<DocumentSnapshot> longTimeAttendance;
 
 
   Future<List<DocumentSnapshot>> fetchStudent() async{
@@ -150,5 +183,12 @@ class GetUserFirebaseInfo{
     userDataControllers.setAttendanceSnapshot(getAttendance);
 
 
+  }
+
+  Future<void>  fetchNotificationHistory() async {
+    userDataControllers.setThisDayAttendance(statisticsMethods.getThisDayNotif(userDataControllers.attendanceSnapshot));
+    userDataControllers.setYesterdayAttendance(statisticsMethods.getYesterdayNotif(userDataControllers.attendanceSnapshot));
+    userDataControllers.setThisWeekAttendance(statisticsMethods.getThisWeekNotif(userDataControllers.attendanceSnapshot));
+    userDataControllers.setLongTimeAttendance(statisticsMethods.getLongTimeNotif(userDataControllers.attendanceSnapshot));
   }
 }
