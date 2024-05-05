@@ -361,7 +361,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     child: DropdownButtonFormField2<String>(
                       value: selectedWeek,
                       isExpanded: false,
-                      //hint: BigText(text: "Select your sex", fontWeight: FontWeight.w400, size: 14,),
                       items:  weeks.map((item) => DropdownMenuItem<String>(
                         value: item,
                         child: Text(
@@ -471,7 +470,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             //statsController.initAttendance(subjects.entries.elementAt(0).value);
 
                             statsController.update();
-                            //statsController.updateBarChart();
+                            statsController.updateBarChart();
                             break;
                           }
                         }
@@ -594,11 +593,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 BigText(text: "Punctuality", color: kGreyColor, size: 16, fontWeight: FontWeight.w700,),
                                 SizedBox(height: 20,),
                                 Expanded(
-                                    child: PieChartAttendance(
+                                    child: Obx(()=>PieChartAttendance(
                                       numPresent: statsController.attendance[0].length,
                                       numAbsent: statsController.attendance[1].length,
                                       numLate: statsController.attendance[2].length,
-                                    )),
+                                    ))),
                                 SizedBox(height: 20,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -641,7 +640,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height:100),
+                    SizedBox(height:20),
                   ],
                 ),
               ),
@@ -668,7 +667,7 @@ class BarChartAttendance extends StatelessWidget {
           barGroups: barGroups,
           gridData: const FlGridData(show: false),
           alignment: BarChartAlignment.spaceAround,
-          maxY: statsController.barchartWeeklyData.reduce(max).toDouble()+1,
+          maxY: statsController.monthChoice.value==5?statsController.barchartMonthlyData.reduce(max).toDouble()+2:statsController.barchartWeeklyData.reduce(max).toDouble()+2,
         )
     ));
   }
@@ -733,13 +732,68 @@ class BarChartAttendance extends StatelessWidget {
     );
   }
 
+  Widget getTitlesForMonth(double value, TitleMeta meta) {
+    final style = TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+      fontSize: 10,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 0:
+        text = 'Jan';
+        break;
+      case 1:
+        text = 'Feb';
+        break;
+      case 2:
+        text = 'Mar';
+        break;
+      case 3:
+        text = 'Apr';
+        break;
+      case 4:
+        text = 'May';
+        break;
+      case 5:
+        text = 'Jun';
+        break;
+      case 6:
+        text = 'Jul';
+        break;
+      case 7:
+        text = 'Aug';
+        break;
+      case 8:
+        text = 'Sep';
+        break;
+      case 9:
+        text = 'Oct';
+        break;
+      case 10:
+        text = 'Nov';
+        break;
+      case 11:
+        text = 'Dec';
+        break;
+      default:
+        text = '';
+        break;
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 4,
+      child: Text(text, style: style),
+    );
+  }
+
   FlTitlesData get titlesData => FlTitlesData(
     show: true,
     bottomTitles: AxisTitles(
       sideTitles: SideTitles(
         showTitles: true,
         reservedSize: 30,
-        getTitlesWidget: getTitles,
+        getTitlesWidget: statsController.monthChoice.value!=5?getTitles:getTitlesForMonth,
       ),
     ),
     leftTitles: const AxisTitles(
@@ -766,68 +820,47 @@ class BarChartAttendance extends StatelessWidget {
     end: Alignment.topCenter,
   );
 
-  List<BarChartGroupData> get barGroups => [
-    BarChartGroupData(
-      x: 0,
-      barRods: [
-        BarChartRodData(
-          toY: statsController.barchartWeeklyData[0].toDouble(),
-          gradient: _barsGradient,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 1,
-      barRods: [
-        BarChartRodData(
-          toY: statsController.barchartWeeklyData[1].toDouble(),
-          gradient: _barsGradient,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 2,
-      barRods: [
-        BarChartRodData(
-          toY: statsController.barchartWeeklyData[2].toDouble(),
-          gradient: _barsGradient,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 3,
-      barRods: [
-        BarChartRodData(
-          toY: statsController.barchartWeeklyData[3].toDouble(),
-          gradient: _barsGradient,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 4,
-      barRods: [
-        BarChartRodData(
-          toY: statsController.barchartWeeklyData[4].toDouble(),
-          gradient: _barsGradient,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 5,
-      barRods: [
-        BarChartRodData(
-          toY: statsController.barchartWeeklyData[5].toDouble(),
-          gradient: _barsGradient,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-  ];
+  List<BarChartGroupData> getBarGroups(){
+    List<BarChartGroupData> group = [];
+
+    for(int i=0; i<6; i++){
+      group.add(BarChartGroupData(
+        x: i,
+        barRods: [
+          BarChartRodData(
+            width: 15,
+            toY: statsController.barchartWeeklyData[i].toDouble(),
+            gradient: _barsGradient,
+          )
+        ],
+        showingTooltipIndicators: [0],
+      ));
+    }
+
+    return group;
+  }
+
+  List<BarChartGroupData> getBarGroupsMonth(){
+    List<BarChartGroupData> group = [];
+
+    for(int i=0; i<12; i++){
+      group.add(BarChartGroupData(
+        x: i,
+        barRods: [
+          BarChartRodData(
+            width: 15,
+            toY: statsController.barchartMonthlyData[i].toDouble(),
+            gradient: _barsGradient,
+          )
+        ],
+        showingTooltipIndicators: [0],
+      ));
+    }
+
+    return group;
+  }
+
+  List<BarChartGroupData> get barGroups => statsController.monthChoice.value!=5?getBarGroups():getBarGroupsMonth();
 }
 
 class PieChartAttendance extends StatelessWidget {
@@ -947,78 +980,6 @@ class PieChartAttendance extends StatelessWidget {
   }
 }
 
-class StatisticsMethods{
-
-  StatisticsMethods();
-
-  List<List<DocumentSnapshot<Object?>>> getTotalAttendance(List<DocumentSnapshot> attendance){
-
-    List<String> attendanceStatus = ["Present", "Absent", "Late"];
-    List<List<DocumentSnapshot>> attendanceList = [];
-
-    for(String status in attendanceStatus){
-      attendanceList.add(attendance.where((doc) => doc['attendance_status'] == status).toList());
-    }
-    return attendanceList;
-
-  }
-
-  List<DateTime> getDatesForPresent(List<DocumentSnapshot> attendanceList){
-    List<DateTime> dates = [];
-
-    for (dynamic datesTemp in attendanceList){
-      Timestamp ts = datesTemp['date'];
-      dates.add(ts.toDate());
-    }
-    return dates;
-  }
-
-  List<DocumentSnapshot> getThisWeekNotif(List<DocumentSnapshot> attendance){
-    List<DocumentSnapshot> thisWeekNotifs = [];
-
-    for(dynamic weekDates in attendance){
-      Timestamp ts = weekDates['date'];
-      DateTime dm = ts.toDate();
-
-      if(DateTime.now().difference(dm).inDays <= 7 && DateTime.now().difference(dm).inDays > 1){
-        thisWeekNotifs.add(weekDates);
-      }
-    }
-
-    return thisWeekNotifs;
-  }
-
-  List<DocumentSnapshot> getLastWeekNotif(List<DocumentSnapshot> attendance){
-    List<DocumentSnapshot> thisWeekNotifs = [];
-
-    for(dynamic weekDates in attendance){
-      Timestamp ts = weekDates['date'];
-      DateTime dm = ts.toDate();
-
-      if(DateTime.now().difference(dm).inDays <= 14 && DateTime.now().difference(dm).inDays > 7){
-        thisWeekNotifs.add(weekDates);
-      }
-    }
-
-    return thisWeekNotifs;
-  }
-
-  List<DocumentSnapshot> getLongTimeNotif(List<DocumentSnapshot> attendance){
-    List<DocumentSnapshot> thisWeekNotifs = [];
-
-    for(dynamic weekDates in attendance){
-      Timestamp ts = weekDates['date'];
-      DateTime dm = ts.toDate();
-
-      if(DateTime.now().difference(dm).inDays > 14){
-        thisWeekNotifs.add(weekDates);
-      }
-    }
-
-    return thisWeekNotifs;
-  }
-}
-
 class PieChartLegend extends StatelessWidget {
 
   PieChartLegend({required this.text, required this.color});
@@ -1046,76 +1007,3 @@ class PieChartLegend extends StatelessWidget {
     );
   }
 }
-
-
-// class h extends StatelessWidget {
-//   const h({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return TableCalendar(
-//       rowHeight: 25,
-//       //shouldFillViewport: true,
-//       firstDay: DateTime.utc(2024,1,1),
-//       lastDay: DateTime(2050),
-//       focusedDay: statsController.focusedDay.value,
-//       calendarFormat: CalendarFormat.month,
-//       onDaySelected: (selectedDay, focusedDay){
-//         statsController.selectedDay.value = selectedDay;
-//         statsController.focusedDay.value = focusedDay;
-//         statsController.update();
-//       },
-//       selectedDayPredicate: (DateTime date){
-//         return specialDates.contains(date);
-//       },
-//       headerStyle: HeaderStyle(
-//           formatButtonShowsNext: false,
-//           leftChevronVisible: false,
-//           rightChevronVisible: false,
-//           headerPadding: EdgeInsets.all(5),
-//           titleTextStyle: TextStyle(
-//               fontSize: 10,
-//               fontFamily: 'Poppins'
-//           ),
-//
-//           formatButtonVisible: false,
-//           titleCentered: false
-//       ),
-//       daysOfWeekStyle: DaysOfWeekStyle(
-//           dowTextFormatter: (date, locale) => DateFormat.E(locale).format(date)[0],
-//           weekdayStyle: TextStyle(
-//               fontFamily: 'Poppins',
-//               fontSize: 9
-//           ),
-//           weekendStyle: TextStyle(
-//               fontFamily: 'Poppins',
-//               fontSize: 9
-//           )
-//       ),
-//
-//       calendarStyle: CalendarStyle(
-//         cellMargin: EdgeInsets.all(0),
-//         isTodayHighlighted: true,
-//         selectedDecoration: BoxDecoration(
-//           color: kBlueColor,
-//           shape: BoxShape.rectangle,
-//           //borderRadius: BorderRadius.circular(5)
-//         ),
-//         selectedTextStyle: TextStyle(fontSize: 9, color: Colors.black),
-//
-//         todayTextStyle: TextStyle(fontSize: 9),
-//         todayDecoration: BoxDecoration(
-//             shape: BoxShape.rectangle
-//         ),
-//         weekendTextStyle: TextStyle(fontSize: 9),
-//         defaultTextStyle: TextStyle(fontSize: 9),
-//         outsideTextStyle: TextStyle(
-//             color: kGreyColor,
-//             fontSize: 9
-//         ),
-//
-//
-//       ),
-//     ),;
-//   }
-// }
