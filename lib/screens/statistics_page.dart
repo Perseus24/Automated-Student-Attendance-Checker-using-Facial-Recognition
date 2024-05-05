@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,8 +22,24 @@ import '../widgets/big_texts.dart';
 import '../widgets/hamburger.dart';
 import 'landing_page.dart';
 
+Map<LayerLink, OverlayEntry> overlays = {};
+
+
+void hideOverlays(){
+  var temp = Map<LayerLink, OverlayEntry>.from(overlays);
+  if(temp.isNotEmpty){
+    temp.forEach((LayerLink key, value) {
+      OverlayEntry? entryHide = overlays[key];
+      entryHide?.remove();
+      overlays.remove(key);
+    });
+  }
+}
+
+
 class StatisticsHome extends StatelessWidget {
-  const StatisticsHome({super.key});
+
+  final homepageController = Get.put(HomepageController());
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +100,15 @@ class StatisticsHome extends StatelessWidget {
           toolbarHeight: 90,
           iconTheme: IconThemeData(color: Colors.white, size: 25),
         ),
-        body: StatisticsPage(),
+        body: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: (){
+              homepageController.notifButtonTapped.value = false;
+              homepageController.expandNotifContainer();
+              homepageController.update();
+              hideOverlays();
+            },
+          child: StatisticsPage()),
       ),
     );
   }
@@ -104,17 +130,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
   final List<String> months = [
     'January',
     'February',
-    'March'
+    'March',
+    'April',
+    'May',
+    'All time'
   ];
   final List<String> weeks = [
     'This week',
     'Last week',
+    'Long time ago',
+    'All time'
   ];
-  String? selectedMonth = "March";
+
+  String? selectedMonth = "May";
   String? selectedWeek = 'This week';
 
-  late List<List<DocumentSnapshot>> attendance;
-  late List<DateTime> hi;
+  LayerLink layerLink = LayerLink();
+  OverlayEntry? overlayEntry;
 
   List<DateTime> specialDates = [
     DateTime(2024, 4, 16), // Example special date 1
@@ -122,312 +154,499 @@ class _StatisticsPageState extends State<StatisticsPage> {
     // Add more special dates as needed
   ];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    attendance = StatisticsMethods().getTotalAttendance(userDataControllers.attendanceSnapshot);
+  void showOverlay(overlayWidgetSize, widget, layerlink, entry){
+    //method for having an overlay widget that may be attached to another widget when tapped
+
+    final overlay = Overlay.of(context)!;
+    final renderBox = context.findRenderObject() as RenderBox;
+    final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
+
+    entry = OverlayEntry(
+        builder: (context) =>Positioned(
+          // left: offset.dx - 150, // Adjust the position to the left of the icon
+          // top: offset.dy + size.height / 2,
+            width: overlayWidgetSize, //may prefer size.width
+            child: CompositedTransformFollower(     //making sure that it is "attached" to the target widget
+                link: layerlink,
+                showWhenUnlinked: false,
+                offset: Offset(0, 55),
+                child: widget
+            )
+        )
+    );
+    overlay.insert(entry!);
+    overlays[layerlink] = entry!;
   }
+
+
+  Widget buildListSubjects(){
+    return Container(
+        height: 200,
+        width: 200,
+        decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)
+            ),
+            shadows: [
+              BoxShadow(
+                color: Color(0x3F000000),
+                blurRadius: 4,
+                offset: Offset(0, 4),
+                spreadRadius: 0,
+              )
+            ]
+        ),
+        child: ListView.builder(
+          itemCount: statsController.listSubjects.length,
+          itemBuilder: (context, position) {
+            final studentsSubjects = statsController.listSubjects.entries.elementAt(position).key;
+            return subjectSelection(studentsSubjects);
+          },
+        )
+    );
+  }
+
+  Widget subjectSelection(String subject){
+    return GestureDetector(
+      onTap: (){
+        statsController.updateSelectedSubject(subject);
+        statsController.updateAttendance();
+
+        statsController.updateBarChart();
+        hideOverlays();
+
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        height: 50,
+        width: 200,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              child: BigText(
+                text: subject,
+                size: 14,
+                maxLines: 2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // I moved this function to the get_user_data
+  // meaning its only initialized every restart. It won't accomodate new notifications
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   statsController.initAttendance();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 17, left: 28, right: 28),
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: 40,
-                child: ListView(
-                  children: [
-                    Obx(()=>CustomSlidingSegmentedControl<int>(
-                      height: 40,
-                      fixedWidth: 100,
-                      initialValue: statsController.groupValue.value,
-                      children: {
-                        0: BigText(text: "Weekly", size: 15, color:(statsController.groupValue.value == 0)?kBlueColor:Color(0xFFA5A5A5), fontWeight: FontWeight.w700,),
-                        1: BigText(text: "Monthly", size: 15, color:(statsController.groupValue.value == 1)?kBlueColor:Color(0xFFA5A5A5), fontWeight: FontWeight.w700,),
-                        2: BigText(text: "All Time",size: 15,color:(statsController.groupValue.value == 2)?kBlueColor:Color(0xFFA5A5A5), fontWeight: FontWeight.w700,),
-                      },
-                      onValueChanged: (groupValue){
-                        statsController.groupValue.value = groupValue;
-                        statsController.update();
-                      },
-                      decoration: BoxDecoration(
-                        color: Color(0xFFE4EAF0),
-                        borderRadius: BorderRadius.circular(30)
+        body: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // BigText(
+                //   text: "Subjects:",
+                //   size: 14,
+                //   fontWeight: FontWeight.bold,
+                // ),
+                //SizedBox(width: 30,),
+                CompositedTransformTarget(
+                  link: layerLink,
+                  child: GestureDetector(
+                    onTap: (){
+                      showOverlay(
+                          200.0,
+                          buildListSubjects(),
+                          layerLink,
+                          overlayEntry
+                      );
+                    },
+                    child: Obx(()=>Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                      height: 50,
+                      //width: 250,
+                      decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x3F000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                              spreadRadius: 0,
+                            )
+                          ]
                       ),
-                      thumbDecoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
+                      child: Center(
+                        child: BigText(
+                          text: statsController.selectedSubject.value,
+                          size: 14,
+                        ),
                       ),
                     )),
-                  ],
-                ),
-
-              ),
-              SizedBox(height: 10,),
-              Obx((){
-                return (statsController.groupValue.value == 0)?Stack(
-                  children: [
-                    Container(
-                      width: 100,
-                      child: DropdownButtonFormField2<String>(
-                        value: selectedWeek,
-                        isExpanded: false,
-                        //hint: BigText(text: "Select your sex", fontWeight: FontWeight.w400, size: 14,),
-                        items:  weeks.map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'SF Pro Display',
-                              color: kGreyColor
-                            ),
-                          ),
-                        )).toList(),
-                        decoration: InputDecoration(
-                            border: InputBorder.none
-                        ),
-                        buttonStyleData: const ButtonStyleData(
-                          padding: EdgeInsets.only(left:0,right:0),
-                        ),
-                        iconStyleData: const IconStyleData(
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.black45,
-                          ),
-                          iconSize: 24,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          width: 100,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          padding: EdgeInsets.symmetric(horizontal: 1),
-                        ),
-                        onSaved: (value){
-
-                        },
-                        onChanged: (String? value){
-
-                        },
-                      ),
-                    )
-                  ],
-                ):
-                (statsController.groupValue.value == 1)?Stack(
-                  children: [
-                    Container(
-                      width: 90,
-                      child: DropdownButtonFormField2<String>(
-                        value: selectedMonth,
-                        isExpanded: false,
-                        //hint: BigText(text: "Select your sex", fontWeight: FontWeight.w400, size: 14,),
-                        items:  months.map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'SF Pro Display',
-                              color: kGreyColor
-                            ),
-                          ),
-                        )).toList(),
-                        decoration: InputDecoration(
-                            border: InputBorder.none
-                        ),
-                        buttonStyleData: const ButtonStyleData(
-                          padding: EdgeInsets.only(left:0,right:0),
-                        ),
-                        iconStyleData: const IconStyleData(
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.black45,
-                          ),
-                          iconSize: 24,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          width: 100,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          padding: EdgeInsets.symmetric(horizontal: 1),
-                        ),
-                        onSaved: (value){
-
-                        },
-                        onChanged: (String? value){
-
-                        },
-                      ),
-                    )
-                  ],
-                ):Container();
-              }),
-              SizedBox(height: 15,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.only(top: 15, left: 20, right: 30),
-                      height: 110,
-                      decoration: ShapeDecoration(
-                        color: Color(0x3F1400FF),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
-                          borderRadius: BorderRadius.circular(15)
-                        )
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BigText(text: "Total Attendance   ", fontWeight: FontWeight.w700, maxLines: 2, size: 16,),
-                          BigText(text: (attendance[0].length + attendance[2].length).toString(), fontWeight: FontWeight.w700, size: 25, color: Color(0xFF1400FF),)
-                        ],
-                      ),
-                    ),
                   ),
-                  SizedBox(width: 20,),
-                  Expanded(
-                    child: Container(
-                      height: 110,
-                      padding: EdgeInsets.only(top: 15, left: 20, right: 30),
-                      decoration: ShapeDecoration(
-                          color: Color(0x59FF0000),
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Color(0xFFFF0000)),
-                              borderRadius: BorderRadius.circular(15)
-                          )
+                )
+              ],
+            ),
+            SizedBox(height: 20,),
+            Container(
+              height: 40,
+              child: ListView(
+                children: [
+                  Obx(()=>CustomSlidingSegmentedControl<int>(
+                    height: 40,
+                    fixedWidth: 100,
+                    initialValue: statsController.groupValue.value,
+                    children: {
+                      0: BigText(text: "Weekly", size: 15, color:(statsController.groupValue.value == 0)?kBlueColor:Color(0xFFA5A5A5), fontWeight: FontWeight.w700,),
+                      1: BigText(text: "Monthly", size: 15, color:(statsController.groupValue.value == 1)?kBlueColor:Color(0xFFA5A5A5), fontWeight: FontWeight.w700,),
+                      2: BigText(text: "All Time",size: 15,color:(statsController.groupValue.value == 2)?kBlueColor:Color(0xFFA5A5A5), fontWeight: FontWeight.w700,),
+                    },
+                    onValueChanged: (groupValue){
+                      statsController.groupValue.value = groupValue;
+                      switch(groupValue){
+                        case 0: statsController.weekChoiceTapped.value = true;
+                                statsController.monthChoiceTapped.value = false;
+                                statsController.allTimeChoiceTapped.value = false;
+                                break;
+                        case 1: statsController.weekChoiceTapped.value = false;
+                                statsController.monthChoiceTapped.value = true;
+                                statsController.allTimeChoiceTapped.value = false;
+                                break;
+                        case 2: statsController.weekChoiceTapped.value = false;
+                                statsController.monthChoiceTapped.value = false;
+                                statsController.allTimeChoiceTapped.value = true;
+                                break;
+
+                      }
+                      statsController.weekChoice.value = 0;
+                      statsController.monthChoice.value = 4;
+                      statsController.updateAttendance();
+                      statsController.update();
+                    },
+                    decoration: BoxDecoration(
+                        color: Color(0xFFE4EAF0),
+                        borderRadius: BorderRadius.circular(30)
+                    ),
+                    thumbDecoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  )),
+                ],
+              ),
+
+            ),
+            SizedBox(height: 10,),
+            Obx((){
+              return (statsController.groupValue.value == 0)?Stack(
+                children: [
+                  Container(
+                    width: 120,
+                    child: DropdownButtonFormField2<String>(
+                      value: selectedWeek,
+                      isExpanded: false,
+                      //hint: BigText(text: "Select your sex", fontWeight: FontWeight.w400, size: 14,),
+                      items:  weeks.map((item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'SF Pro Display',
+                              color: kGreyColor
+                          ),
+                        ),
+                      )).toList(),
+                      decoration: InputDecoration(
+                          border: InputBorder.none
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BigText(text: "Total Absences   ", fontWeight: FontWeight.w700, maxLines: 2, size: 16,),
-                          BigText(text: attendance[1].length.toString(), fontWeight: FontWeight.w700, size: 25, color: Color(0xFFFF0000), )
-                        ],
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(left:0,right:0),
                       ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: 100,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 1),
+                      ),
+                      onSaved: (value){
+
+                      },
+                      onChanged: (String? value){
+                        for(int i=0; i<weeks.length; i++){
+                          if(weeks[i] == value){
+                            statsController.weekChoice.value = i;
+
+                            statsController.updateAttendance();
+                            //statsController.initAttendance(subjects.entries.elementAt(0).value);
+
+                            statsController.update();
+                            statsController.updateBarChart();
+                            break;
+                          }
+                        }
+                      },
                     ),
                   )
                 ],
-              ),
-              SizedBox(height: 15,),
-              Container(
-                padding: EdgeInsets.all(20),
-                height: 200,
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
-                  ),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x3F000000),
-                      blurRadius: 4,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    )
-                  ]
-                ),
+              ):
+              (statsController.groupValue.value == 1)?Stack(
+                children: [
+                  Container(
+                    width: 90,
+                    child: DropdownButtonFormField2<String>(
+                      value: selectedMonth,
+                      isExpanded: false,
+                      //hint: BigText(text: "Select your sex", fontWeight: FontWeight.w400, size: 14,),
+                      items:  months.map((item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'SF Pro Display',
+                              color: kGreyColor
+                          ),
+                        ),
+                      )).toList(),
+                      decoration: InputDecoration(
+                          border: InputBorder.none
+                      ),
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(left:0,right:0),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: 100,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 1),
+                      ),
+                      onSaved: (value){
+
+                      },
+                      onChanged: (String? value){
+                        for(int i=0; i<months.length; i++){
+                          if(months[i] == value){
+                            statsController.monthChoice.value = i;
+
+                            statsController.updateAttendance();
+                            //statsController.initAttendance(subjects.entries.elementAt(0).value);
+
+                            statsController.update();
+                            //statsController.updateBarChart();
+                            break;
+                          }
+                        }
+
+                      },
+                    ),
+                  )
+                ],
+              ):Container();
+            }),
+            SizedBox(height: 15,),
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BigText(text: "Attendance Rate", color: kGreyColor, size: 16, fontWeight: FontWeight.w700,),
-                    SizedBox(height: 20,),
-                    Expanded(
-                      child: BarChartAttendance())
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.only(top: 15, left: 20, right: 30),
+                            height: 110,
+                            decoration: ShapeDecoration(
+                                color: Color(0x3F1400FF),
+                                shape: RoundedRectangleBorder(
+                                    side: BorderSide(width: 1, color: Color(0xFF1A43BF)),
+                                    borderRadius: BorderRadius.circular(15)
+                                )
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                BigText(text: "Total Attendance   ", fontWeight: FontWeight.w700, maxLines: 2, size: 16,),
+                                Obx(()=>BigText(text: (statsController.attendance[0].length + statsController.attendance[2].length).toString(), fontWeight: FontWeight.w700, size: 25, color: Color(0xFF1400FF),))
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20,),
+                        Expanded(
+                          child: Container(
+                            height: 110,
+                            padding: EdgeInsets.only(top: 15, left: 20, right: 30),
+                            decoration: ShapeDecoration(
+                                color: Color(0x59FF0000),
+                                shape: RoundedRectangleBorder(
+                                    side: BorderSide(width: 1, color: Color(0xFFFF0000)),
+                                    borderRadius: BorderRadius.circular(15)
+                                )
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                BigText(text: "Total Absences   ", fontWeight: FontWeight.w700, maxLines: 2, size: 16,),
+                                Obx(()=>BigText(text: statsController.attendance[1].length.toString(), fontWeight: FontWeight.w700, size: 25, color: Color(0xFFFF0000), ))
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 15,),
+                    Obx(()=>Visibility(
+                      visible: !statsController.allTimeChoiceTapped.value,
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        height: 200,
+                        width: double.infinity,
+                        decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 4,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ]
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BigText(text: "Attendance Rate", color: kGreyColor, size: 16, fontWeight: FontWeight.w700,),
+                            SizedBox(height: 20,),
+                            Expanded(
+                                child: BarChartAttendance())
+                          ],
+                        ),
+                      ),
+                    )),
+                    SizedBox(height: 15,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            height: 220,
+                            decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)
+                                ),
+                                shadows: [
+              
+                                  BoxShadow(
+                                    color: Color(0x3F000000),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 4),
+                                    spreadRadius: 0,
+                                  )
+                                ]
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                BigText(text: "Punctuality", color: kGreyColor, size: 16, fontWeight: FontWeight.w700,),
+                                SizedBox(height: 20,),
+                                Expanded(
+                                    child: PieChartAttendance(
+                                      numPresent: statsController.attendance[0].length,
+                                      numAbsent: statsController.attendance[1].length,
+                                      numLate: statsController.attendance[2].length,
+                                    )),
+                                SizedBox(height: 20,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    PieChartLegend(color: kBlueColor, text: "Present",),
+                                    PieChartLegend(color: Colors.red, text: "Absent",),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    PieChartLegend(color: Colors.yellow, text: "Late",),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                        Expanded(
+                          child: Container(
+                              padding: EdgeInsets.all(5),
+                              height: 200,
+                              decoration: ShapeDecoration(
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)
+                                  ),
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Color(0x3F000000),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 4),
+                                      spreadRadius: 0,
+                                    )
+                                  ]
+                              ),
+                              child: Center(child: Text("Show more"))
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height:100),
                   ],
                 ),
               ),
-              SizedBox(height: 15,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      height: 220,
-                      decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)
-                          ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x3F000000),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                              spreadRadius: 0,
-                            )
-                          ]
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BigText(text: "Punctuality", color: kGreyColor, size: 16, fontWeight: FontWeight.w700,),
-                          SizedBox(height: 20,),
-                          Expanded(
-                            child: PieChartAttendance(
-                              numPresent: attendance[0].length,
-                              numAbsent: attendance[1].length,
-                              numLate: attendance[2].length,
-                                                      )),
-                          SizedBox(height: 20,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PieChartLegend(color: kBlueColor, text: "Present",),
-                              PieChartLegend(color: Colors.red, text: "Absent",),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              PieChartLegend(color: Colors.yellow, text: "Late",),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10,),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      height: 200,
-                      decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)
-                          ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x3F000000),
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                              spreadRadius: 0,
-                            )
-                          ]
-                      ),
-                      child: Center(child: Text("Show more"))
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height:100),
-            ],
-          ),
+            ),
+          ],
         ),
 
       ),
@@ -436,44 +655,45 @@ class _StatisticsPageState extends State<StatisticsPage> {
 }
 
 class BarChartAttendance extends StatelessWidget {
-  const BarChartAttendance({super.key});
+
+  StatisticsController statsController = Get.put(StatisticsController());
 
   @override
   Widget build(BuildContext context) {
-    return BarChart(
-      BarChartData(
-        barTouchData: barTouchData,
-        titlesData: titlesData,
-        borderData: borderData,
-        barGroups: barGroups,
-        gridData: const FlGridData(show: false),
-        alignment: BarChartAlignment.spaceAround,
-        maxY: 20,
-      )
-    );
+    return Obx(()=>BarChart(
+        BarChartData(
+          barTouchData: barTouchData,
+          titlesData: titlesData,
+          borderData: borderData,
+          barGroups: barGroups,
+          gridData: const FlGridData(show: false),
+          alignment: BarChartAlignment.spaceAround,
+          maxY: statsController.barchartWeeklyData.reduce(max).toDouble()+1,
+        )
+    ));
   }
 
   BarTouchData get barTouchData => BarTouchData(
-    enabled: false,
-    touchTooltipData: BarTouchTooltipData(
-      getTooltipColor: (group) => Colors.transparent,
-      tooltipPadding: EdgeInsets.zero,
-      tooltipMargin: 8,
-      getTooltipItem: (
-        BarChartGroupData group,
-        int groupIndex,
-        BarChartRodData rod,
-        int rodIndex,
-      ) {
-        return BarTooltipItem(
-          rod.toY.round().toString(),
-          const TextStyle(
-            color: kBlueColor,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-      }
-    )
+      enabled: false,
+      touchTooltipData: BarTouchTooltipData(
+          getTooltipColor: (group) => Colors.transparent,
+          tooltipPadding: EdgeInsets.zero,
+          tooltipMargin: 8,
+          getTooltipItem: (
+              BarChartGroupData group,
+              int groupIndex,
+              BarChartRodData rod,
+              int rodIndex,
+              ) {
+            return BarTooltipItem(
+              rod.toY.round().toString(),
+              const TextStyle(
+                color: kBlueColor,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          }
+      )
   );
 
   Widget getTitles(double value, TitleMeta meta) {
@@ -551,7 +771,7 @@ class BarChartAttendance extends StatelessWidget {
       x: 0,
       barRods: [
         BarChartRodData(
-          toY: 8,
+          toY: statsController.barchartWeeklyData[0].toDouble(),
           gradient: _barsGradient,
         )
       ],
@@ -561,7 +781,7 @@ class BarChartAttendance extends StatelessWidget {
       x: 1,
       barRods: [
         BarChartRodData(
-          toY: 10,
+          toY: statsController.barchartWeeklyData[1].toDouble(),
           gradient: _barsGradient,
         )
       ],
@@ -571,7 +791,7 @@ class BarChartAttendance extends StatelessWidget {
       x: 2,
       barRods: [
         BarChartRodData(
-          toY: 14,
+          toY: statsController.barchartWeeklyData[2].toDouble(),
           gradient: _barsGradient,
         )
       ],
@@ -581,7 +801,7 @@ class BarChartAttendance extends StatelessWidget {
       x: 3,
       barRods: [
         BarChartRodData(
-          toY: 15,
+          toY: statsController.barchartWeeklyData[3].toDouble(),
           gradient: _barsGradient,
         )
       ],
@@ -591,7 +811,7 @@ class BarChartAttendance extends StatelessWidget {
       x: 4,
       barRods: [
         BarChartRodData(
-          toY: 13,
+          toY: statsController.barchartWeeklyData[4].toDouble(),
           gradient: _barsGradient,
         )
       ],
@@ -601,7 +821,7 @@ class BarChartAttendance extends StatelessWidget {
       x: 5,
       barRods: [
         BarChartRodData(
-          toY: 10,
+          toY: statsController.barchartWeeklyData[5].toDouble(),
           gradient: _barsGradient,
         )
       ],
@@ -619,7 +839,7 @@ class PieChartAttendance extends StatelessWidget {
   final int numLate;
 
   final StatisticsController statisticsController = Get.put(StatisticsController());
-  
+
   String getValue(int num){
     int total = numPresent+numAbsent+numLate;
     double avg = num/total;
@@ -656,19 +876,19 @@ class PieChartAttendance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PieChart(
-        PieChartData(
-          pieTouchData: PieTouchData(
-            touchCallback: (FlTouchEvent event, pieTouchResponse) {
-              statisticsController.expandContainer();
-            },
-          ),
-          borderData: FlBorderData(
-            show: false,
-          ),
-          sectionsSpace: 0,
-          centerSpaceRadius: 20,
-          sections: showingSections(),
+      PieChartData(
+        pieTouchData: PieTouchData(
+          touchCallback: (FlTouchEvent event, pieTouchResponse) {
+            statisticsController.expandContainer();
+          },
         ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        sectionsSpace: 0,
+        centerSpaceRadius: 20,
+        sections: showingSections(),
+      ),
     );
   }
 
@@ -679,36 +899,36 @@ class PieChartAttendance extends StatelessWidget {
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: kBlueColor,
-            value: double.parse(numPresent.toString()),
-            //title: getValue(numPresent)+ "%",
-            radius: radius,
-            showTitle: false,
-            badgeWidget: buildAnimatedContainers(numPresent),
-            badgePositionPercentageOffset: 1,
-            titlePositionPercentageOffset: 1
+              color: kBlueColor,
+              value: double.parse(numPresent.toString()),
+              //title: getValue(numPresent)+ "%",
+              radius: radius,
+              showTitle: false,
+              badgeWidget: buildAnimatedContainers(numPresent),
+              badgePositionPercentageOffset: 1,
+              titlePositionPercentageOffset: 1
           );
         case 1:
           return PieChartSectionData(
-            color: Colors.yellow,
-            value: double.parse(numLate.toString()),
-            title: getValue(numLate)+"%",
-            radius: radius,
-            showTitle: false,
-            badgeWidget: buildAnimatedContainers(numLate),
-            badgePositionPercentageOffset: 1,
-            titlePositionPercentageOffset: 1
+              color: Colors.yellow,
+              value: double.parse(numLate.toString()),
+              title: getValue(numLate)+"%",
+              radius: radius,
+              showTitle: false,
+              badgeWidget: buildAnimatedContainers(numLate),
+              badgePositionPercentageOffset: 1,
+              titlePositionPercentageOffset: 1
           );
         case 2:
           return PieChartSectionData(
-            color: Colors.red,
-            value: double.parse(numAbsent.toString()),
-            title: getValue(numAbsent)+"%",
-            radius: radius,
-            showTitle: false,
-            badgeWidget: buildAnimatedContainers(numAbsent),
-            badgePositionPercentageOffset: 1,
-            titlePositionPercentageOffset: 1
+              color: Colors.red,
+              value: double.parse(numAbsent.toString()),
+              title: getValue(numAbsent)+"%",
+              radius: radius,
+              showTitle: false,
+              badgeWidget: buildAnimatedContainers(numAbsent),
+              badgePositionPercentageOffset: 1,
+              titlePositionPercentageOffset: 1
           );
         default:
           return PieChartSectionData(
