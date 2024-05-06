@@ -105,6 +105,18 @@ class Home1State extends State<Home1> {
   final Notifications notifications = Get.put(Notifications());
   final userDataControllers = Get.put(UserDataControllers());
 
+  final StatisticsMethods statisticsMethods = StatisticsMethods();
+
+  String getAttendanceRate(){
+    List<List<DocumentSnapshot<Object?>>> dc = statisticsMethods.getTotalAttendanceAll();
+    int attendance = dc[0].length + dc[2].length;
+
+    double rate = (attendance/(attendance+dc[1].length))*100;
+
+    return rate.toStringAsFixed(2);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(375, 677));
@@ -178,7 +190,7 @@ class Home1State extends State<Home1> {
                             SizedBox(height: getDynamicSize.getHeight(context)*0.01,),
                             Row(
                               children: [
-                                BigText(text: "Welcome back, Cy!", color: Colors.white, size: 22, fontWeight: FontWeight.w700,
+                                BigText(text: "Welcome back " + userDataControllers.studentSnapshot[0]['first_name'].toString() + "!", color: Colors.white, size: 22, fontWeight: FontWeight.w700,
                                   letterSpacing: 0.08,)
                               ],
                             ),
@@ -195,7 +207,7 @@ class Home1State extends State<Home1> {
                                       children: [
                                         BigText(text: 'of', color: Colors.white, letterSpacing: 0.06,
                                           size: 16, fontWeight: FontWeight.w400,),
-                                        BigText(text: ' 60%', color: Colors.white, letterSpacing: 0.06,
+                                        BigText(text: ' ' + getAttendanceRate() + '%', color: Colors.white, letterSpacing: 0.06,
                                           size: 16, fontWeight: FontWeight.w700,),
                                         BigText(text: '. Keep up the good work!', color: Colors.white, letterSpacing: 0.06,
                                           size: 16, fontWeight: FontWeight.w400,),
