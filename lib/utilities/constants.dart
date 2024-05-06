@@ -177,7 +177,6 @@ class StatisticsMethods{
     return listAttendance;
   }
 
-
   List<List<DocumentSnapshot<Object?>>> getTotalAttendance(List<DocumentSnapshot> attendance, int subject_id){
 
     List<String> attendanceStatus = ["Present", "Absent", "Late"];
@@ -195,6 +194,25 @@ class StatisticsMethods{
         attendanceList.add(attendance.where((doc) => doc['attendance_status'] == status && doc['subject_sched_id'] == element).toList());
       }
     });
+
+    return attendanceList;
+
+  }
+
+
+
+  List<List<DocumentSnapshot<Object?>>> getTotalAttendanceAll(){
+
+    List<String> attendanceStatus = ["Present", "Absent", "Late"];
+    List<List<DocumentSnapshot>> attendanceList = [];
+    List<int> schedule_subject = [];
+
+
+      for(String status in attendanceStatus){
+        attendanceList.add( userDataControllers.attendanceSnapshot.where((doc) => doc['attendance_status'] == status).toList());
+      }
+
+
 
     return attendanceList;
 

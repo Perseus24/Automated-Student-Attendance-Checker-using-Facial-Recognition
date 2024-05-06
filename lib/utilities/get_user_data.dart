@@ -3,12 +3,17 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/professor_side/utilities/get_prof_data.dart';
 import 'package:flutter_application_1/utilities/constants.dart';
 import 'package:get/get.dart';
+
+import '../screens/notification_page.dart';
 
 
 
 class UserDataControllers extends GetxController{
+
+  late List<DocumentSnapshot> _studentSnapshot;
   late List<DocumentSnapshot> _subjectSnapshot;
   late List<DocumentSnapshot> _professorSnapshot;
   late List<DocumentSnapshot> _roomSnapshot;
@@ -20,7 +25,9 @@ class UserDataControllers extends GetxController{
   late List<DocumentSnapshot> _thisWeekAttendance;
   late List<DocumentSnapshot> _longTimeAttendance;
 
+  RxInt switchDashboardUser = 0.obs;  //0 for students,1 for professors
 
+  List<DocumentSnapshot> get studentSnapshot => _studentSnapshot;
   List<DocumentSnapshot> get subjectSnapshot => _subjectSnapshot;
   List<DocumentSnapshot> get professorSnapshot => _professorSnapshot;
   List<DocumentSnapshot> get roomSnapshot => _roomSnapshot;
@@ -32,6 +39,12 @@ class UserDataControllers extends GetxController{
   List<DocumentSnapshot> get yesterdayAttendance => _yesterdayAttendance;
   List<DocumentSnapshot> get thisWeekAttendance => _thisWeekAttendance;
   List<DocumentSnapshot> get longTimeAttendance => _longTimeAttendance;
+
+
+  void setStudentSnapshot(List<DocumentSnapshot> docs) {
+    _studentSnapshot = docs;
+    update(); // Updates UI dependent on this controller
+  }
 
   void setSubjectSnapshot(List<DocumentSnapshot> docs) {
     _subjectSnapshot = docs;
@@ -84,14 +97,14 @@ class UserDataControllers extends GetxController{
     Completer<bool> complete = Completer();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user != null) {
-        complete.complete(true);
+        return complete.complete(true);
       }else{
-        complete.complete(false);
+        return complete.complete(false);
       }
     });
     //uncomment this once all the pages before main homepage completes
     return complete.future;
-    return false;
+    //return false;
 
   }
 
@@ -113,6 +126,7 @@ class GetUserFirebaseInfo{
 
   final userDataControllers = Get.put(UserDataControllers());
   final StatisticsMethods statisticsMethods = StatisticsMethods();
+  final statsController = Get.put(StatisticsController());
 
   late final List<DocumentSnapshot> getStudentID;
   List<DocumentSnapshot> getStudentSubject = [];
@@ -122,15 +136,20 @@ class GetUserFirebaseInfo{
   late final List<DocumentSnapshot> getRooms;
   late final List<DocumentSnapshot> getBldg;
   late final List<DocumentSnapshot> getAttendance;
+  late final int getCourseBlock;
 
   late final List<DocumentSnapshot> thisDayAttendance;
   late final List<DocumentSnapshot> yesterdayAttendance;
   late final List<DocumentSnapshot> thisWeekAttendance;
   late final List<DocumentSnapshot> longTimeAttendance;
 
+  final ProfDataControllers profDataControllers = Get.put(ProfDataControllers());
+  final GetProfessorFirebaseInfo getProfessorFirebaseInfo = GetProfessorFirebaseInfo();
 
   Future<List<DocumentSnapshot>> fetchStudent() async{
-    QuerySnapshot studentSnapshot = await studentTable.where('middle_name', isEqualTo: userid).get();
+    final String? userid = FirebaseAuth.instance.currentUser?.uid;
+    QuerySnapshot studentSnapshot = await studentTable.where('user_uid', isEqualTo: userid).get();
+    userDataControllers.setStudentSnapshot(studentSnapshot.docs);
     return studentSnapshot.docs;
 
   }
@@ -138,57 +157,90 @@ class GetUserFirebaseInfo{
   Future<void> fetchStudentFirebaseInfos() async{
     getStudentID = await fetchStudent();
 
-    QuerySnapshot studentSubjectSnapshot = await studentSubjectTable.where('student_id', isEqualTo: getStudentID[0]['student_ID']).get();
-    getStudentSubject = studentSubjectSnapshot.docs;
+    if(getStudentID.isEmpty){
+      print("HERE!");
+      await getProfessorFirebaseInfo.fetchStudentFirebaseInfos();
+      userDataControllers.switchDashboardUser.value = 1;
+      userDataControllers.update();
+    }else{
+      userDataControllers.switchDashboardUser.value = 0;
+      userDataControllers.update();
 
-    final subjectIDs = getStudentSubject.map((docs) => docs['subject_id']).toList();
+      getCourseBlock = getStudentID[0]['course_bloc_id']; //course
 
-    //get the subject table
-    QuerySnapshot subjectSnapshot = await subjectsTable.where('subject_id', whereIn: subjectIDs).get();
-    getSubjects = subjectSnapshot.docs;
+      QuerySnapshot studentSubjectSnapshot = await studentSubjectTable.where('student_id', isEqualTo: getStudentID[0]['student_ID']).get();
+      getStudentSubject = studentSubjectSnapshot.docs;
 
-    userDataControllers.setSubjectSnapshot(getSubjects);
-    final professorIDs = getSubjects.map((docs) => docs['professor_id']).toList();
+      ChatNotification.subscribeToTopic(getStudentID[0]['student_ID'].toString());
 
-    //get the schedule_subject table
-    QuerySnapshot schedSubjectSnapshot = await schedSubjectTable.where('subject_id', whereIn: subjectIDs).get();
-    getSchedSubject = schedSubjectSnapshot.docs;
+      final subjectIDs = getStudentSubject.map((docs) => docs['subject_id']).toList();
 
-    userDataControllers.setScheduleSnapshot(getSchedSubject);
-    final roomIDs = getSchedSubject.map((docs) => docs['room_id']).toList();
+      //get the subject table
+      QuerySnapshot subjectSnapshot = await subjectsTable.where('subject_id', whereIn: subjectIDs).get();
+      getSubjects = subjectSnapshot.docs;
 
-    //get the professors table
-    QuerySnapshot professorSnapshot = await professorsTable.where('professor_id', whereIn: professorIDs).get();
-    getProfessors = professorSnapshot.docs;
 
-    userDataControllers.setProfessorSnapshot(getProfessors);
+      userDataControllers.setSubjectSnapshot(getSubjects);
+      final professorIDs = getSubjects.map((docs) => docs['professor_id']).toList();
 
-    //get the room table
-    QuerySnapshot roomSnapshot = await roomTable.where('room_id', whereIn: roomIDs).get();
-    getRooms = roomSnapshot.docs;
+      //get the schedule_subject table
+      QuerySnapshot schedSubjectSnapshot = await schedSubjectTable.where('subject_id', whereIn: subjectIDs).get();
+      getSchedSubject = schedSubjectSnapshot.docs;
 
-    userDataControllers.setRoomSnapshot(getRooms);
-    final bldgIDs = getRooms.map((docs) => docs['bldg_id']).toList();
+      //get only the schedule with the same block with the student
+      final getSchedSubjectNew = getSchedSubject.where((element) => element['course_bloc_id'] == getCourseBlock).toList();
 
-    //get the bldg table
-    QuerySnapshot bldgSnapshot = await bldgTable.where('bldg_id', whereIn: bldgIDs).get();
-    getBldg = bldgSnapshot.docs;
+      userDataControllers.setScheduleSnapshot(getSchedSubjectNew);
+      final roomIDs = getSchedSubjectNew.map((docs) => docs['room_id']).toList();
 
-    userDataControllers.setBldgSnapshot(getBldg);
+      //get the professors table
+      QuerySnapshot professorSnapshot = await professorsTable.where('professor_id', whereIn: professorIDs).get();
+      getProfessors = professorSnapshot.docs;
 
-    //get the attendance table
-    QuerySnapshot attendanceSnapshot = await attendanceTable.where('student_id', isEqualTo: getStudentID[0]['student_ID']).get();
-    getAttendance = attendanceSnapshot.docs;
+      userDataControllers.setProfessorSnapshot(getProfessors);
 
-    userDataControllers.setAttendanceSnapshot(getAttendance);
+      //get the room table
+      QuerySnapshot roomSnapshot = await roomTable.where('room_id', whereIn: roomIDs).get();
+      getRooms = roomSnapshot.docs;
+
+      userDataControllers.setRoomSnapshot(getRooms);
+      final bldgIDs = getRooms.map((docs) => docs['bldg_id']).toList();
+
+      //get the bldg table
+      QuerySnapshot bldgSnapshot = await bldgTable.where('bldg_id', whereIn: bldgIDs).get();
+      getBldg = bldgSnapshot.docs;
+
+      userDataControllers.setBldgSnapshot(getBldg);
+
+      //get the attendance table
+      QuerySnapshot attendanceSnapshot = await attendanceTable.where('student_id', isEqualTo: getStudentID[0]['student_ID']).get();
+      getAttendance = attendanceSnapshot.docs;
+
+      userDataControllers.setAttendanceSnapshot(getAttendance);
+
+      statsController.initAttendance();
+    }
+
 
 
   }
 
+  Future<void> fetchAttendance() async{
+    getStudentID = await fetchStudent();
+    QuerySnapshot attendanceSnapshot = await attendanceTable.where('student_id', isEqualTo: getStudentID[0]['student_ID']).get();
+    getAttendance = attendanceSnapshot.docs;
+
+    userDataControllers.setAttendanceSnapshot(getAttendance);
+  }
   Future<void>  fetchNotificationHistory() async {
+
     userDataControllers.setThisDayAttendance(statisticsMethods.getThisDayNotif(userDataControllers.attendanceSnapshot));
     userDataControllers.setYesterdayAttendance(statisticsMethods.getYesterdayNotif(userDataControllers.attendanceSnapshot));
     userDataControllers.setThisWeekAttendance(statisticsMethods.getThisWeekNotif(userDataControllers.attendanceSnapshot));
     userDataControllers.setLongTimeAttendance(statisticsMethods.getLongTimeNotif(userDataControllers.attendanceSnapshot));
+
+    Notifications notifications = Get.put(Notifications());
+
+    notifications.updateLists();
   }
 }
