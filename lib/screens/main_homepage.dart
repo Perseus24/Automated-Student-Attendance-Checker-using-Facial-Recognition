@@ -78,7 +78,7 @@ class MainHomePage extends StatelessWidget{
         body: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: (){
-            homepageController.notifButtonTapped.toggle();
+            homepageController.notifButtonTapped.value = false;
             homepageController.expandNotifContainer();
             homepageController.update();
           },

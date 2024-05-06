@@ -1,8 +1,5 @@
+
 import 'dart:math';
-
-import 'package:intl/intl.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'package:fl_chart/fl_chart.dart';
@@ -21,6 +18,7 @@ import '../utilities/get_user_data.dart';
 import '../widgets/big_texts.dart';
 import '../widgets/hamburger.dart';
 import 'landing_page.dart';
+import 'notification_page.dart';
 
 Map<LayerLink, OverlayEntry> overlays = {};
 
@@ -40,6 +38,7 @@ void hideOverlays(){
 class StatisticsHome extends StatelessWidget {
 
   final homepageController = Get.put(HomepageController());
+  final userDataControllers = Get.put(UserDataControllers());
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +60,9 @@ class StatisticsHome extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BigText(text: "Taylor Dimagiba Swift", fontWeight: FontWeight.w700, color: Color(0xFFBCC1CD), size: 15),
-                    BigText(text: "BSCS 3B", fontWeight: FontWeight.w400, color: Color(0xFFBCC1CD), size: 15,),
+                    BigText(text: userDataControllers.studentSnapshot[0]['first_name'].toString() + " " +
+                    userDataControllers.studentSnapshot[0]['last_name'].toString(), fontWeight: FontWeight.w700, color: Color(0xFFBCC1CD), size: 15),
+                    BigText(text: "BS Computer Science 3-"+(userDataControllers.studentSnapshot[0]['course_bloc_id']==33002?"B":"A"), fontWeight: FontWeight.w400, color: Color(0xFFBCC1CD), size: 15,),
                   ],
                 )
               ],
@@ -79,7 +79,10 @@ class StatisticsHome extends StatelessWidget {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              Navigator.of(context).push(createRouteBack(MyApp()));
+                              homepageController.notifButtonTapped.toggle();
+                              homepageController.expandNotifContainer();
+                              homepageController.update();
+
                             },
                             clipBehavior: Clip.antiAlias,
                             style: ElevatedButton.styleFrom(
@@ -109,6 +112,7 @@ class StatisticsHome extends StatelessWidget {
               hideOverlays();
             },
           child: StatisticsPage()),
+        bottomNavigationBar: NotificationStream(),
       ),
     );
   }
@@ -647,7 +651,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
             ),
           ],
         ),
-
       ),
     );
   }

@@ -16,47 +16,37 @@ import '../utilities/get_user_data.dart';
 import '../widgets/big_texts.dart';
 import 'package:get/get.dart';
 
-class NotificationPage extends StatelessWidget {
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  class NotificationStream extends StatelessWidget {
 
-  final HomepageController homepageController = Get.put(HomepageController());
-  final userDataControllers = Get.put(UserDataControllers());
+    final CollectionReference attendanceTable = FirebaseFirestore.instance.collection('student_attendance');
+    final Notifications notifications = Get.put(Notifications());
+    final HomepageController homepageController = Get.put(HomepageController());
 
+    List<DocumentSnapshot> sortAttendance(dynamic listAttendance){
+      listAttendance.sort((a, b) {
+        // Assuming 'time' is a string in HH:mm aa format
+        Timestamp tsA = a['date'];
+        Timestamp tsB = b['date'];
 
-  List<DocumentSnapshot<Object?>> sortNotif(List<DocumentSnapshot> sched){
+        DateTime dtA = tsA.toDate();
+        DateTime dtB = tsB.toDate();
 
+        // Comparing DateTime objects
+        return dtB.compareTo(dtA);
+      });
+      return listAttendance;
+    }
 
-    List<DocumentSnapshot> filteredSched = sched.toList();
-    filteredSched.sort((a, b) {
-      // Assuming 'time' is a string in HH:mm aa format
-      Timestamp tsA = a['date'];
-      Timestamp tsB = b['date'];
+    @override
+    Widget build(BuildContext context) {
+      bool thisDayEmpty = notifications.thisDayAttendance.isEmpty;
+      bool yesterdayEmpty = notifications.yesterdayAttendance.isEmpty;
+      bool thisWeekEmpty = notifications.thisWeekAttendance.isEmpty;
+      bool longTimeEmpty = notifications.longTimeAttendance.isEmpty;
 
-      DateTime dtA = tsA.toDate();
-      DateTime dtB = tsB.toDate();
-
-      // Comparing DateTime objects
-      return dtB.compareTo(dtA);
-    });
-    return filteredSched;
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    List<DocumentSnapshot> thisDayAttendance = sortNotif(userDataControllers.thisDayAttendance);
-    List<DocumentSnapshot> yesterdayAttendance = sortNotif(userDataControllers.yesterdayAttendance);
-    List<DocumentSnapshot> thisWeekAttendance = sortNotif(userDataControllers.thisWeekAttendance);
-    List<DocumentSnapshot> longTimeAttendance = sortNotif(userDataControllers.longTimeAttendance);
-
-
-    bool thisDayEmpty = thisDayAttendance.isEmpty;
-    bool yesterdayEmpty = yesterdayAttendance.isEmpty;
-    bool thisWeekEmpty = thisWeekAttendance.isEmpty;
-    bool longTimeEmpty = longTimeAttendance.isEmpty;
-
-    return Obx(()=>AnimatedContainer(
+      return Obx(()=>AnimatedContainer(
         duration: Duration(milliseconds: 500),
         curve: Curves.ease,
         height: homepageController.notifContainer.value,
@@ -87,19 +77,46 @@ class NotificationPage extends StatelessWidget {
                     children: [
                       SizedBox(height: 20,),
                       thisDayEmpty?Container():BigText(text: "Today", size: 16, color: kGreyColor,),
-                      thisDayEmpty?Container():buildListViewBuilder(thisDayAttendance),
+                      thisDayEmpty?Container():StreamBuilder<QuerySnapshot>(
+                          stream: attendanceTable.snapshots(),
+                          builder: (context, snapshots){
+
+                            final listAttendance = snapshots.data!.docs;
+
+
+                            listAttendance.sort((a, b) {
+                              // Assuming 'time' is a string in HH:mm aa format
+                              Timestamp tsA = a['date'];
+                              Timestamp tsB = b['date'];
+
+                              DateTime dtA = tsA.toDate();
+                              DateTime dtB = tsB.toDate();
+
+                              // Comparing DateTime objects
+                              return dtB.compareTo(dtA);
+                            });
+
+                            StatisticsMethods statisticsMethods = StatisticsMethods();
+
+                            List<DocumentSnapshot> thisDayAttendance = statisticsMethods.getThisDayNotif(listAttendance.cast<DocumentSnapshot<Object?>>());
+
+
+                            return buildListViewBuilder(thisDayAttendance);
+
+                          }
+                      ),
                       thisDayEmpty?Container():SizedBox(height: 10,),
 
                       yesterdayEmpty?Container():BigText(text: "Yesterday", size: 16, color: kGreyColor,),
-                      yesterdayEmpty?Container():buildListViewBuilder(yesterdayAttendance),
+                      notifications.yesterdayAttendance.isEmpty?Container():buildListViewBuilder(notifications.yesterdayAttendance),
                       yesterdayEmpty?Container():SizedBox(height: 10,),
 
                       thisWeekEmpty?Container():BigText(text: "This week", size: 16, color: kGreyColor,),
-                      thisWeekEmpty?Container():buildListViewBuilder(thisWeekAttendance),
+                      notifications.thisWeekAttendance.isEmpty?Container():buildListViewBuilder(notifications.thisWeekAttendance),
                       thisWeekEmpty?Container():SizedBox(height: 10,),
 
                       longTimeEmpty?Container():BigText(text: "Long time ago", size: 16, color: kGreyColor,),
-                      longTimeEmpty?Container():buildListViewBuilder(longTimeAttendance),
+                      notifications.longTimeAttendance.isEmpty?Container():buildListViewBuilder(notifications.longTimeAttendance),
                       longTimeEmpty?Container():SizedBox(height: 10,),
 
                     ],
@@ -112,19 +129,22 @@ class NotificationPage extends StatelessWidget {
     ));
   }
 
-  Widget buildListViewBuilder(List<DocumentSnapshot> attendance){
+  UserDataControllers userDataControllers = Get.put(UserDataControllers());
+
+  Widget buildListViewBuilder(List<DocumentSnapshot> attendanceThis){
 
     final List<DocumentSnapshot> schedule = userDataControllers.scheduleSnapshot;
     final List<DocumentSnapshot> subject = userDataControllers.subjectSnapshot;
+
 
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
-        itemCount: attendance.length,
+        itemCount: attendanceThis.length,
         itemBuilder: (context, position) {
 
-          final attendanceDocs = attendance[position];
+          final attendanceDocs = attendanceThis[position];
           final schedDocs = schedule.firstWhere((element) => element['subject_sched_id'] == attendanceDocs['subject_sched_id']);
           final subjectDocs = subject.firstWhere((element) => element['subject_id'] == schedDocs['subject_id']);
 
@@ -195,8 +215,11 @@ class NotificationPage extends StatelessWidget {
   }
 }
 
+
+
 class ChatNotification{
 
+  Notifications notifications = Get.put(Notifications());
   static Future<void> subscribeToTopic(String topic) async {
     await FirebaseMessaging.instance.subscribeToTopic(topic);
   }
@@ -248,6 +271,8 @@ class ChatNotification{
 
   static Future<void> onNotificationDisplayedMethod(ReceivedNotification receivedNotification) async{
     debugPrint('NotificationDisplayed!');
+    Notifications notifications = Get.put(Notifications());
+    notifications.expandPopUp();
   }
 
   static Future<void> onDismissActionReceivedMethod(ReceivedAction receivedAction) async{
@@ -328,6 +353,7 @@ class NewNotif {
     );
   }
 
+  Notifications notifications = Get.put(Notifications());
   // Method to handle incoming FCM messages when the app is in the background
   Future<void> setBackgroundMessageHandler() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -336,13 +362,19 @@ class NewNotif {
   // Background message handler function
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print('Handling a background message ${message.messageId}');
+
+    notifications.updateNotifVariables(message.data['subject'], message.data['attendance_status'], message.data['date']);
+
     showNotification(message.data['title'], message.data['body']);
   }
 
   // Method to handle incoming FCM messages when the app is in the foreground
   void setForegroundMessageHandler() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Handling a foreground message ${message.messageId}');
+      print('Handling a foreground message ${message.data}');
+      
+      notifications.updateNotifVariables(message.data['subject'], message.data['attendance_status'], DateTime.parse(message.data['date']));
+      
       showNotification(message.notification?.title, message.notification?.body);
     });
   }
