@@ -96,6 +96,7 @@ class StatisticsController extends GetxController{
   void initAttendance(){
     getSubjects();
 
+    print(listSubjects.entries.elementAt(0).value);
     originalAttendance.value = statisticsMethods.getTotalAttendance(statisticsMethods.getThisWeekStatsNumber(userDataControllers.attendanceSnapshot),listSubjects.entries.elementAt(0).value);
     attendance.value = originalAttendance;
 
@@ -120,7 +121,6 @@ class StatisticsController extends GetxController{
       }else{
         barchartWeeklyData.value = statisticsMethods.getBarChartWeekly(merge());
       }
-
     }
     update();
   }
@@ -180,7 +180,7 @@ class StatisticsMethods{
   List<List<DocumentSnapshot<Object?>>> getTotalAttendance(List<DocumentSnapshot> attendance, int subject_id){
 
     List<String> attendanceStatus = ["Present", "Absent", "Late"];
-    List<List<DocumentSnapshot>> attendanceList = [];
+    List<List<DocumentSnapshot>> attendanceList = [[],[],[]];
     List<int> schedule_subject = [];
 
     userDataControllers.scheduleSnapshot.forEach((element) {  //gets only the schedule of the certain subject
@@ -189,11 +189,22 @@ class StatisticsMethods{
       }
     });
 
-    schedule_subject.forEach((element) {    // adds the attendance status for the certain subject
-      for(String status in attendanceStatus){
-        attendanceList.add(attendance.where((doc) => doc['attendance_status'] == status && doc['subject_sched_id'] == element).toList());
+    for (int i=0; i<3; i++){
+      for (int index in schedule_subject) {    // adds the attendance status for the certain subject
+
+          for (var element in attendance) {
+            if(element['attendance_status'] == attendanceStatus[i] && element['subject_sched_id'] == index ){
+              attendanceList[i].add(element);
+              print(element['subject_sched_id']);
+            }
+          }
+          //attendanceList.add(attendance.where((doc) => doc['attendance_status'] == status && doc['subject_sched_id'] == element).toList());
+
       }
-    });
+    }
+
+
+
 
     return attendanceList;
 
@@ -298,25 +309,24 @@ class StatisticsMethods{
   List<int> getBarChartWeekly(List<DocumentSnapshot> attendance){
     List<int> weeklyData = [0,0,0,0,0,0];
 
-    print('debug');
-
-
     for (var element in attendance) {
-      for(int i=1; i<7; i++){
 
-        Timestamp dt = element['date'];
-        DateTime st = dt.toDate();
+      Timestamp ts = element['date'];
+      DateTime dm = ts.toDate();
 
-        if(i==st.weekday){
-          weeklyData[i-1] = weeklyData[i-1]+1;
-          break;
+      if(DateTime.now().difference(dm).inHours <= 168 && DateTime.now().difference(dm).inSeconds > 1){
+        for(int i=1; i<7; i++){
+
+
+          if(i==dm.weekday){
+            weeklyData[i-1] = weeklyData[i-1]+1;
+            break;
+          }
         }
       }
     }
 
 
-
-    print(weeklyData.toString());
     return weeklyData;
   }
   List<int> getBarChartMonthly(List<DocumentSnapshot> attendance){
@@ -334,7 +344,7 @@ class StatisticsMethods{
         }
       }
     }
-    print(weeklyData.toString());
+
     return weeklyData;
   }
 
@@ -349,7 +359,6 @@ class StatisticsMethods{
       attendanceList.add(attendance.where((element) => element['attendance_status'] == words).toList());
     }
 
-
     return attendanceList;
 
   }
@@ -361,12 +370,19 @@ class StatisticsMethods{
       Timestamp ts = weekDates['date'];
       DateTime dm = ts.toDate();
 
+
       if(DateTime.now().difference(dm).inHours <= 168 && DateTime.now().difference(dm).inSeconds > 1){
         thisWeekNotifs.add(weekDates);
       }
     }
 
     sortDates(thisWeekNotifs);
+
+    thisWeekNotifs.forEach((element) {
+      if(element['subject_sched_id'] == 30315){
+        print('o');
+      }
+    });
 
     return thisWeekNotifs;
   }
@@ -417,7 +433,13 @@ class StatisticsMethods{
       }
     }
 
+    print('pl');
     sortDates(thisWeekNotifs);
+    thisWeekNotifs.forEach((element) {
+      if(element['subject_sched_id'] == 30315){
+        print('hehe');
+      }
+    });
 
     return thisWeekNotifs;
   }
@@ -432,7 +454,7 @@ class StatisticsMethods{
       Timestamp ts = weekDates['date'];
       DateTime dm = ts.toDate();
 
-      if(dm.month == month+1 && month!=6){
+      if(dm.month == month && month!=6){
         thisWeekNotifs.add(weekDates);
       }else if(month==6){
         thisWeekNotifs.add(weekDates);

@@ -183,7 +183,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
     overlays[layerlink] = entry!;
   }
 
-
   Widget buildListSubjects(){
     return Container(
         height: 200,
@@ -243,7 +242,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   // I moved this function to the get_user_data
-  // meaning its only initialized every restart. It won't accomodate new notifications
+  // meaning its only initialized every restart. It won't accommodate new notifications
   // @override
   // void initState() {
   //   // TODO: implement initState
@@ -341,6 +340,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       statsController.weekChoice.value = 0;
                       statsController.monthChoice.value = 4;
                       statsController.updateAttendance();
+                      statsController.updateBarChart();
                       statsController.update();
                     },
                     decoration: BoxDecoration(
@@ -471,7 +471,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             statsController.monthChoice.value = i;
 
                             statsController.updateAttendance();
-                            //statsController.initAttendance(subjects.entries.elementAt(0).value);
 
                             statsController.update();
                             statsController.updateBarChart();
@@ -582,7 +581,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                     borderRadius: BorderRadius.circular(15)
                                 ),
                                 shadows: [
-              
                                   BoxShadow(
                                     color: Color(0x3F000000),
                                     blurRadius: 4,
