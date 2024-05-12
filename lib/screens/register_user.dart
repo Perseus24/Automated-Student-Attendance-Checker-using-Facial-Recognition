@@ -201,6 +201,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final logInController = Get.put(LogInControllers());
 
+
   Future<User?>signUpWithEmailAndPassword(String email, String password) async{
     try{
       print("this is " + email);

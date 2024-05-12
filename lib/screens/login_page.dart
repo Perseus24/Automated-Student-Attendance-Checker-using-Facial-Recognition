@@ -357,7 +357,9 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(height: 10.h,)
               ],
             ),
-            Obx(()=>Positioned.fill(
+            Obx(()=>Positioned(
+              top: MediaQuery.of(context).size.height/2-100,
+              left:MediaQuery.of(context).size.width/2-100,
               child: logInControllerTemp.loading.value ? buildLoading(context) : Container()
             ))
           ],
@@ -368,7 +370,23 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget buildLoading(BuildContext context){
     return Container(
-      color: Colors.black.withOpacity(0.5),
+      height: 100,
+      width: 200,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15)
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 4,
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      padding: EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -377,7 +395,7 @@ class _SignInPageState extends State<SignInPage> {
             strokeWidth: 5.w,
           ),
           SizedBox(height: 10.h,),
-          BigText(text: 'Preparing...', color: Colors.white,)
+          BigText(text: 'Fetching user\'s data...', color: Colors.black, size: 14,)
         ],
       ),
     );
