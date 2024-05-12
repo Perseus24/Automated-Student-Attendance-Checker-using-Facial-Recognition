@@ -3,6 +3,7 @@
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,10 +81,10 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
                       thisDayEmpty?Container():StreamBuilder<QuerySnapshot>(
                           stream: attendanceTable.snapshots(),
                           builder: (context, snapshots){
-
-                            final listAttendance = snapshots.data!.docs;
-
-
+                            
+                            var listAttendance = snapshots.data!.docs;
+                            
+                            listAttendance = listAttendance.where((element) => element['student_id'] == userDataControllers.studentSnapshot[0]['student_ID']).toList();
                             listAttendance.sort((a, b) {
                               // Assuming 'time' is a string in HH:mm aa format
                               Timestamp tsA = a['date'];
@@ -222,6 +223,7 @@ class ChatNotification{
   Notifications notifications = Get.put(Notifications());
   static Future<void> subscribeToTopic(String topic) async {
     await FirebaseMessaging.instance.subscribeToTopic(topic);
+
   }
   static Future<void> initializeNotification() async{
     await AwesomeNotifications().initialize(
