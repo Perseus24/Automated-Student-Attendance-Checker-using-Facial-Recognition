@@ -6,6 +6,7 @@ import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/professor_side/calendar_page_prof.dart';
 import 'package:flutter_application_1/professor_side/main_homepage_prof.dart';
 import 'package:flutter_application_1/professor_side/class_list_page.dart';
+import 'package:flutter_application_1/professor_side/profile_page_prof.dart';
 import 'package:flutter_application_1/professor_side/utilities/get_prof_data.dart';
 import 'package:flutter_application_1/screens/landing_page.dart';
 import 'package:flutter_application_1/screens/main_homepage.dart';
@@ -62,7 +63,7 @@ class BuildDrawer extends StatelessWidget {
             HamburgerPages(selectedAppPage: selectedAppPage, widget:  userDataControllers.switchDashboardUser.value==0?CalendarHome():CalendarHomeProf(),
               drawerPage: AppPages.Calendar, icon: 'images/calendar_',),
             SizedBox(height: 5),
-            HamburgerPages(selectedAppPage: selectedAppPage, widget: ProfilePage(),
+            HamburgerPages(selectedAppPage: selectedAppPage, widget: userDataControllers.switchDashboardUser.value==0?ProfilePage():ProfilePageProf(),
               drawerPage: AppPages.Profile, icon: 'images/profile_',),
             SizedBox(height: 5),
             Container(

@@ -23,7 +23,7 @@ class HamburgerPages extends StatelessWidget {
         Navigator.of(context).push(createRouteGo(widget));
       },
       child: Container(
-        height: 50.h,
+        height: 50,
         decoration: ShapeDecoration(
           color: selectedAppPage == drawerPage? kDrawerPagesColor:Colors.transparent,
           shape: RoundedRectangleBorder(
@@ -32,12 +32,12 @@ class HamburgerPages extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+          padding: EdgeInsets.only(left: 7, top: 8, bottom: 8),
           child: Row(
             children: [
               Image.asset('$icon${selectedAppPage == drawerPage?1:0}.png'),
-              SizedBox(width: 10.w,),
-              BigText(text: drawerPage.name, size: 16.sp, color:selectedAppPage == drawerPage?kBlueColor:Colors.black, fontWeight: FontWeight.w700,),
+              SizedBox(width: 10),
+              BigText(text: drawerPage.name, size: 16, color:selectedAppPage == drawerPage?kBlueColor:Colors.black, fontWeight: FontWeight.w700,),
             ],
           ),
         ),
