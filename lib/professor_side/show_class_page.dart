@@ -101,6 +101,7 @@ class _ClassSubjectInfoState extends State<ClassSubjectInfo> {
     students.sort((a,b) => a['last_name'].compareTo(b['last_name']));
 
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -247,7 +248,12 @@ class _ClassSubjectInfoState extends State<ClassSubjectInfo> {
                 ),
               ),
             ),
-          )
+          ),
+          Obx(()=>Positioned(
+              top: MediaQuery.of(context).size.height/2-100,
+              left:MediaQuery.of(context).size.width/2-100,
+              child: profDataControllers.fetchStudentData.value ? buildLoading(context) : Container()
+          ))
         ],
       ),
     );
@@ -332,8 +338,11 @@ class _ClassSubjectInfoState extends State<ClassSubjectInfo> {
   Widget popUp(){
     return GestureDetector(
       onTap: () async{
+        profDataControllers.fetchStudentData.value = true;
+        hideOverlays();
         await GetStudentAttendance().fetchStudentFirebaseInfos();
         Navigator.of(context).push(createRouteGo(StatisticsHome()));
+        profDataControllers.fetchStudentData.value = false;
       },
       child: Container(
         height: 50,
@@ -353,6 +362,39 @@ class _ClassSubjectInfoState extends State<ClassSubjectInfo> {
           ],
         ),
         child: Center(child: BigText(text: "Show attendance history", size: 14,)),
+      ),
+    );
+  }
+
+  Widget buildLoading(BuildContext context){
+    return Container(
+      height: 100,
+      width: 200,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15)
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 4,
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      padding: EdgeInsets.all(10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: kBlueColor,
+            strokeWidth: 5,
+          ),
+          SizedBox(height: 10,),
+          BigText(text: 'Fetching user\'s data...', color: Colors.black, size: 14,)
+        ],
       ),
     );
   }

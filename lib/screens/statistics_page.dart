@@ -60,8 +60,14 @@ class StatisticsHome extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        drawer: BuildDrawer(selectedAppPage: AppPages.Statistics,),
+        drawer: userDataControllers.switchDashboardUser.value==0?BuildDrawer(selectedAppPage: AppPages.Statistics,):null,
         appBar: AppBar(
+          leading: userDataControllers.switchDashboardUser.value==1?IconButton(
+            icon: Icon(Icons.arrow_back_rounded, size: 30,),
+            onPressed: (){
+              Navigator.of(context).pop(context);
+            },
+          ):null,
           //leadingWidth: 40,
           backgroundColor: kBlueColor,
           title: Container(
