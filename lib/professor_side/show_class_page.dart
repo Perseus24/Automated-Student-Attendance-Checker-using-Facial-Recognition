@@ -3,11 +3,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/professor_side/main_homepage_prof.dart';
 import 'package:flutter_application_1/professor_side/utilities/get_prof_data.dart';
+import 'package:flutter_application_1/screens/statistics_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
+import '../utilities/build_routes.dart';
 import '../utilities/constants.dart';
+import '../utilities/get_user_data.dart';
 import '../widgets/big_texts.dart';
 
 Map<LayerLink, OverlayEntry> overlays = {};
@@ -31,6 +35,7 @@ class _ShowClassPageState extends State<ShowClassPage> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -272,7 +277,11 @@ class _ClassSubjectInfoState extends State<ClassSubjectInfo> {
                       setState(() {
                         hideOverlays();
                       });
+                      StudentAttendance stud = Get.put(StudentAttendance());
+                      stud.student_id.value = studentP['student_ID'];
+                      stud.student_name.value = studentP['first_name'] + " " + studentP['last_name'];
                       showOverlay(180.0, popUp(),  studentLL[position], overlayEntry);
+
                     },
                     child: Container(
                       height: 50,
@@ -321,24 +330,78 @@ class _ClassSubjectInfoState extends State<ClassSubjectInfo> {
   }
 
   Widget popUp(){
-    return Container(
-      height: 50,
-      //width: 100,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))
+    return GestureDetector(
+      onTap: () async{
+        await GetStudentAttendance().fetchStudentFirebaseInfos();
+        Navigator.of(context).push(createRouteGo(StatisticsHome()));
+      },
+      child: Container(
+        height: 50,
+        //width: 100,
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5))
+          ),
+          shadows: [
+            BoxShadow(
+              color: Color(0x3F000000),
+              blurRadius: 4,
+              offset: Offset(0, 4),
+              spreadRadius: 0,
+            )
+          ],
         ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x3F000000),
-            blurRadius: 4,
-            offset: Offset(0, 4),
-            spreadRadius: 0,
-          )
-        ],
+        child: Center(child: BigText(text: "Show attendance history", size: 14,)),
       ),
-      child: Center(child: BigText(text: "Show attendance history", size: 14,)),
     );
+  }
+}
+
+class StudentAttendance extends GetxController{
+
+  RxInt student_id = 0.obs;
+  RxString student_name = ''.obs;
+
+  //needed documents for attendance statistics
+
+  late List<DocumentSnapshot> _attendanceSnapshot;
+  List<DocumentSnapshot> get attendanceSnapshot => _attendanceSnapshot;
+
+  void setAttendanceSnapshot(List<DocumentSnapshot> docs){
+    _attendanceSnapshot = docs;
+    update();
+  }
+}
+
+class GetStudentAttendance{
+  final StudentAttendance studentAttendance = Get.put(StudentAttendance());
+  final statsController = Get.put(StatisticsController());
+  final userDataControllers = Get.put(UserDataControllers());
+
+  final CollectionReference attendanceTable = FirebaseFirestore.instance.collection('student_attendance');
+  final CollectionReference schedSubjectTable = FirebaseFirestore.instance.collection('subject_sched');
+
+  late final List<DocumentSnapshot> getAttendance;
+  late final List<DocumentSnapshot> getSchedSubject;
+
+
+
+  Future<void> fetchStudentFirebaseInfos() async{
+    QuerySnapshot attendanceSnapshot = await attendanceTable.where('student_id', isEqualTo: studentAttendance.student_id.value).get();
+    getAttendance = attendanceSnapshot.docs;
+
+    userDataControllers.setAttendanceSnapshot(getAttendance);
+
+    //get the schedule_subject table
+    QuerySnapshot schedSubjectSnapshot = await schedSubjectTable.where('subject_id', isEqualTo: 31012).get();
+    getSchedSubject = schedSubjectSnapshot.docs;
+
+    //get only the schedule with the same block with the student
+    final getSchedSubjectNew = getSchedSubject.where((element) => element['course_bloc_id'] == 33002).toList();
+
+    userDataControllers.setScheduleSnapshot(getSchedSubjectNew);
+
+    statsController.initAttendanceForProf();
   }
 }
