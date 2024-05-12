@@ -52,41 +52,30 @@ class _SignInPageState extends State<SignInPage> {
     // Initialize the controller outside the build method
     Get.put(logInController);
   }
+
+  void getUserData() async{
+    GetUserFirebaseInfo getUserFirebaseInfo = GetUserFirebaseInfo();
+    await getUserFirebaseInfo.fetchStudentFirebaseInfos();
+    await getUserFirebaseInfo.fetchNotificationHistory();
+  }
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<LogInControllers>();
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, size: 30,),
+          onPressed: (){
+            Navigator.of(context).push(createRouteBack(LandingPage()));
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Stack(
           children: [
             Column(
               children: [
-                Container(
-                    margin: EdgeInsets.only(top: 55, bottom: 15),
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Row(
-                        children: [
-                          Container(
-                              width: 45.h,
-                              height: 45.h,
-                              child: ElevatedButton(
-                                onPressed: (){
-                                  Navigator.of(context).push(createRouteBack(MyApp()));
-                                },
-                                clipBehavior: Clip.antiAlias,
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  padding: EdgeInsets.zero, // <--add this
-                                ),
-                                child: Image.asset('images/Back.png'),
 
-                              )
-                          ),
-                        ]
-                    )
-                ),
                 SizedBox(height: 22.55.h,),
                 Center(
                     child: Container(
@@ -326,8 +315,7 @@ class _SignInPageState extends State<SignInPage> {
                             logInControllerTemp.loading.value = true;
                             try{
                               user = await authService.signInWithEmailAndPassword(controller.emailControllerText.value, controller.passwordControllerText.value);
-                              GetUserFirebaseInfo getUserFirebaseInfo = GetUserFirebaseInfo();    //note that  new users are not able to log in
-                              await getUserFirebaseInfo.fetchStudentFirebaseInfos();
+
                             }catch (e){
 
                             }finally{
@@ -341,7 +329,8 @@ class _SignInPageState extends State<SignInPage> {
                               controller.passwordWrongController.text = '';
                               controller.hasPasswordError = false.obs;
                               controller.hasEmailError = false.obs;
-                              Navigator.of(context).push(createRouteGo(MainHomePage()));
+                              logInControllerTemp.loading.value = false;
+                              Navigator.of(context).push(createRouteGo(LoadingScreen()));
 
                             }
                           }

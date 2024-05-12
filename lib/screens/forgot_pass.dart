@@ -23,32 +23,88 @@ class ForgotPassPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded),
+          icon: Icon(Icons.arrow_back_rounded, size: 30,),
           onPressed: (){
             Navigator.pop(context);
           },
         ),
       ),
       body: Container(
-        height: 500.h,
+        height: 500,
         child: Stack(
           children: [
             Positioned(
-              top: 50.h,
-              left: 20.w,
-              right: 20.w,
+              top: 50,
+              left: 20,
+              right: 20,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Container(
-                      height: 200.h,
-                      padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 40.h),
+                      //height: 200,
+                      padding: EdgeInsets.only(left: 40, right: 40, top: 60, bottom: 30),
                       child: Column(
                         children: [
                           Text('Change Password'),
-                          Text('Please fill in the details below')
+                          Text('Please fill in the details below'),
+                          SizedBox(height: 20,),
+                          TextField(
+                            decoration: InputDecoration(
+                              hintText: "Your email address",
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 14
+                              )
+                            ),
+                          ),
+                          SizedBox(height: 15,),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 45,
+                                  decoration: ShapeDecoration(
+                                    color: kBlueColor,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15)
+                                    ),
+                                    shadows: [
+                                      BoxShadow(
+                                        color: Color(0x3F000000),
+                                        blurRadius: 4,
+                                        offset: Offset(0, 4),
+                                        spreadRadius: 0,
+                                      )
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: BigText(
+                                      text: "Submit",
+                                      color: Colors.white,
+                                      size: 16,
+
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
                           
+                        ],
+                      ),
+                      decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        shadows: [
+                          BoxShadow(
+                            color: Color(0x3F000000),
+                            blurRadius: 4,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          )
                         ],
                       ),
                     ),

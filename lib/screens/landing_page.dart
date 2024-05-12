@@ -147,19 +147,18 @@ class _LandingPageState extends State<LandingPage> {
                         height: 47.h,
                         width: 289.w,
                         decoration: ShapeDecoration(
-                          color: Color(0x001A43BF),
+                          color: Colors.white,
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              width: 1,
-                              color: Colors.black.withOpacity(0.46000000834465027),
-                            ),
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                         child: ElevatedButton(
                           clipBehavior: Clip.antiAlias,
                           style: ElevatedButton.styleFrom(
-                            disabledBackgroundColor: Color(0x001A43BF),
+                            side: BorderSide(
+                              color: kBlueColor,
+                            ),
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),

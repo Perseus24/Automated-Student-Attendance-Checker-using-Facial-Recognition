@@ -138,7 +138,7 @@ class Page1TextControllers extends GetxController{
   void updateInputs(){
     hasFirstNameError.value = firstNameController.text.isEmpty;
     hasLastNameError.value = lastNameController.text.isEmpty;
-    hasAnyErrorPage1.value = hasFirstNameError.value||hasLastNameError.value;
+    hasAnyErrorPage1.value = !hasFirstNameError.value||!hasLastNameError.value;
 
     update();
   }
@@ -189,7 +189,7 @@ class Page2TextControllers extends GetxController{
     blocEmpty.value = blocController.text.isEmpty;
     yearLevelEmpty.value = yearLevelController.text.isEmpty;
 
-    hasAnyErrorPage2.value = sexEmpty.value||courseEmpty.value||blocEmpty.value||yearLevelEmpty.value;
+    hasAnyErrorPage2.value = !sexEmpty.value||!courseEmpty.value||!blocEmpty.value||!yearLevelEmpty.value;
     //return hasError;
     update();
   }
@@ -203,6 +203,8 @@ class AuthService {
 
   Future<User?>signUpWithEmailAndPassword(String email, String password) async{
     try{
+      print("this is " + email);
+      print("this is " + password);
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       return result.user;
     }on FirebaseAuthException catch(error){
@@ -214,6 +216,7 @@ class AuthService {
 
       }
     }
+    return null;
   }
 
   Future<User?>signInWithEmailAndPassword(String email, String password) async{
@@ -308,35 +311,17 @@ class _RegisterPageState extends State<RegisterPage>{
     final controller3 = Get.find<LogInControllers>();
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, size: 30,),
+          onPressed: (){
+            Navigator.of(context).push(createRouteBack(LandingPage()));
+          },
+        ),
+      ),
       body: SingleChildScrollView(
           child: Column(
               children: [
-                Container(
-                    margin: EdgeInsets.only(top: 55, bottom: 15),
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    child: Row(
-                        children: [
-                          Container(
-                              width: 45.h,
-                              height: 45.h,
-                              child: ElevatedButton(
-                                onPressed: (){
-                                  Navigator.of(context).push(createRouteBack(MyApp()));
-                                },
-                                clipBehavior: Clip.antiAlias,
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  padding: EdgeInsets.zero, // <--add this
-                                ),
-                                child: Image.asset('images/Back.png'),
-
-                              )
-                          ),
-                        ]
-                    )
-                ),
                 SizedBox(height: 5.h,),
                 Center(
                     child: Container(
@@ -477,7 +462,7 @@ class _RegisterPageState extends State<RegisterPage>{
                                         padding: EdgeInsets.zero,
                                       ),
                                       onPressed: () async {
-                                        Navigator.of(context).push(createRouteGo(RegisterFace()));
+                                        //Navigator.of(context).push(createRouteGo(RegisterFace()));
                                         //await readJson();
                                         controller.updateInputs();
                                         controller2.updateInputs();
@@ -489,15 +474,18 @@ class _RegisterPageState extends State<RegisterPage>{
                                         //}
 
                                         User? user;
-                                        try{
-                                          user = await authService.signUpWithEmailAndPassword(controller3.emailControllerText.value, controller3.passwordWrongControllerText.value);
-                                        }catch(error){
-                                        }finally{
-                                        }
-                                        if(!controller.hasAnyErrorPage1.value && !controller2.hasAnyErrorPage2.value && !controller3.hasAnyErrorEmailPass.value){
+                                        // try{
+                                        //   user = await authService.signUpWithEmailAndPassword(controller3.emailControllerText.value, controller3.passwordWrongControllerText.value);
+                                        // }catch(error){
+                                        // }finally{
+                                        // }
+                                        if(controller.hasAnyErrorPage1.value && controller2.hasAnyErrorPage2.value && controller3.hasAnyErrorEmailPass.value){
 
-                                          student.doc(student.id).set({'first_name': controller.firstNameControllerText.value, 'last_name': controller.lastNameControllerText.value,
-                                            'middle_name': controller.middleNameControllerText.value, 'sex': controller2.sexControllerText.value});
+                                          print(controller3.emailControllerText.value);
+                                          print(controller3.passwordControllerText.value);
+                                          user = await authService.signUpWithEmailAndPassword(controller3.emailControllerText.value, controller3.passwordControllerText.value);
+                                          //student.doc(student.id).set({'first_name': controller.firstNameControllerText.value, 'last_name': controller.lastNameControllerText.value,
+                                          //  'middle_name': controller.middleNameControllerText.value, 'sex': controller2.sexControllerText.value});
                                           //student.add({'first_name': controller.firstNameControllerText.value});
                                           //controller.firstNameController.text = '';
                                           //controller.hasFirstNameError.value = false;
@@ -506,8 +494,12 @@ class _RegisterPageState extends State<RegisterPage>{
                                           //controller.lastNameController.text = '';
                                           //controller2.sexController.text = '';
                                           //controller.hasAnyErrorPage1.value = false;
-                                          Navigator.of(context).push(createRouteGo(RegisterFace()));
+                                          //Navigator.of(context).push(createRouteGo(RegisterFace()));
+                                          print("WTF!!!");
                                         }else{
+                                          print(controller.hasAnyErrorPage1.value);
+                                          print(controller2.hasAnyErrorPage2.value);
+                                          print(controller3.hasAnyErrorEmailPass.value);
                                           hasAnyError.value = true;
                                           errorForVibrateOnly.value = true;
                                           Duration duration  = Duration(milliseconds: 300);
