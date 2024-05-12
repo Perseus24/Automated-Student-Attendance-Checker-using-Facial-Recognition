@@ -158,7 +158,7 @@ class GetUserFirebaseInfo{
     getStudentID = await fetchStudent();
 
     if(getStudentID.isEmpty){
-      print("HERE!");
+
       await getProfessorFirebaseInfo.fetchStudentFirebaseInfos();
       userDataControllers.switchDashboardUser.value = 1;
       userDataControllers.update();
@@ -219,6 +219,7 @@ class GetUserFirebaseInfo{
       userDataControllers.setAttendanceSnapshot(getAttendance);
 
       statsController.initAttendance();
+
     }
 
 
