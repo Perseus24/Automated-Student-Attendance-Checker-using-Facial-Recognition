@@ -1,14 +1,20 @@
-import 'package:firebase_admin/firebase_admin.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/professor_side/calendar_page_prof.dart';
+import 'package:flutter_application_1/professor_side/main_homepage_prof.dart';
+import 'package:flutter_application_1/professor_side/class_list_page.dart';
+import 'package:flutter_application_1/professor_side/utilities/get_prof_data.dart';
 import 'package:flutter_application_1/screens/landing_page.dart';
 import 'package:flutter_application_1/screens/main_homepage.dart';
 import 'package:flutter_application_1/screens/statistics_page.dart';
+import 'package:flutter_application_1/utilities/get_user_data.dart';
 import 'package:flutter_application_1/widgets/big_texts.dart';
 import 'package:flutter_application_1/widgets/hamburger_pages.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:get/get.dart';
 import '../screens/profile_page.dart';
 import '../utilities/constants.dart';
 import '../utilities/build_routes.dart';
@@ -24,40 +30,43 @@ class BuildDrawer extends StatelessWidget {
   int num2 = 0;
   int num3 = 0;
 
+  final userDataControllers = Get.put(UserDataControllers());
+
   @override
   Widget build(BuildContext context) {
 
     return Drawer(
-      width: 250.w,
+      backgroundColor: Colors.white,
+      width: 250,
       child: Padding(
-        padding: EdgeInsets.only(left: 15.w, right: 30.w, top: 45.h),
+        padding: EdgeInsets.only(left: 15, right: 30, top: 45),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: EdgeInsets.all(25.h),
+              padding: EdgeInsets.all(25),
               child: Image.asset('images/logo.png'),
             ),
-            SizedBox(height: 20.h,),
+            SizedBox(height: 20),
             Padding(
-              padding: EdgeInsets.only(left: 22.w),
-              child: BigText(text: "Main Menu", color: Colors.black, size: 18.sp,fontWeight: FontWeight.w700,),
+              padding: EdgeInsets.only(left: 22),
+              child: BigText(text: "Main Menu", color: Colors.black, size: 18,fontWeight: FontWeight.w700,),
             ),
-            SizedBox(height: 10.h),
-            HamburgerPages(selectedAppPage: selectedAppPage, widget: MainHomePage(),
+            SizedBox(height: 10),
+            HamburgerPages(selectedAppPage: selectedAppPage, widget: userDataControllers.switchDashboardUser.value==0?MainHomePage():MainHomePageProf(),
               drawerPage: AppPages.Dashboard, icon: 'images/dashboard_',),
-            SizedBox(height: 5.h),
-            HamburgerPages(selectedAppPage: selectedAppPage, widget: StatisticsHome(),
+            SizedBox(height: 5),
+            HamburgerPages(selectedAppPage: selectedAppPage, widget: userDataControllers.switchDashboardUser.value==0?StatisticsHome():ClassLists(),
               drawerPage: AppPages.Statistics, icon: 'images/statistics_',),
-            SizedBox(height: 5.h),
-            HamburgerPages(selectedAppPage: selectedAppPage, widget: CalendarHome(),
+            SizedBox(height: 5),
+            HamburgerPages(selectedAppPage: selectedAppPage, widget:  userDataControllers.switchDashboardUser.value==0?CalendarHome():CalendarHomeProf(),
               drawerPage: AppPages.Calendar, icon: 'images/calendar_',),
-            SizedBox(height: 5.h),
+            SizedBox(height: 5),
             HamburgerPages(selectedAppPage: selectedAppPage, widget: ProfilePage(),
               drawerPage: AppPages.Profile, icon: 'images/profile_',),
-            SizedBox(height: 5.h),
+            SizedBox(height: 5),
             Container(
-              height: 50.h,
+              height: 50,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -71,16 +80,18 @@ class BuildDrawer extends StatelessWidget {
                     ),
                     padding: EdgeInsets.zero,
                   ),
-                  onPressed: (){
+                  onPressed: ()async{
+                    final FirebaseAuth _auth = FirebaseAuth.instance;
+                    await _auth.signOut();
                     Navigator.of(context).push(createRouteBack(LandingPage()));
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(left: 7.w, top: 8.h, bottom: 8.h),
+                    padding: EdgeInsets.only(left: 7, top: 8, bottom: 8),
                     child: Row(
                       children: [
                         Image.asset('images/log_out.png'),
-                        SizedBox(width: 10.w,),
-                        BigText(text: "Log out", size: 16.sp, color:  Color(0xFFFF0000), fontWeight: FontWeight.w700,),
+                        SizedBox(width: 10,),
+                        BigText(text: "Log out", size: 16, color:  Color(0xFFFF0000), fontWeight: FontWeight.w700,),
                       ],
                     ),
                   )
@@ -92,5 +103,6 @@ class BuildDrawer extends StatelessWidget {
     );
   }
 }
+
 
 
