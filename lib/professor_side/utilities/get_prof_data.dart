@@ -17,10 +17,10 @@ class ProfDataControllers extends GetxController{
   late List<DocumentSnapshot> _bldgSnapshot;
   late List<DocumentSnapshot> _scheduleSnapshot;
   late List<DocumentSnapshot> _attendanceSnapshot;
-  late List<DocumentSnapshot> _thisDayAttendance;
-  late List<DocumentSnapshot> _yesterdayAttendance;
-  late List<DocumentSnapshot> _thisWeekAttendance;
-  late List<DocumentSnapshot> _longTimeAttendance;
+  late List<DocumentSnapshot> _professorSnapshot;
+
+  RxInt tappedSchedSubject = 0.obs;
+  RxBool fetchStudentData = false.obs;
 
 
   List<DocumentSnapshot> get subjectSnapshot => _subjectSnapshot;
@@ -29,6 +29,7 @@ class ProfDataControllers extends GetxController{
   List<DocumentSnapshot> get bldgSnapshot => _bldgSnapshot;
   List<DocumentSnapshot> get scheduleSnapshot => _scheduleSnapshot;
   List<DocumentSnapshot> get attendanceSnapshot => _attendanceSnapshot;
+  List<DocumentSnapshot> get professorSnapshot => _professorSnapshot;
 
 
   void setSubjectSnapshot(List<DocumentSnapshot> docs) {
@@ -57,25 +58,11 @@ class ProfDataControllers extends GetxController{
     update();
   }
 
-  void setThisDayAttendance(List<DocumentSnapshot> docs) {
-    _thisDayAttendance = docs;
-    update(); // Updates UI dependent on this controller
+  void setProfesssorSnapshot(List<DocumentSnapshot> docs){
+    _professorSnapshot = docs;
+    update();
   }
 
-  void setYesterdayAttendance(List<DocumentSnapshot> docs) {
-    _yesterdayAttendance = docs;
-    update(); // Updates UI dependent on this controller
-  }
-
-  void setThisWeekAttendance(List<DocumentSnapshot> docs) {
-    _thisWeekAttendance = docs;
-    update(); // Updates UI dependent on this controller
-  }
-
-  void setLongTimeAttendance(List<DocumentSnapshot> docs) {
-    _longTimeAttendance = docs;
-    update(); // Updates UI dependent on this controller
-  }
 
   Future<bool> checkLoggedIn() async{
     //check if there's a user already logged in
@@ -120,12 +107,14 @@ class GetProfessorFirebaseInfo{
   late final List<DocumentSnapshot> getRooms;
   late final List<DocumentSnapshot> getBldg;
   late final List<DocumentSnapshot> getAttendance;
+  late final List<DocumentSnapshot> getBlock;
 
 
   Future<List<DocumentSnapshot>> fetchProfessor() async{
     final String? userid = FirebaseAuth.instance.currentUser?.uid;
-    QuerySnapshot studentSnapshot = await professorTable.where('user_uid', isEqualTo: userid).get();
-    return studentSnapshot.docs;
+    QuerySnapshot profSnapshot = await professorTable.where('user_uid', isEqualTo: userid).get();
+    profDataControllers.setProfesssorSnapshot(profSnapshot.docs);
+    return profSnapshot.docs;
 
   }
 
@@ -143,21 +132,20 @@ class GetProfessorFirebaseInfo{
 
     final studentIDs = students.docs.map((docs) => docs['student_id']).toList();  //list of students
 
-    //studentIDs.removeRange(0, 10);  //try to comment this once app release
-    List<List<dynamic>> sublist = [];
+    List<List<dynamic>> sublist_student_id = [];
     for (int i = 0; i < studentIDs.length; i += 30) {
-      sublist.add(studentIDs.sublist(i, i + 30 > studentIDs.length ? studentIDs.length : i + 30));
+
+      sublist_student_id.add(studentIDs.sublist(i, i + 30 > studentIDs.length ? studentIDs.length : i + 30));
     }
 
-    List<DocumentSnapshot<Object?>> getStudents = []; //
-    for(int i=0; i<sublist.length;i++){
-      QuerySnapshot studentsSnapshot = await studentTable.where('student_ID', whereIn: sublist[i]).get();
+    List<DocumentSnapshot<Object?>> getStudents = [];
+    for(int i=0; i<sublist_student_id.length;i++){
+      QuerySnapshot studentsSnapshot = await studentTable.where('student_ID', whereIn: sublist_student_id[i]).get();
       getStudents.addAll(studentsSnapshot.docs);
     }
-    print("total"+getStudents.length.toString());
-    // QuerySnapshot studentsSnapshot = await studentTable.where('student_id', whereIn: studentIDs).get();
-    // getStudents = studentsSnapshot.docs;  //list of info of students
-    //
+
+
+
     profDataControllers.setStudentsSnapshot(getStudents);
     //get the schedule_subject table
     QuerySnapshot schedSubjectSnapshot = await schedSubjectTable.where('subject_id', isEqualTo: getProfessorSubject[0]['subject_id']).get();

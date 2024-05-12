@@ -1,14 +1,17 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/professor_side/show_class_page.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/professor_side/utilities/get_prof_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../utilities/build_routes.dart';
 import '../utilities/constants.dart';
 import '../widgets/big_texts.dart';
 import '../widgets/hamburger.dart';
+import 'class_list_page.dart';
 
 class MainHomePageProf extends StatefulWidget {
   const MainHomePageProf({super.key});
@@ -24,40 +27,6 @@ class _MainHomePageProfState extends State<MainHomePageProf> {
       appBar: AppBar(
         title: BigText(text: "Dashboard", color: Colors.white, size:25, fontWeight: FontWeight.w700,),
         backgroundColor: kBlueColor,
-        actions: [
-          Container(
-              margin: EdgeInsets.only(right: 10),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                        width: 50,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () async{
-                            // homepageController.notifButtonTapped.toggle();
-                            //
-                            // homepageController.expandNotifContainer();
-                            // //homepageController.showLoading.toggle();
-                            // homepageController.update();
-
-                          },
-                          clipBehavior: Clip.antiAlias,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                            ),
-                            padding: EdgeInsets.zero, // <--add this
-                          ),
-                          child: Image.asset('images/Bellpin.png'),
-                        )
-                    ),
-                  ]
-              )
-          ),
-        ],
         toolbarHeight: 80,
         iconTheme: IconThemeData(color: Colors.white, size: 25),
       ),
@@ -82,85 +51,88 @@ class _BodyPageProfState extends State<BodyPageProf> {
     return Container(
       color: Colors.white,
       height: double.infinity,
-      child: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(0.00, -1.00),
-                  end: Alignment(0, 1),
-                  colors: [
-                    kBlueColor,
-                    Colors.white
-                  ],
-                ),
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.00, -1.00),
+                end: Alignment(0, 1),
+                colors: [
+                  kBlueColor,
+                  Colors.white
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal:40),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage("images/prof_icon.png"),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal:40),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage("images/prof_icon.png"),
+                      ),
+                      SizedBox(width: 10,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BigText(text: profDataControllers.professorSnapshot[0]['first_name'].toString() + profDataControllers.professorSnapshot[0]['last_name'].toString(), color: Colors.white, size: 17,),
+                          BigText(text: "Associate Professor III", color: Colors.white, size: 15,),
+                        ],
+                      )
+      
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50, right: 0),
+                    child: Container(
+                      height: 80,
+                      width: 300,
+                      decoration: ShapeDecoration(
+                        color: kBlueColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(25)),
                         ),
-                        SizedBox(width: 10,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 15),
+                        child: Row(
                           children: [
-                            BigText(text: "Maria Leonor G. Robredo", color: Colors.white, size: 17,),
-                            BigText(text: "Associate Professor III", color: Colors.white, size: 15,),
-                          ],
-                        )
-
-                      ],
-                    ),
-                    SizedBox(height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 50, right: 0),
-                      child: Container(
-                        height: 80,
-                        width: 300,
-                        decoration: ShapeDecoration(
-                          color: kBlueColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 15),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        BigText(text: "Students",color: Colors.white, size: 15,),
-                                        Icon(Icons.arrow_forward_ios_outlined, size: 15,)
-                                      ],
-                                    ),
-                                    BigText(
-                                      text: profDataControllers.studentsSnapshot.length.toString(),
-                                      color: Colors.white,
-                                      size: 18,
-                                    )
-                                  ],
-                                ),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      BigText(text: "Students",color: Colors.white, size: 15,),
+                                      Icon(Icons.arrow_forward_ios_outlined, size: 15, color: Colors.white)
+                                    ],
+                                  ),
+                                  BigText(
+                                    text: profDataControllers.studentsSnapshot.length.toString(),
+                                    color: Colors.white,
+                                    size: 18,
+                                  )
+                                ],
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: 10,right: 15),
-                                width: 1,
-                                color: Colors.white,
-                              ),
-                              Expanded(
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 10,right: 15),
+                              width: 1,
+                              color: Colors.white,
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: (){
+                                  Navigator.of(context).push(createRouteGo(ClassLists()));
+                                },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
@@ -168,7 +140,7 @@ class _BodyPageProfState extends State<BodyPageProf> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         BigText(text: "Classes",color: Colors.white, size: 15,),
-                                        Icon(Icons.arrow_forward_ios_outlined, size: 15,)
+                                        Icon(Icons.arrow_forward_ios_outlined, size: 15, color: Colors.white)
                                       ],
                                     ),
                                     BigText(
@@ -179,26 +151,28 @@ class _BodyPageProfState extends State<BodyPageProf> {
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
-            Positioned(
-              top: 180,
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width:MediaQuery.of(context).size.width,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
-                    ),
+          ),
+          Positioned(
+            top: 180,
+              child: Container(
+                height: MediaQuery.of(context).size.height - 300,
+                width:MediaQuery.of(context).size.width,
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
                   ),
+                ),
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -308,10 +282,10 @@ class _BodyPageProfState extends State<BodyPageProf> {
                       ),
                     ],
                   ),
-                )
-            ),
-          ],
-        ),
+                ),
+              )
+          ),
+        ],
       ),
     );
   }
@@ -467,7 +441,7 @@ class _ClassesBodyState extends State<ClassesBody>{
         ],
       ),
       child: Container(
-          padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 10),
           child: Row(
             children: [
               Column(
@@ -508,7 +482,7 @@ class _ClassesBodyState extends State<ClassesBody>{
                         Icon(Icons.class_outlined, color: Colors.black, size: 15,),
                         SizedBox(width: 5,),
                         Expanded(
-                          child: BigText(text:"BSCS 3B", color: Colors.black, fontWeight: FontWeight.w500, size: 15,),
+                          child: BigText(text:schedSubjectSnapshot['course_bloc_id']==33002?"BSCS 3B":"BSCS 3A", color: Colors.black, fontWeight: FontWeight.w500, size: 15,),
                         )
                       ],
                     ),
