@@ -100,6 +100,18 @@ class StatisticsController extends GetxController{
     originalAttendance.value = statisticsMethods.getTotalAttendance(statisticsMethods.getThisWeekStatsNumber(userDataControllers.attendanceSnapshot),listSubjects.entries.elementAt(0).value);
     attendance.value = originalAttendance;
 
+    updateBarChart();
+    update();
+  }
+
+  void initAttendanceForProf(){
+
+    selectedSubject.value = 'Data Mining';
+    listSubjects.value = {'Data Mining':31012};
+    originalAttendance.value = statisticsMethods.getTotalAttendance(statisticsMethods.getThisWeekStatsNumber(userDataControllers.attendanceSnapshot),31012);
+    attendance.value = originalAttendance;
+
+    updateBarChart();
     update();
   }
 
@@ -314,21 +326,16 @@ class StatisticsMethods{
       Timestamp ts = element['date'];
       DateTime dm = ts.toDate();
 
-      if(DateTime.now().difference(dm).inHours <= 168 && DateTime.now().difference(dm).inSeconds > 1){
-        for(int i=1; i<7; i++){
-
-
-          if(i==dm.weekday){
-            weeklyData[i-1] = weeklyData[i-1]+1;
-            break;
-          }
+      for(int i=1; i<7; i++){
+        if(i==dm.weekday){
+          weeklyData[i-1] = weeklyData[i-1]+1;
+          break;
         }
       }
     }
-
-
     return weeklyData;
   }
+
   List<int> getBarChartMonthly(List<DocumentSnapshot> attendance){
     List<int> weeklyData = [0,0,0,0,0,0,0,0,0,0,0,0];
 

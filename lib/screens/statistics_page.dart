@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import 'package:table_calendar/table_calendar.dart';
+import '../professor_side/show_class_page.dart';
 import '../utilities/build_routes.dart';
 import '../utilities/get_user_data.dart';
 import '../widgets/big_texts.dart';
@@ -39,6 +40,17 @@ class StatisticsHome extends StatelessWidget {
 
   final homepageController = Get.put(HomepageController());
   final userDataControllers = Get.put(UserDataControllers());
+  final StudentAttendance studentAttendance = Get.put(StudentAttendance());
+  final String name = '';
+
+  String setName(int index){
+
+    if(index == 0){
+     return userDataControllers.studentSnapshot[0]['first_name'].toString() + " " +
+         userDataControllers.studentSnapshot[0]['last_name'].toString();
+    }
+    return studentAttendance.student_name.value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +72,8 @@ class StatisticsHome extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BigText(text: userDataControllers.studentSnapshot[0]['first_name'].toString() + " " +
-                    userDataControllers.studentSnapshot[0]['last_name'].toString(), fontWeight: FontWeight.w700, color: Color(0xFFBCC1CD), size: 15),
-                    BigText(text: "BS Computer Science 3-"+(userDataControllers.studentSnapshot[0]['course_bloc_id']==33002?"B":"A"), fontWeight: FontWeight.w400, color: Color(0xFFBCC1CD), size: 15,),
+                    BigText(text:setName(userDataControllers.switchDashboardUser.value), fontWeight: FontWeight.w700, color: Color(0xFFBCC1CD), size: 15),
+                    BigText(text: "BS Computer Science 3B", fontWeight: FontWeight.w400, color: Color(0xFFBCC1CD), size: 15,),
                   ],
                 )
               ],
@@ -74,7 +85,7 @@ class StatisticsHome extends StatelessWidget {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      userDataControllers.switchDashboardUser.value==0?Container(
                           width: 50,
                           height: 50,
                           child: ElevatedButton(
@@ -95,7 +106,7 @@ class StatisticsHome extends StatelessWidget {
                             ),
                             child: Image.asset('images/Bellpin.png'),
                           )
-                      ),
+                      ):Container(),
                     ]
                 )
             ),
@@ -112,12 +123,11 @@ class StatisticsHome extends StatelessWidget {
               hideOverlays();
             },
           child: StatisticsPage()),
-        bottomNavigationBar: NotificationStream(),
+        bottomNavigationBar: userDataControllers.switchDashboardUser.value==0?NotificationStream():null,
       ),
     );
   }
 }
-
 
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({super.key});
@@ -257,7 +267,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       child: Scaffold(
         body: Column(
           children: [
-            Row(
+             userDataControllers.switchDashboardUser.value==0?Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // BigText(
@@ -305,7 +315,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   ),
                 )
               ],
-            ),
+            ):Container(),
             SizedBox(height: 20,),
             Container(
               height: 40,
@@ -406,12 +416,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         for(int i=0; i<weeks.length; i++){
                           if(weeks[i] == value){
                             statsController.weekChoice.value = i;
-
                             statsController.updateAttendance();
-                            //statsController.initAttendance(subjects.entries.elementAt(0).value);
-
-                            statsController.update();
                             statsController.updateBarChart();
+                            statsController.update();
                             break;
                           }
                         }
@@ -622,7 +629,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         Expanded(
                           child: Container(
                               padding: EdgeInsets.all(5),
-                              height: 200,
+                              height: 220,
                               decoration: ShapeDecoration(
                                   color: Colors.white,
                                   shape: RoundedRectangleBorder(
