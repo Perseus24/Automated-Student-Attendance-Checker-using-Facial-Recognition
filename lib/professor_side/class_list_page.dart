@@ -24,7 +24,7 @@ class _ClassListsState extends State<ClassLists> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BigText(text: "Statistics", color: Colors.white, size:25, fontWeight: FontWeight.w700,),
+        title: BigText(text: "Class list", color: Colors.white, size:25, fontWeight: FontWeight.w700,),
         backgroundColor: kBlueColor,
         toolbarHeight: 80,
         iconTheme: IconThemeData(color: Colors.white, size: 25),
