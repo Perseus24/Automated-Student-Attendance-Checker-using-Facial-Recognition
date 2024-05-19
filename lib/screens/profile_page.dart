@@ -10,6 +10,7 @@ import '../utilities/build_routes.dart';
 import '../web/web_main.dart';
 import '../widgets/big_texts.dart';
 import '../widgets/hamburger.dart';
+import 'notification_page.dart';
 
 class ProfilePage extends StatelessWidget {
 
@@ -64,6 +65,7 @@ class ProfilePage extends StatelessWidget {
             homepageController.update();
           },
         child: ProfileBody()),
+      bottomNavigationBar: NotificationStream(),
     );
   }
 }
