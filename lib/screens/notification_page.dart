@@ -283,12 +283,15 @@ class ChatNotification{
 
   static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async{
     final payload = receivedAction.payload ?? {};
+    print("tapped!");
     if(payload['navigate'] == 'true'){
       Main.navigatorKey.currentState?.push(
           MaterialPageRoute(
             builder: (_) => MainHomePage(),
           )
       );
+      Notifications notifications = Get.put(Notifications());
+      notifications.expandPopUp();
     }
   }
 
@@ -357,18 +360,7 @@ class NewNotif {
 
   Notifications notifications = Get.put(Notifications());
   // Method to handle incoming FCM messages when the app is in the background
-  Future<void> setBackgroundMessageHandler() async {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  }
 
-  // Background message handler function
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    print('Handling a background message ${message.messageId}');
-
-    notifications.updateNotifVariables(message.data['subject'], message.data['attendance_status'], message.data['date']);
-
-    showNotification(message.data['title'], message.data['body']);
-  }
 
   // Method to handle incoming FCM messages when the app is in the foreground
   void setForegroundMessageHandler() {
@@ -378,6 +370,17 @@ class NewNotif {
       notifications.updateNotifVariables(message.data['subject'], message.data['attendance_status'], DateTime.parse(message.data['date']));
       
       showNotification(message.notification?.title, message.notification?.body);
+    });
+  }
+
+  void setBackgroundMessageHandler() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Handling a background message ${message.messageId}');
+
+      notifications.updateNotifVariables(message.data['subject'], message.data['attendance_status'], message.data['date']);
+
+      showNotification(message.data['title'], message.data['body']);
+      notifications.expandPopUp();
     });
   }
 
